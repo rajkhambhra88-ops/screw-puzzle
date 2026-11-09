@@ -85,7 +85,7 @@
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   }
 
-  /* 3D Toy Boxes Area */
+  /* 3D Target Boxes Area */
   .boxes-container {
     display: flex;
     justify-content: center;
@@ -139,7 +139,7 @@
   .box-hole {
     width: 18px;
     height: 18px;
-    background: #6f7887;
+    background: #5a6473;
     border-radius: 50%;
     box-shadow: inset 2px 2px 5px #000, 0 1px 1px rgba(255,255,255,0.4);
     display: flex;
@@ -192,7 +192,7 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: #647082;
+    background: #566375;
     box-shadow: inset 2px 3px 6px #000, 0 1px 2px rgba(255,255,255,0.6);
     display: flex;
     justify-content: center;
@@ -200,7 +200,7 @@
     position: relative;
   }
 
-  /* Playfield & 3D Leaves */
+  /* Playfield & 3D Botanical Plates */
   .playfield {
     flex: 1;
     position: relative;
@@ -209,7 +209,7 @@
   }
   .leaf {
     position: absolute;
-    width: 135px;
+    width: 140px;
     height: 56px;
     border-radius: 70px 0px 70px 0px;
     border: 3.5px solid #ffffff;
@@ -217,17 +217,18 @@
                 inset 0 3px 6px rgba(255,255,255,0.5),
                 inset 0 -3px 6px rgba(0,0,0,0.2);
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 6px;
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.4s;
   }
+
   /* Central Leaf Rib / Vein */
   .leaf::after {
     content: '';
     position: absolute;
-    width: 75%;
+    width: 80%;
     height: 3px;
     background: linear-gradient(90deg, rgba(255,255,255,0.65), rgba(255,255,255,0.05));
     border-radius: 2px;
@@ -240,17 +241,43 @@
   .leaf-yellow { background: linear-gradient(135deg, #ffdf79, #e0a92f); }
   .leaf-purple { background: linear-gradient(135deg, #ccb4f7, #9878d6); }
 
+  /* Plate Screw Socket/Hole (Fixed Position) */
+  .leaf-slot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #231b17 50%, #4a3b34 85%, #6a574d 100%);
+    box-shadow: inset 2px 2px 5px #000, 0 1px 1px rgba(255,255,255,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
+  }
+  .leaf-slot::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #110d0a;
+    box-shadow: inset 1px 1px 3px #000;
+  }
+
   /* 3D Realistic Metallic Screws */
   .screw {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 5;
     cursor: pointer;
     box-shadow: inset 0 2px 3px rgba(255,255,255,0.7),
                 inset 0 -3px 4px rgba(0,0,0,0.4),
-                0 5px 8px rgba(0,0,0,0.32);
+                0 5px 8px rgba(0,0,0,0.35);
     transition: transform 0.12s ease;
     display: flex;
     justify-content: center;
@@ -259,7 +286,6 @@
   .screw:active {
     transform: scale(0.92) rotate(25deg);
   }
-  /* Recessed Cross Head Slots */
   .screw::before, .screw::after {
     content: '';
     position: absolute;
@@ -276,7 +302,18 @@
     height: 16px;
   }
 
-  /* Screw Colors (High-gloss domed look) */
+  /* Locked / Covered Screw Shake Animation */
+  @keyframes shakeLocked {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px) rotate(-8deg); }
+    40% { transform: translateX(4px) rotate(8deg); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+  .screw.locked-shake {
+    animation: shakeLocked 0.25s ease-in-out;
+  }
+
   .screw-orange {
     background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%);
     border: 2px solid #a34300;
@@ -295,6 +332,7 @@
   }
 
   .screw-mini {
+    position: relative;
     width: 20px;
     height: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -307,8 +345,8 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 10px 16px 20px;
-    margin-bottom: 60px;
+    padding: 10px 16px 15px;
+    margin-bottom: 65px;
     z-index: 10;
   }
   .booster-btn {
@@ -420,389 +458,4 @@
     </div>
     <div class="booster-btn" onclick="useBooster('cleaner')">
       <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🧹</span>
-      <div class="booster-badge" id="cleaner-count">1</div>
-    </div>
-  </div>
-
-  <!-- Win Modal -->
-  <div class="overlay" id="win-modal">
-    <div class="modal-card">
-      <div class="modal-title">शानदार जीत! 🏆</div>
-      <p id="win-subtext">लेवल पूरा हुआ!</p>
-      <button class="modal-btn" onclick="nextLevel()">अगला लेवल ➔</button>
-    </div>
-  </div>
-
-  <!-- Fail Modal -->
-  <div class="overlay" id="fail-modal">
-    <div class="modal-card">
-      <div class="modal-title" style="color:#d9534f;">गेम ओवर! ⚠️</div>
-      <p>सारे बफ़र स्लॉट भर गए हैं।</p>
-      <button class="modal-btn" style="background: linear-gradient(135deg, #f39c12, #d35400); box-shadow: 0 5px 0 #963b00;" onclick="retryLevel()">पुनः प्रयास करें</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Web Audio Synthesizer
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playSound(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    const now = audioCtx.currentTime;
-    if (type === 'click') {
-      osc.frequency.setValueAtTime(480, now);
-      osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-      osc.start(now);
-      osc.stop(now + 0.08);
-    } else if (type === 'match') {
-      osc.frequency.setValueAtTime(523, now);
-      osc.frequency.setValueAtTime(659, now + 0.09);
-      osc.frequency.setValueAtTime(783, now + 0.18);
-      gain.gain.setValueAtTime(0.4, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    } else if (type === 'fail') {
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.setValueAtTime(140, now + 0.16);
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    }
-  }
-
-  // Master State
-  let currentLevel = parseInt(localStorage.getItem('screw_game_level') || '1');
-  const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
-  const LEAF_COLORS = ['leaf-green', 'leaf-blue', 'leaf-yellow', 'leaf-purple'];
-
-  let boxSlots = [];
-  let buffer = [null, null, null, null, null];
-  let leaves = [];
-  let totalScrews = 0;
-  let removedScrews = 0;
-  let boosters = { drill: 2, hammer: 1, cleaner: 1 };
-
-  function generateLevel(lvl) {
-    let leafCount, activeColorList;
-
-    if (lvl === 1) {
-      leafCount = 2;
-      activeColorList = ['orange', 'yellow'];
-    } else if (lvl === 2) {
-      leafCount = 3;
-      activeColorList = ['orange', 'yellow'];
-    } else if (lvl <= 5) {
-      leafCount = 4 + (lvl - 3);
-      activeColorList = ['orange', 'yellow', 'blue'];
-    } else if (lvl <= 10) {
-      leafCount = 7 + Math.floor((lvl - 6) * 0.8);
-      activeColorList = ['orange', 'yellow', 'blue', 'brown'];
-    } else {
-      leafCount = Math.min(13, 8 + Math.floor(lvl / 15));
-      activeColorList = ALL_COLORS;
-    }
-
-    boxSlots = [
-      { type: 'box', color: activeColorList[0], count: 0 },
-      { type: 'box', color: activeColorList[1] || activeColorList[0], count: 0 },
-      { type: 'ad', unlocked: false },
-      { type: 'ad', unlocked: false }
-    ];
-
-    buffer = [null, null, null, null, null];
-    leaves = [];
-    let screwIdCounter = 1;
-
-    for (let i = 0; i < leafCount; i++) {
-      let topPos = 65 + (i * 24) + (Math.sin(i * 1.5) * 20);
-      let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
-      let rotation = -35 + ((i * 35) % 80);
-      let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
-
-      let screwsOnThisLeaf = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
-      let leafScrews = [];
-
-      for (let s = 0; s < screwsOnThisLeaf; s++) {
-        let scColor = activeColorList[(i + s) % activeColorList.length];
-        leafScrews.push({
-          id: 's_' + (screwIdCounter++),
-          color: scColor
-        });
-      }
-
-      leaves.push({
-        id: 'leaf_' + (i + 1),
-        top: Math.round(topPos),
-        left: Math.round(leftPos),
-        rot: rotation,
-        color: leafColor,
-        screws: leafScrews
-      });
-    }
-
-    totalScrews = 0;
-    leaves.forEach(l => totalScrews += l.screws.length);
-    removedScrews = 0;
-
-    document.getElementById('level-display').innerText = `LEVEL ${lvl}`;
-    updateProgress();
-    renderBoxes();
-    renderBuffer();
-    renderPlayfield();
-  }
-
-  function renderBoxes() {
-    const container = document.getElementById('boxes-row');
-    container.innerHTML = '';
-    boxSlots.forEach((slot, index) => {
-      const box = document.createElement('div');
-      box.className = 'box-card';
-      if (slot.type === 'box') {
-        box.classList.add('box-' + slot.color);
-        const inner = document.createElement('div');
-        inner.className = 'box-inner';
-        for (let i = 0; i < 3; i++) {
-          const hole = document.createElement('div');
-          hole.className = 'box-hole';
-          if (i < slot.count) {
-            hole.classList.add('filled');
-            const sm = document.createElement('div');
-            sm.className = `screw screw-mini screw-${slot.color}`;
-            hole.appendChild(sm);
-          }
-          inner.appendChild(hole);
-        }
-        box.appendChild(inner);
-      } else {
-        box.classList.add('ad-box');
-        box.innerHTML = `<span class="plus">+</span><span class="ad-tag">AD</span>`;
-        box.onclick = () => unlockAdSlot(index);
-      }
-      container.appendChild(box);
-    });
-  }
-
-  function renderBuffer() {
-    const row = document.getElementById('buffer-holes');
-    row.innerHTML = '';
-    buffer.forEach((color) => {
-      const hole = document.createElement('div');
-      hole.className = 'buffer-hole';
-      if (color) {
-        const sc = document.createElement('div');
-        sc.className = `screw screw-mini screw-${color}`;
-        hole.appendChild(sc);
-      }
-      row.appendChild(hole);
-    });
-  }
-
-  function renderPlayfield() {
-    const pf = document.getElementById('playfield');
-    pf.innerHTML = '';
-
-    leaves.forEach((l, leafIndex) => {
-      const leafEl = document.createElement('div');
-      leafEl.className = `leaf ${l.color}`;
-      leafEl.id = l.id;
-      leafEl.style.top = l.top + 'px';
-      leafEl.style.left = l.left + 'px';
-      leafEl.style.transform = `rotate(${l.rot}deg)`;
-      leafEl.style.zIndex = leafIndex + 1;
-
-      l.screws.forEach((s) => {
-        const sc = document.createElement('div');
-        sc.className = `screw screw-${s.color}`;
-        sc.onclick = (e) => {
-          e.stopPropagation();
-          handleScrewClick(l.id, s.id, s.color);
-        };
-        leafEl.appendChild(sc);
-      });
-
-      pf.appendChild(leafEl);
-    });
-  }
-
-  function handleScrewClick(leafId, screwId, color) {
-    playSound('click');
-
-    let targetBox = boxSlots.find(b => b.type === 'box' && b.color === color && b.count < 3);
-
-    if (targetBox) {
-      targetBox.count++;
-      removeScrewFromBoard(leafId, screwId);
-      if (targetBox.count === 3) {
-        playSound('match');
-        setTimeout(() => recycleBox(targetBox), 320);
-      }
-    } else {
-      let emptyIdx = buffer.indexOf(null);
-      if (emptyIdx !== -1) {
-        buffer[emptyIdx] = color;
-        removeScrewFromBoard(leafId, screwId);
-      } else {
-        playSound('fail');
-        document.getElementById('fail-modal').style.display = 'flex';
-        return;
-      }
-    }
-
-    renderBoxes();
-    renderBuffer();
-    checkBufferToBoxHop();
-    updateProgress();
-  }
-
-  function removeScrewFromBoard(leafId, screwId) {
-    const leaf = leaves.find(l => l.id === leafId);
-    if (!leaf) return;
-    leaf.screws = leaf.screws.filter(s => s.id !== screwId);
-    removedScrews++;
-
-    if (leaf.screws.length === 0) {
-      const leafElem = document.getElementById(leaf.id);
-      if (leafElem) {
-        leafElem.style.transform += ' translateY(440px) rotate(45deg)';
-        leafElem.style.opacity = '0';
-        setTimeout(() => {
-          leaves = leaves.filter(l => l.id !== leafId);
-          renderPlayfield();
-        }, 450);
-      }
-    } else {
-      renderPlayfield();
-    }
-  }
-
-  function recycleBox(box) {
-    box.count = 0;
-    const remainingColors = [];
-    leaves.forEach(l => l.screws.forEach(s => remainingColors.push(s.color)));
-    buffer.forEach(c => { if(c) remainingColors.push(c); });
-
-    if (remainingColors.length > 0) {
-      box.color = remainingColors[Math.floor(Math.random() * remainingColors.length)];
-    } else {
-      box.color = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
-    }
-
-    renderBoxes();
-    checkBufferToBoxHop();
-  }
-
-  function checkBufferToBoxHop() {
-    let moved = false;
-    buffer.forEach((color, idx) => {
-      if (color) {
-        let matchingBox = boxSlots.find(b => b.type === 'box' && b.color === color && b.count < 3);
-        if (matchingBox) {
-          matchingBox.count++;
-          buffer[idx] = null;
-          moved = true;
-          if (matchingBox.count === 3) {
-            playSound('match');
-            setTimeout(() => recycleBox(matchingBox), 320);
-          }
-        }
-      }
-    });
-
-    if (moved) {
-      renderBoxes();
-      renderBuffer();
-    }
-  }
-
-  function unlockAdSlot(index) {
-    playSound('click');
-    const activeColors = boxSlots.filter(b => b.type === 'box').map(b => b.color);
-    const candidate = ALL_COLORS.find(c => !activeColors.includes(c)) || 'orange';
-    boxSlots[index] = { type: 'box', color: candidate, count: 0 };
-    renderBoxes();
-    checkBufferToBoxHop();
-  }
-
-  function updateProgress() {
-    let percent = totalScrews > 0 ? Math.min(100, Math.floor((removedScrews / totalScrews) * 100)) : 100;
-    document.getElementById('progress-text').innerText = percent + '%';
-
-    if (removedScrews >= totalScrews && totalScrews > 0) {
-      playSound('match');
-      setTimeout(() => {
-        document.getElementById('win-subtext').innerText = `लेवल ${currentLevel} पूरा हुआ!`;
-        document.getElementById('win-modal').style.display = 'flex';
-      }, 550);
-    }
-  }
-
-  function nextLevel() {
-    document.getElementById('win-modal').style.display = 'none';
-    currentLevel++;
-    localStorage.setItem('screw_game_level', currentLevel);
-    generateLevel(currentLevel);
-  }
-
-  function retryLevel() {
-    document.getElementById('fail-modal').style.display = 'none';
-    generateLevel(currentLevel);
-  }
-
-  function useBooster(type) {
-    if (boosters[type] <= 0) return;
-
-    if (type === 'drill') {
-      for (let l of leaves) {
-        if (l.screws.length > 0) {
-          const s = l.screws[0];
-          boosters.drill--;
-          document.getElementById('drill-count').innerText = boosters.drill;
-          handleScrewClick(l.id, s.id, s.color);
-          return;
-        }
-      }
-    } else if (type === 'hammer') {
-      if (leaves.length > 0) {
-        const topLeaf = leaves[leaves.length - 1];
-        boosters.hammer--;
-        document.getElementById('hammer-count').innerText = boosters.hammer;
-        removedScrews += topLeaf.screws.length;
-        leaves.pop();
-        playSound('click');
-        renderPlayfield();
-        updateProgress();
-      }
-    } else if (type === 'cleaner') {
-      buffer = [null, null, null, null, null];
-      boosters.cleaner--;
-      document.getElementById('cleaner-count').innerText = boosters.cleaner;
-      playSound('click');
-      renderBuffer();
-    }
-  }
-
-  function resetBoosterCounts() {
-    boosters = { drill: 2, hammer: 1, cleaner: 1 };
-    document.getElementById('drill-count').innerText = boosters.drill;
-    document.getElementById('hammer-count').innerText = boosters.hammer;
-    document.getElementById('cleaner-count').innerText = boosters.cleaner;
-  }
-
-  function togglePause() {
-    alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
-  }
-
-  // First Run
-  generateLevel(currentLevel);
-</script>
-</body>
-</html>
+      <div class="bo
