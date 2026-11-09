@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Screw Puzzle 3D Deluxe</title>
+<title>Screw Jam 3D Real Physics</title>
 <style>
   * {
     box-sizing: border-box;
@@ -40,7 +40,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 14px 18px 8px;
-    z-index: 100;
+    z-index: 200;
   }
   .pause-btn {
     font-size: 24px;
@@ -80,13 +80,13 @@
     margin-top: 4px;
   }
 
-  /* Boxes */
+  /* 3D Toy Boxes */
   .boxes-container {
     display: flex;
     justify-content: center;
     gap: 10px;
     padding: 6px 12px;
-    z-index: 100;
+    z-index: 200;
   }
   .box-card {
     width: 78px;
@@ -167,7 +167,7 @@
     justify-content: center;
     gap: 12px;
     margin: 12px 0 4px;
-    z-index: 100;
+    z-index: 200;
   }
   .buffer-hole {
     width: 26px;
@@ -181,27 +181,51 @@
     position: relative;
   }
 
-  /* Playfield & Plates */
+  /* 3D Playfield Canvas */
   .playfield {
     flex: 1;
     position: relative;
     margin: 6px 12px;
     overflow: hidden;
   }
-  .leaf {
+
+  /* Various Plate Shapes */
+  .plate {
     position: absolute;
-    width: 145px;
-    height: 56px;
-    border-radius: 70px 0px 70px 0px;
-    border: 3.5px solid #ffffff;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.25),
-                inset 0 3px 6px rgba(255,255,255,0.5),
-                inset 0 -3px 6px rgba(0,0,0,0.2);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     padding: 0 8px;
-    transition: transform 0.65s cubic-bezier(0.34, 1.35, 0.64, 1), opacity 0.4s;
+    border: 3.5px solid #ffffff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.28),
+                inset 0 3px 6px rgba(255,255,255,0.6),
+                inset 0 -3px 6px rgba(0,0,0,0.25);
+    transition: opacity 0.4s;
+    will-change: transform;
+  }
+  /* Shape 1: Leaf */
+  .shape-leaf {
+    width: 145px;
+    height: 56px;
+    border-radius: 70px 0px 70px 0px;
+  }
+  /* Shape 2: Curved Arch / Crescent */
+  .shape-arch {
+    width: 145px;
+    height: 54px;
+    border-radius: 40px 40px 15px 15px;
+  }
+  /* Shape 3: Straight Mechanical Bar */
+  .shape-bar {
+    width: 140px;
+    height: 50px;
+    border-radius: 25px;
+  }
+  /* Shape 4: Wedge Plate */
+  .shape-wedge {
+    width: 135px;
+    height: 54px;
+    border-radius: 35px 8px 35px 8px;
   }
 
   .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
@@ -223,7 +247,7 @@
     flex-shrink: 0;
   }
 
-  /* 3D Screws */
+  /* 3D Realistic Screws */
   .screw {
     width: 32px;
     height: 32px;
@@ -234,7 +258,7 @@
     box-shadow: inset 0 2px 3px rgba(255,255,255,0.7),
                 inset 0 -3px 4px rgba(0,0,0,0.4),
                 0 5px 8px rgba(0,0,0,0.35);
-    transition: transform 0.12s ease, filter 0.2s ease;
+    transition: transform 0.1s ease, filter 0.15s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -243,7 +267,7 @@
     transform: scale(0.92);
   }
   .screw.covered-screw {
-    filter: brightness(0.72) saturate(0.85);
+    filter: brightness(0.68) saturate(0.85);
   }
   .screw.shake {
     animation: shakeAnim 0.3s ease;
@@ -296,7 +320,7 @@
     align-items: center;
     padding: 10px 16px 15px;
     margin-bottom: 65px;
-    z-index: 100;
+    z-index: 200;
   }
   .booster-btn {
     width: 92px;
@@ -338,7 +362,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 200;
+    z-index: 300;
   }
   .modal-card {
     background: #ffffff;
@@ -481,6 +505,7 @@
   let currentLevel = parseInt(localStorage.getItem('screw_game_level') || '1');
   const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
   const LEAF_COLORS = ['leaf-green', 'leaf-blue', 'leaf-yellow', 'leaf-purple'];
+  const SHAPE_STYLES = ['shape-leaf', 'shape-arch', 'shape-bar', 'shape-wedge'];
 
   let boxSlots = [];
   let buffer = [null, null, null, null, null];
@@ -525,6 +550,7 @@
       let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
       let initialRot = -30 + ((i * 35) % 75);
       let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
+      let shapeClass = SHAPE_STYLES[i % SHAPE_STYLES.length];
 
       let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
       let slots = [];
@@ -545,7 +571,13 @@
         currentRot: initialRot,
         pivotOrigin: 'center center',
         color: leafColor,
-        slots: slots
+        shape: shapeClass,
+        slots: slots,
+        isHanging: false,
+        hangBaseAngle: 0,
+        swingPhase: Math.random() * Math.PI * 2, // Natural offset for swing
+        swingSpeed: 1.8 + Math.random() * 0.8,
+        swingAmplitude: 14 + Math.random() * 6 // Degrees of gentle sway
       });
     }
 
@@ -564,6 +596,7 @@
     renderPlayfield();
   }
 
+  // Exact Pixel-Collision: Raycasting through elementsFromPoint
   function isScrewCovered(screwElement, leafId) {
     if (!screwElement) return false;
     const sRect = screwElement.getBoundingClientRect();
@@ -574,9 +607,10 @@
     const targetLeafIdx = leaves.findIndex(l => l.id === leafId);
 
     for (let el of elementsAtPoint) {
-      const parentLeaf = el.closest('.leaf');
+      const parentLeaf = el.closest('.plate');
       if (parentLeaf && parentLeaf.id !== leafId) {
         const topLeafIdx = leaves.findIndex(l => l.id === parentLeaf.id);
+        // If an upper leaf is hovering over this screw, it is locked!
         if (topLeafIdx > targetLeafIdx) {
           return true;
         }
@@ -637,7 +671,7 @@
 
     leaves.forEach((l, leafIndex) => {
       const leafEl = document.createElement('div');
-      leafEl.className = `leaf ${l.color}`;
+      leafEl.className = `plate ${l.shape} ${l.color}`;
       leafEl.id = l.id;
       leafEl.style.top = l.top + 'px';
       leafEl.style.left = l.left + 'px';
@@ -676,11 +710,32 @@
 
       pf.appendChild(leafEl);
     });
-
-    setTimeout(updateCoveredVisuals, 60);
   }
 
-  function updateCoveredVisuals() {
+  // Real-Time Physics Swing Loop
+  let lastTime = performance.now();
+  function physicsLoop(now) {
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    let anySwinging = false;
+    leaves.forEach((l) => {
+      if (l.isHanging) {
+        anySwinging = true;
+        l.swingPhase += l.swingSpeed * dt;
+        // Harmonic smooth pendulum oscillation
+        const sway = Math.sin(l.swingPhase) * l.swingAmplitude;
+        l.currentRot = l.hangBaseAngle + sway;
+
+        const el = document.getElementById(l.id);
+        if (el) {
+          el.style.transformOrigin = l.pivotOrigin;
+          el.style.transform = `rotate(${l.currentRot}deg)`;
+        }
+      }
+    });
+
+    // Real-time lock / unlock check as plates swing dynamically over screws
     leaves.forEach((l) => {
       l.slots.forEach((slot) => {
         if (slot.color !== null) {
@@ -695,7 +750,10 @@
         }
       });
     });
+
+    requestAnimationFrame(physicsLoop);
   }
+  requestAnimationFrame(physicsLoop);
 
   function handleScrewClick(leafId, screwId, color) {
     playSound('click');
@@ -741,11 +799,12 @@
 
     const remainingSlots = leaf.slots.filter(s => s.color !== null);
 
-    // 0 स्क्रू: प्लेट नीचे गिर जाएगी
+    // ZERO screws: Drop off
     if (remainingSlots.length === 0) {
+      leaf.isHanging = false;
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
-        leafElem.style.transform += ' translateY(460px) rotate(55deg)';
+        leafElem.style.transform += ' translateY(480px) rotate(55deg)';
         leafElem.style.opacity = '0';
         setTimeout(() => {
           leaves = leaves.filter(l => l.id !== leafId);
@@ -755,34 +814,32 @@
       return;
     }
 
-    // सिर्फ 1 स्क्रू बचा: शुद्ध नीचे की तरफ लटकना (Pure Downward Gravity)
+    // EXACTLY 1 SCREW REMAINING: Hang down & begin real-time physics swing!
     if (remainingSlots.length === 1) {
       const pivotSlot = remainingSlots[0];
       const totalSlots = leaf.slots.length;
       
-      // स्लॉट के अनुसार धुरी
       let percentX = (totalSlots === 2) 
         ? (pivotSlot.slotId === 0 ? '25%' : '75%')
         : (pivotSlot.slotId === 0 ? '18%' : (pivotSlot.slotId === 1 ? '50%' : '82%'));
 
       leaf.pivotOrigin = `${percentX} 50%`;
+      leaf.isHanging = true;
 
-      // भारी सिरा हमेशा नीचे (Downward Angle Only)
+      // Base gravity angle (always pointing downward)
       if (totalSlots === 2) {
-        // बायां स्क्रू बचा है तो दायां भारी हिस्सा नीचे (+85°)
-        // दायां स्क्रू बचा है तो बायां हिस्सा नीचे झूलने के लिए (-85°)
-        leaf.currentRot = (pivotSlot.slotId === 0) ? 85 : -85;
+        leaf.hangBaseAngle = (pivotSlot.slotId === 0) ? 82 : -82;
       } else {
         if (pivotSlot.slotId === 0) {
-          leaf.currentRot = 85;  // दायां भारी हिस्सा नीचे
+          leaf.hangBaseAngle = 82;
         } else if (pivotSlot.slotId === 2) {
-          leaf.currentRot = -85; // बायां भारी हिस्सा नीचे
+          leaf.hangBaseAngle = -82;
         } else {
-          // बीच का स्क्रू बचा होने पर हल्का सा झुकाव नीचे की ओर
-          leaf.currentRot = 80;
+          leaf.hangBaseAngle = 80;
         }
       }
 
+      leaf.currentRot = leaf.hangBaseAngle;
       playSound('creak');
     }
 
