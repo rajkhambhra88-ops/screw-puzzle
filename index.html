@@ -201,7 +201,7 @@
     justify-content: space-evenly;
     align-items: center;
     padding: 0 8px;
-    transition: transform 0.65s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.4s;
+    transition: transform 0.65s cubic-bezier(0.34, 1.35, 0.64, 1), opacity 0.4s;
   }
 
   .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
@@ -459,7 +459,6 @@
         osc.start(now);
         osc.stop(now + 0.3);
       } else if (type === 'creak') {
-        // Wooden/plate gravity creak sound when hanging
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(240, now);
         osc.frequency.linearRampToValueAtTime(140, now + 0.25);
@@ -566,14 +565,12 @@
     renderPlayfield();
   }
 
-  // Exact Pixel-Precise Raycast Detection
   function isScrewCovered(screwElement, leafId) {
     if (!screwElement) return false;
     const sRect = screwElement.getBoundingClientRect();
     const scX = sRect.left + sRect.width / 2;
     const scY = sRect.top + sRect.height / 2;
 
-    // Get all DOM elements stacked at the exact center of this screw
     const elementsAtPoint = document.elementsFromPoint(scX, scY);
     const targetLeafIdx = leaves.findIndex(l => l.id === leafId);
 
@@ -581,7 +578,6 @@
       const parentLeaf = el.closest('.leaf');
       if (parentLeaf && parentLeaf.id !== leafId) {
         const topLeafIdx = leaves.findIndex(l => l.id === parentLeaf.id);
-        // Only elements from leaves with higher z-index block this screw
         if (topLeafIdx > targetLeafIdx) {
           return true;
         }
@@ -682,7 +678,6 @@
       pf.appendChild(leafEl);
     });
 
-    // Refresh covered states with precise raycast
     setTimeout(updateCoveredVisuals, 60);
   }
 
@@ -747,7 +742,7 @@
 
     const remainingSlots = leaf.slots.filter(s => s.color !== null);
 
-    // ZERO screws: Leaf falls off completely
+    // 0 स्क्रू बचे: प्लेट गिर जाएगी
     if (remainingSlots.length === 0) {
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
@@ -761,19 +756,32 @@
       return;
     }
 
-    // EXACTLY 1 SCREW REMAINING: Plate hangs down & swings around this pivot screw!
+    // सिर्फ 1 स्क्रू बचा: प्लेट हमेशा नीचे की ओर लटकेगी
     if (remainingSlots.length === 1) {
       const pivotSlot = remainingSlots[0];
       const totalSlots = leaf.slots.length;
       
-      // Calculate dynamic pivot point based on socket position
+      // स्लॉट के आधार पर सटीक धुरी केंद्र (Pivot Origin)
       let percentX = (totalSlots === 2) 
-        ? (pivotSlot.slotId === 0 ? '28%' : '72%')
-        : (pivotSlot.slotId === 0 ? '22%' : (pivotSlot.slotId === 1 ? '50%' : '78%'));
+        ? (pivotSlot.slotId === 0 ? '25%' : '75%')
+        : (pivotSlot.slotId === 0 ? '18%' : (pivotSlot.slotId === 1 ? '50%' : '82%'));
 
       leaf.pivotOrigin = `${percentX} 50%`;
-      // Hang down naturally by gravity (~70 to 85 degrees downward)
-      leaf.currentRot = (leaf.baseRot > 0) ? 78 : 84;
+
+      // गुरुत्वाकर्षण दिशा: भारी सिरा हमेशा नीचे गिरेगा
+      if (totalSlots === 2) {
+        // अगर बायां स्क्रू बचा है तो दायां भारी हिस्सा नीचे झुकेगा (+85deg)
+        // अगर दायां स्क्रू बचा है तो बायां भारी हिस्सा नीचे झुकेगा (-85deg)
+        leaf.currentRot = (pivotSlot.slotId === 0) ? 84 : -84;
+      } else {
+        if (pivotSlot.slotId === 0) {
+          leaf.currentRot = 86; // दायां सिरा नीचे
+        } else if (pivotSlot.slotId === 2) {
+          leaf.currentRot = -86; // बायां सिरा नीचे
+        } else {
+          leaf.currentRot = 90; // बीच का स्क्रू होने पर सीधी नीचे
+        }
+      }
 
       playSound('creak');
     }
