@@ -2,1060 +2,141 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#18243b">
 <title>Screw Puzzle 3D Deluxe</title>
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  }
-  body {
-    background: radial-gradient(circle at center, #f5ebd9 0%, #d8c3a5 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-  #game-app {
-    width: 100%;
-    max-width: 440px;
-    height: 100vh;
-    max-height: 920px;
-    background: #eaddcb;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
-    overflow: hidden;
-  }
-
-  /* Top Bar */
-  .top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px 8px;
-    z-index: 200;
-  }
-  .pause-btn {
-    font-size: 24px;
-    font-weight: 900;
-    color: #4b443c;
-    cursor: pointer;
-  }
-  .level-title {
-    font-size: 23px;
-    font-weight: 900;
-    color: #403830;
-    letter-spacing: 0.5px;
-  }
-  .top-right-icons {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .ad-showcase-btn {
-    background: #e67e22;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 900;
-    padding: 4px 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-  .star-badge {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    background: linear-gradient(135deg, #99939a, #6c666f);
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 900;
-  }
-  .star-badge span { margin-top: 4px; }
-
-  /* 3D Toy Boxes */
-  .boxes-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 6px 12px;
-    z-index: 200;
-  }
-  .box-card {
-    width: 78px;
-    height: 78px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: inset 0 3px 2px rgba(255,255,255,0.6),
-                inset 0 -4px 6px rgba(0,0,0,0.25),
-                0 8px 12px rgba(0,0,0,0.18);
-    transition: transform 0.25s ease;
-  }
-  .box-orange { background: linear-gradient(145deg, #ffa843, #e56f06); border: 3.5px solid #c45700; }
-  .box-yellow { background: linear-gradient(145deg, #ffdf4c, #e7a500); border: 3.5px solid #be8500; }
-  .box-blue   { background: linear-gradient(145deg, #64c2ff, #1c88d8); border: 3.5px solid #1369a8; }
-  .box-brown  { background: linear-gradient(145deg, #b87b53, #7a4622); border: 3.5px solid #572f13; }
-
-  .box-inner {
-    width: 62px;
-    height: 62px;
-    background: linear-gradient(145deg, #f0ebd9, #dcd4be);
-    border-radius: 14px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-    gap: 4px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-  }
-  .box-hole {
-    width: 18px;
-    height: 18px;
-    background: #5a6473;
-    border-radius: 50%;
-    box-shadow: inset 2px 2px 5px #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .box-hole.filled { box-shadow: none; background: transparent; }
-
-  .ad-box {
-    background: linear-gradient(145deg, #fedc4f, #f1b312);
-    border: 3.5px solid #cb9306;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-  }
-  .ad-box .plus { font-size: 34px; font-weight: 900; color: #5d3f00; line-height: 26px; }
-  .ad-box .ad-tag {
-    position: absolute;
-    bottom: 5px;
-    right: 6px;
-    background: linear-gradient(180deg, #8fe03d, #5fae1d);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 900;
-    padding: 2px 5px;
-    border-radius: 5px;
-  }
-
-  /* Buffer Holes */
-  .buffer-row {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin: 12px 0 4px;
-    z-index: 200;
-  }
-  .buffer-hole {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #566375;
-    box-shadow: inset 2px 3px 6px #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  /* Playfield & Plates */
-  .playfield {
-    flex: 1;
-    position: relative;
-    margin: 6px 12px;
-    overflow: hidden;
-  }
-  .plate {
-    position: absolute;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 0 8px;
-    border: 3.5px solid #ffffff;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.28),
-                inset 0 3px 6px rgba(255,255,255,0.6),
-                inset 0 -3px 6px rgba(0,0,0,0.25);
-    transition: opacity 0.4s;
-    will-change: transform;
-  }
-  .shape-leaf { width: 145px; height: 56px; border-radius: 70px 0px 70px 0px; }
-  .shape-arch { width: 145px; height: 54px; border-radius: 40px 40px 15px 15px; }
-  .shape-bar  { width: 140px; height: 50px; border-radius: 25px; }
-  .shape-wedge { width: 135px; height: 54px; border-radius: 35px 8px 35px 8px; }
-
-  .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
-  .leaf-blue   { background: linear-gradient(135deg, #6fd0ff, #319edd); }
-  .leaf-yellow { background: linear-gradient(135deg, #ffdf79, #e0a92f); }
-  .leaf-purple { background: linear-gradient(135deg, #ccb4f7, #9878d6); }
-
-  .leaf-hole-socket {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, #18120e 45%, #463730 80%, #685348 100%);
-    box-shadow: inset 2px 2px 4px #000, 0 1px 1px rgba(255,255,255,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  /* 3D Screws */
-  .screw {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    position: relative;
-    z-index: 5;
-    cursor: pointer;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.7),
-                inset 0 -3px 4px rgba(0,0,0,0.4),
-                0 5px 8px rgba(0,0,0,0.35);
-    transition: transform 0.1s ease, filter 0.15s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .screw:active { transform: scale(0.92); }
-  .screw.covered-screw { filter: brightness(0.68) saturate(0.85); }
-  .screw.shake { animation: shakeAnim 0.3s ease; }
-  @keyframes shakeAnim {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px) rotate(-12deg); }
-    75% { transform: translateX(5px) rotate(12deg); }
-  }
-
-  .screw::before, .screw::after {
-    content: '';
-    position: absolute;
-    background: #2b1f1a;
-    border-radius: 2px;
-    box-shadow: 0 1px 1px rgba(255,255,255,0.4);
-  }
-  .screw::before { width: 16px; height: 4.5px; }
-  .screw::after  { width: 4.5px; height: 16px; }
-
-  .screw-orange { background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%); border: 2px solid #a34300; }
-  .screw-yellow { background: radial-gradient(circle at 35% 30%, #fff799 5%, #f7c51e 55%, #b48500 100%); border: 2px solid #9e7500; }
-  .screw-blue   { background: radial-gradient(circle at 35% 30%, #9be4ff 5%, #2a9fe5 55%, #0f5c9e 100%); border: 2px solid #0d548f; }
-  .screw-brown  { background: radial-gradient(circle at 35% 30%, #c9936e 5%, #8e5229 55%, #4e260c 100%); border: 2px solid #48230b; }
-
-  .screw-mini { width: 20px; height: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-  .screw-mini::before { width: 10px; height: 3px; }
-  .screw-mini::after  { width: 3px; height: 10px; }
-
-  /* Bottom Boosters */
-  .bottom-bar {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 16px 15px;
-    margin-bottom: 65px;
-    z-index: 200;
-  }
-  .booster-btn {
-    width: 92px;
-    height: 58px;
-    background: linear-gradient(180deg, #ffdf60 0%, #f1b312 100%);
-    border: 3.5px solid #cb9306;
-    border-radius: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    box-shadow: inset 0 2px 2px #fff, 0 5px 0 #9f6c00, 0 7px 10px rgba(0,0,0,0.22);
-    cursor: pointer;
-  }
-  .booster-badge {
-    position: absolute;
-    top: -7px;
-    right: -6px;
-    background: #ffffff;
-    border: 2.5px solid #444;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 900;
-    padding: 0px 6px;
-    color: #222;
-  }
-
-  /* ================= 3D Video Ad Overlay ================= */
-  #ad-video-modal {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(18, 14, 11, 0.95);
-    backdrop-filter: blur(8px);
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 20px;
-    z-index: 500;
-  }
-  .ad-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .ad-badge {
-    background: #f1c40f;
-    color: #2c3e50;
-    font-size: 12px;
-    font-weight: 900;
-    padding: 4px 10px;
-    border-radius: 6px;
-  }
-  .ad-close {
-    color: #fff;
-    font-size: 24px;
-    font-weight: 900;
-    cursor: pointer;
-  }
-  .ad-screen {
-    width: 100%;
-    height: 380px;
-    background: radial-gradient(circle at center, #2e2825, #141110);
-    border: 3px solid #ffbe73;
-    border-radius: 24px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .ad-leaf-demo {
-    position: absolute;
-    width: 160px;
-    height: 60px;
-    border-radius: 80px 0px 80px 0px;
-    background: linear-gradient(135deg, #6ae0b2, #39b384);
-    border: 4px solid #fff;
-    box-shadow: 0 12px 25px rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    animation: adSwing 2.2s infinite ease-in-out;
-    transform-origin: 25% 50%;
-  }
-  @keyframes adSwing {
-    0%, 100% { transform: rotate(70deg); }
-    50% { transform: rotate(95deg); }
-  }
-  .ad-subtext {
-    position: absolute;
-    bottom: 20px;
-    background: rgba(0,0,0,0.75);
-    padding: 6px 14px;
-    border-radius: 20px;
-    color: #fedc4f;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    text-align: center;
-  }
-  .ad-install-btn {
-    width: 100%;
-    padding: 16px 0;
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    font-size: 19px;
-    font-weight: 900;
-    border-radius: 20px;
-    box-shadow: 0 6px 0 #1e8449, 0 12px 25px rgba(46,204,113,0.45);
-    display: block;
-    cursor: pointer;
-  }
-  .ad-install-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #1e8449;
-  }
-
-  /* Win/Fail Modals */
-  .overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 300;
-  }
-  .modal-card {
-    background: #ffffff;
-    padding: 26px 32px;
-    border-radius: 24px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-    max-width: 82%;
-  }
-  .modal-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; color: #333; }
-  .modal-btn {
-    margin-top: 18px;
-    background: linear-gradient(135deg, #4bd59f, #229f6d);
-    color: #fff;
-    border: none;
-    padding: 12px 28px;
-    font-size: 18px;
-    font-weight: 800;
-    border-radius: 14px;
-    cursor: pointer;
-    box-shadow: 0 5px 0 #146b48;
-  }
+:root{--ink:#17243b;--gold:#ffd36a;--cream:#f5ead7}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+body{min-height:100dvh;background:radial-gradient(circle at 50% 12%,#435879,#111a2d 72%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center;color:#263044;overflow:hidden}
+button{font:inherit;cursor:pointer;border:0}
+#app{width:min(100%,480px);height:100dvh;min-height:560px;position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#f8eddb,#ddc7a6);box-shadow:0 0 45px #0008}
+.top{height:66px;display:flex;align-items:center;justify-content:space-between;padding:9px 15px;background:linear-gradient(180deg,#fff8e9,#ead8bd);box-shadow:0 3px 9px #65452630;z-index:5}
+.iconbtn{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#fff,#d7c4a9);box-shadow:inset 0 2px 3px #fff,0 3px 6px #674c3035;color:#38445a;font-size:19px;font-weight:900}
+.level{text-align:center;font-weight:1000;font-size:19px;letter-spacing:1px;color:#34415a}
+.sublevel{font-size:10px;color:#8b765a;letter-spacing:2px}
+.coins{background:linear-gradient(135deg,#fff0b4,#e9ae37);padding:8px 11px;border-radius:13px;font-weight:900;box-shadow:0 3px 0 #a87520;color:#68440c;font-size:13px}
+.progress-wrap{height:7px;background:#b9a78d;z-index:4}
+#progress{height:100%;width:0;background:linear-gradient(90deg,#4fc9a0,#a5e36e);transition:width .3s}
+.status{display:flex;justify-content:space-between;padding:8px 17px 3px;font-size:11px;font-weight:800;color:#806c52;letter-spacing:.7px}
+.boxes{display:flex;justify-content:center;gap:10px;padding:5px 10px 9px;z-index:3}
+.box{width:clamp(62px,17vw,76px);height:clamp(62px,17vw,76px);border-radius:19px;display:grid;place-items:center;position:relative;border:3px solid #ffffffa8;box-shadow:inset 0 4px 5px #fff9,inset 0 -7px 8px #0003,0 7px 10px #45301e45;transform:translateY(0);transition:transform .2s}
+.box:active{transform:translateY(3px)}
+.box-core{width:75%;height:75%;border-radius:13px;background:linear-gradient(145deg,#e9e4d4,#c8bda7);box-shadow:inset 0 3px 6px #0004;display:flex;align-items:center;justify-content:center;gap:3px}
+.mini-hole{width:23%;aspect-ratio:1;border-radius:50%;background:#526073;box-shadow:inset 2px 3px 5px #111}
+.box-count{position:absolute;right:-5px;top:-7px;border-radius:9px;background:#fff;color:#263044;font-size:11px;font-weight:1000;padding:2px 6px;box-shadow:0 2px 5px #0004}
+.box.ad{background:linear-gradient(145deg,#ffe56d,#e9a51b);color:#624300;font-size:29px;font-weight:1000}
+.box.ad small{position:absolute;bottom:3px;right:6px;font-size:9px;background:#4c9e43;color:#fff;border-radius:5px;padding:1px 4px}
+.buffer-label{text-align:center;font-size:10px;font-weight:900;letter-spacing:2px;color:#8c7555;margin:1px 0 5px}
+.buffer{display:flex;justify-content:center;gap:10px;padding:0 10px 8px}
+.slot{width:31px;height:31px;border-radius:50%;background:linear-gradient(145deg,#758398,#39465b);box-shadow:inset 3px 4px 7px #101827,0 2px 2px #fff8;display:grid;place-items:center}
+.playfield{flex:1;position:relative;margin:2px 10px 7px;border-radius:25px;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#f6e9d4 0,#e6d3b7 66%,#d0b995 100%);box-shadow:inset 0 5px 16px #765a3525,inset 0 -3px 10px #fff8}
+.playfield:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#9c80531c 1px,transparent 1px);background-size:17px 17px;pointer-events:none}
+.plate{position:absolute;width:clamp(126px,37vw,166px);height:58px;border:4px solid #fff;border-radius:23px 10px 23px 10px;display:flex;align-items:center;justify-content:space-evenly;padding:0 10px;box-shadow:inset 0 4px 6px #fff9,inset 0 -6px 7px #0003,0 11px 0 #0002,0 15px 17px #47321e42;transform-style:preserve-3d;transition:transform .42s ease,opacity .35s;z-index:1}
+.plate.green{background:linear-gradient(145deg,#8af0c7,#36ae87);border-color:#f4fff9}
+.plate.blue{background:linear-gradient(145deg,#91ddff,#328bc9)}
+.plate.yellow{background:linear-gradient(145deg,#fff09b,#dca52c)}
+.plate.purple{background:linear-gradient(145deg,#dfcaff,#9273d0)}
+.plate.orange{background:linear-gradient(145deg,#ffc17e,#dc762c)}
+.plate.hanging{animation:sway 2.3s ease-in-out infinite alternate;transform-origin:var(--pivot,50% 50%)}
+@keyframes sway{from{rotate:-7deg}to{rotate:7deg}}
+.plate.falling{transform:translateY(430px) rotate(65deg)!important;opacity:0}
+.socket{width:33px;height:33px;border-radius:50%;background:radial-gradient(circle,#17130f 42%,#59483b 70%,#8b7660 100%);display:grid;place-items:center;flex:none;box-shadow:inset 2px 3px 5px #0009,0 1px 1px #fff8}
+.screw{width:27px;height:27px;border-radius:50%;position:relative;border:2px solid #684c2d;box-shadow:inset 0 3px 4px #fff9,inset 0 -4px 5px #0005,0 4px 6px #0006;display:grid;place-items:center;z-index:2}
+.screw:before,.screw:after{content:"";position:absolute;background:#493426;border-radius:2px;box-shadow:0 1px 1px #fff8}
+.screw:before{width:14px;height:4px}.screw:after{width:4px;height:14px}
+.orange{--s:#ff8d32}.yellow{--s:#f4c52e}.blue{--s:#36a9e8}.brown{--s:#95603b}
+.screw.orange{background:radial-gradient(circle at 32% 27%,#ffe0ad,#ff8d32 58%,#a9480c)}
+.screw.yellow{background:radial-gradient(circle at 32% 27%,#fffbd0,#f4c52e 58%,#9b7000)}
+.screw.blue{background:radial-gradient(circle at 32% 27%,#d4f5ff,#36a9e8 58%,#07558b)}
+.screw.brown{background:radial-gradient(circle at 32% 27%,#f0c49c,#95603b 58%,#4b2916)}
+.screw:active{transform:scale(.9)}
+.screw.blocked{filter:brightness(.58)}
+.boosters{display:flex;justify-content:space-around;padding:9px 13px 15px;background:linear-gradient(180deg,#e5d2b6,#d6bd9b);z-index:3}
+.boost{width:29%;height:57px;border-radius:17px;background:linear-gradient(180deg,#fff0a2,#e7ad27);border:2px solid #c38a16;box-shadow:inset 0 2px 2px #fff,0 5px 0 #986b17,0 7px 9px #0003;display:flex;align-items:center;justify-content:center;gap:8px;font-size:24px;position:relative}
+.boost:active{transform:translateY(3px);box-shadow:inset 0 2px 2px #fff,0 2px 0 #986b17}
+.boost b{font-size:12px;background:#fff;border-radius:8px;padding:2px 6px;color:#263044}
+.toast{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:#26344d;color:#fff;padding:11px 18px;border-radius:14px;font-size:13px;font-weight:800;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;box-shadow:0 5px 18px #0004}
+.toast.show{opacity:1}
+.overlay{position:absolute;inset:0;background:#101827b9;backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:20;padding:22px}
+.dialog{width:min(340px,100%);background:linear-gradient(145deg,#fff9ed,#e9d7bb);border:3px solid #fff;border-radius:26px;padding:25px 20px;text-align:center;box-shadow:0 20px 50px #0007}
+.dialog h2{font-size:25px;color:#33415b;margin-bottom:9px}.dialog p{font-size:14px;color:#79684e;line-height:1.5}
+.action{margin-top:17px;padding:12px 22px;border-radius:14px;background:linear-gradient(135deg,#55d5a7,#239b75);color:#fff;font-weight:900;box-shadow:0 5px 0 #176c50;width:100%}
+.secondary{background:linear-gradient(135deg,#8194b1,#53647f);box-shadow:0 5px 0 #34435b}
+@media(max-height:680px){.top{height:57px}.boxes{padding:2px 8px 5px}.box{width:59px;height:59px}.buffer{padding-bottom:4px}.plate{height:52px}.boosters{padding:7px 12px 10px}.boost{height:49px}}
 </style>
 </head>
 <body>
-
-<div id="game-app">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <div class="pause-btn" onclick="togglePause()">❚❚</div>
-    <div class="level-title" id="level-display">LEVEL 1</div>
-    <div class="top-right-icons">
-      <!-- सुंदर वीडियो ऐड देखने का बटन -->
-      <div class="ad-showcase-btn" onclick="openAdVideo()">🎬 Ad Video</div>
-      <div class="star-badge"><span id="progress-text">0%</span></div>
-    </div>
-  </div>
-
-  <!-- Boxes Row -->
-  <div class="boxes-container" id="boxes-row"></div>
-
-  <!-- Buffer Holes -->
-  <div class="buffer-row" id="buffer-holes"></div>
-
-  <!-- Playfield -->
-  <div class="playfield" id="playfield"></div>
-
-  <!-- Boosters Bar -->
-  <div class="bottom-bar">
-    <div class="booster-btn" onclick="useBooster('drill')">
-      <span style="font-size:28px;">🪛</span>
-      <div class="booster-badge" id="drill-count">2</div>
-    </div>
-    <div class="booster-btn" onclick="useBooster('hammer')">
-      <span style="font-size:28px;">🔨</span>
-      <div class="booster-badge" id="hammer-count">1</div>
-    </div>
-    <div class="booster-btn" onclick="useBooster('cleaner')">
-      <span style="font-size:28px;">🧹</span>
-      <div class="booster-badge" id="cleaner-count">1</div>
-    </div>
-  </div>
-
-  <!-- ================= सुंदर वीडियो ऐड पॉपअप ================= -->
-  <div id="ad-video-modal">
-    <div class="ad-header">
-      <div class="ad-badge">⭐ SPONSORED PROMO</div>
-      <div class="ad-close" onclick="closeAdVideo()">✕</div>
-    </div>
-
-    <div class="ad-screen">
-      <div style="font-size: 38px; position: absolute; top: 25px;">🔩 🧩 ⚙️</div>
-      <!-- 3D झूलती प्लेट का डेमो वीडियो एनिमेशन -->
-      <div class="ad-leaf-demo">
-        <div class="screw screw-mini screw-yellow"></div>
-        <div class="screw screw-mini screw-orange"></div>
-      </div>
-      <div class="ad-subtext" id="ad-subtext-rotator">✨ असली 3D फ़िज़िक्स और झूलती प्लेट्स का मज़ा!</div>
-    </div>
-
-    <!-- इंस्टॉल / प्ले लिंक बटन -->
-    <a href="https://rajkhambhra88-ops.github.io/screw-puzzle/index.html" 
-       target="_blank" 
-       class="ad-install-btn" 
-       onclick="closeAdVideo()">
-       📲 INSTALL / PLAY NOW
-    </a>
-  </div>
-
-  <!-- Win Modal -->
-  <div class="overlay" id="win-modal">
-    <div class="modal-card">
-      <div class="modal-title">शानदार जीत! 🏆</div>
-      <p id="win-subtext">लेवल पूरा हुआ!</p>
-      <button class="modal-btn" onclick="nextLevel()">अगला लेवल ➔</button>
-    </div>
-  </div>
-
-  <!-- Fail Modal -->
-  <div class="overlay" id="fail-modal">
-    <div class="modal-card">
-      <div class="modal-title" style="color:#d9534f;">गेम ओवर! ⚠️</div>
-      <p>सारे बफ़र स्लॉट भर गए हैं।</p>
-      <button class="modal-btn" style="background: linear-gradient(135deg, #f39c12, #d35400); box-shadow: 0 5px 0 #963b00;" onclick="retryLevel()">पुनः प्रयास करें</button>
-    </div>
-  </div>
+<div id="app">
+  <header class="top">
+    <button class="iconbtn" id="pauseBtn" aria-label="Pause">Ⅱ</button>
+    <div class="level"><div id="levelText">LEVEL 1</div><div class="sublevel">SCREW PUZZLE 3D</div></div>
+    <div class="coins">🪙 <span id="coinText">100</span></div>
+  </header>
+  <div class="progress-wrap"><div id="progress"></div></div>
+  <div class="status"><span>🎯 प्लेटों से स्क्रू निकालें</span><span id="percent">0% पूरा</span></div>
+  <section class="boxes" id="boxes"></section>
+  <div class="buffer-label">BUFFER SLOTS</div>
+  <section class="buffer" id="buffer"></section>
+  <main class="playfield" id="field" aria-label="Game board"></main>
+  <footer class="boosters">
+    <button class="boost" data-boost="drill" aria-label="Drill"><span>🪛</span><b id="drillCount">2</b></button>
+    <button class="boost" data-boost="hammer" aria-label="Hammer"><span>🔨</span><b id="hammerCount">1</b></button>
+    <button class="boost" data-boost="cleaner" aria-label="Cleaner"><span>🧹</span><b id="cleanerCount">1</b></button>
+  </footer>
+  <div class="toast" id="toast"></div>
+  <div class="overlay" id="overlay"><div class="dialog"><h2 id="dialogTitle">गेम रुका हुआ है</h2><p id="dialogText">जारी रखने के लिए नीचे दबाएँ।</p><button class="action" id="mainAction">जारी रखें</button><button class="action secondary" id="secondAction" style="display:none">फिर से शुरू करें</button></div></div>
 </div>
-
 <script>
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playSound(type) {
-    try {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
-
-      if (type === 'click') {
-        osc.frequency.setValueAtTime(480, now);
-        osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
-      } else if (type === 'match') {
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.09);
-        osc.frequency.setValueAtTime(783, now + 0.18);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      } else if (type === 'fail') {
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.setValueAtTime(140, now + 0.16);
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      } else if (type === 'creak') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(240, now);
-        osc.frequency.linearRampToValueAtTime(140, now + 0.25);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-        osc.start(now);
-        osc.stop(now + 0.25);
-      } else if (type === 'blocked') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, now);
-        osc.frequency.setValueAtTime(110, now + 0.08);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.16);
-        osc.start(now);
-        osc.stop(now + 0.16);
-      }
-    } catch(e){}
-  }
-
-  let currentLevel = parseInt(localStorage.getItem('screw_game_level') || '1');
-  const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
-  const LEAF_COLORS = ['leaf-green', 'leaf-blue', 'leaf-yellow', 'leaf-purple'];
-  const SHAPE_STYLES = ['shape-leaf', 'shape-arch', 'shape-bar', 'shape-wedge'];
-
-  let boxSlots = [];
-  let buffer = [null, null, null, null, null];
-  let leaves = [];
-  let totalScrews = 0;
-  let removedScrews = 0;
-  let boosters = { drill: 2, hammer: 1, cleaner: 1 };
-
-  function generateLevel(lvl) {
-    let leafCount, activeColorList;
-
-    if (lvl === 1) {
-      leafCount = 2;
-      activeColorList = ['orange', 'yellow'];
-    } else if (lvl === 2) {
-      leafCount = 3;
-      activeColorList = ['orange', 'yellow'];
-    } else if (lvl <= 5) {
-      leafCount = 4 + (lvl - 3);
-      activeColorList = ['orange', 'yellow', 'blue'];
-    } else if (lvl <= 10) {
-      leafCount = 7 + Math.floor((lvl - 6) * 0.8);
-      activeColorList = ['orange', 'yellow', 'blue', 'brown'];
-    } else {
-      leafCount = Math.min(13, 8 + Math.floor(lvl / 15));
-      activeColorList = ALL_COLORS;
-    }
-
-    boxSlots = [
-      { type: 'box', color: activeColorList[0], count: 0 },
-      { type: 'box', color: activeColorList[1] || activeColorList[0], count: 0 },
-      { type: 'ad', unlocked: false },
-      { type: 'ad', unlocked: false }
-    ];
-
-    buffer = [null, null, null, null, null];
-    leaves = [];
-    let screwIdCounter = 1;
-
-    for (let i = 0; i < leafCount; i++) {
-      let topPos = 65 + (i * 26) + (Math.sin(i * 1.5) * 18);
-      let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
-      let initialRot = -30 + ((i * 35) % 75);
-      let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
-      let shapeClass = SHAPE_STYLES[i % SHAPE_STYLES.length];
-
-      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
-      let slots = [];
-
-      for (let s = 0; s < numSlots; s++) {
-        let scColor = activeColorList[(i + s) % activeColorList.length];
-        slots.push({
-          slotId: s,
-          color: scColor,
-          screwId: 's_' + (screwIdCounter++)
-        });
-      }
-
-      leaves.push({
-        id: 'leaf_' + (i + 1),
-        top: Math.round(topPos),
-        left: Math.round(leftPos),
-        currentRot: initialRot,
-        pivotOrigin: 'center center',
-        color: leafColor,
-        shape: shapeClass,
-        slots: slots,
-        isHanging: false,
-        hangBaseAngle: 0,
-        swingPhase: Math.random() * Math.PI * 2,
-        swingSpeed: 1.8 + Math.random() * 0.8,
-        swingAmplitude: 14 + Math.random() * 6
-      });
-    }
-
-    totalScrews = 0;
-    leaves.forEach(l => {
-      l.slots.forEach(slot => {
-        if (slot.color !== null) totalScrews++;
-      });
-    });
-    removedScrews = 0;
-
-    document.getElementById('level-display').innerText = `LEVEL ${lvl}`;
-    updateProgress();
-    renderBoxes();
-    renderBuffer();
-    renderPlayfield();
-  }
-
-  function isScrewCovered(screwElement, leafId) {
-    if (!screwElement) return false;
-    const sRect = screwElement.getBoundingClientRect();
-    const scX = sRect.left + sRect.width / 2;
-    const scY = sRect.top + sRect.height / 2;
-
-    const elementsAtPoint = document.elementsFromPoint(scX, scY);
-    const targetLeafIdx = leaves.findIndex(l => l.id === leafId);
-
-    for (let el of elementsAtPoint) {
-      const parentLeaf = el.closest('.plate');
-      if (parentLeaf && parentLeaf.id !== leafId) {
-        const topLeafIdx = leaves.findIndex(l => l.id === parentLeaf.id);
-        if (topLeafIdx > targetLeafIdx) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  function renderBoxes() {
-    const container = document.getElementById('boxes-row');
-    container.innerHTML = '';
-    boxSlots.forEach((slot, index) => {
-      const box = document.createElement('div');
-      box.className = 'box-card';
-      if (slot.type === 'box') {
-        box.classList.add('box-' + slot.color);
-        const inner = document.createElement('div');
-        inner.className = 'box-inner';
-        for (let i = 0; i < 3; i++) {
-          const hole = document.createElement('div');
-          hole.className = 'box-hole';
-          if (i < slot.count) {
-            hole.classList.add('filled');
-            const sm = document.createElement('div');
-            sm.className = `screw screw-mini screw-${slot.color}`;
-            hole.appendChild(sm);
-          }
-          inner.appendChild(hole);
-        }
-        box.appendChild(inner);
-      } else {
-        box.classList.add('ad-box');
-        box.innerHTML = `<span class="plus">+</span><span class="ad-tag">AD</span>`;
-        box.onclick = () => unlockAdSlot(index);
-      }
-      container.appendChild(box);
-    });
-  }
-
-  function renderBuffer() {
-    const row = document.getElementById('buffer-holes');
-    row.innerHTML = '';
-    buffer.forEach((color) => {
-      const hole = document.createElement('div');
-      hole.className = 'buffer-hole';
-      if (color) {
-        const sc = document.createElement('div');
-        sc.className = `screw screw-mini screw-${color}`;
-        hole.appendChild(sc);
-      }
-      row.appendChild(hole);
-    });
-  }
-
-  function renderPlayfield() {
-    const pf = document.getElementById('playfield');
-    pf.innerHTML = '';
-
-    leaves.forEach((l, leafIndex) => {
-      const leafEl = document.createElement('div');
-      leafEl.className = `plate ${l.shape} ${l.color}`;
-      leafEl.id = l.id;
-      leafEl.style.top = l.top + 'px';
-      leafEl.style.left = l.left + 'px';
-      leafEl.style.transformOrigin = l.pivotOrigin;
-      leafEl.style.transform = `rotate(${l.currentRot}deg)`;
-      leafEl.style.zIndex = leafIndex + 1;
-
-      l.slots.forEach((slot) => {
-        const socket = document.createElement('div');
-        socket.className = 'leaf-hole-socket';
-
-        if (slot.color !== null) {
-          const sc = document.createElement('div');
-          sc.className = `screw screw-${slot.color}`;
-          sc.id = slot.screwId;
-
-          sc.onclick = (e) => {
-            e.stopPropagation();
-
-            if (isScrewCovered(sc, l.id)) {
-              playSound('blocked');
-              sc.classList.remove('shake');
-              void sc.offsetWidth;
-              sc.classList.add('shake');
-              return;
-            }
-
-            handleScrewClick(l.id, slot.screwId, slot.color);
-          };
-
-          socket.appendChild(sc);
-        }
-
-        leafEl.appendChild(socket);
-      });
-
-      pf.appendChild(leafEl);
-    });
-  }
-
-  // Real-Time Physics Swing Loop
-  let lastTime = performance.now();
-  function physicsLoop(now) {
-    const dt = (now - lastTime) / 1000;
-    lastTime = now;
-
-    leaves.forEach((l) => {
-      if (l.isHanging) {
-        l.swingPhase += l.swingSpeed * dt;
-        const sway = Math.sin(l.swingPhase) * l.swingAmplitude;
-        l.currentRot = l.hangBaseAngle + sway;
-
-        const el = document.getElementById(l.id);
-        if (el) {
-          el.style.transformOrigin = l.pivotOrigin;
-          el.style.transform = `rotate(${l.currentRot}deg)`;
-        }
-      }
-    });
-
-    leaves.forEach((l) => {
-      l.slots.forEach((slot) => {
-        if (slot.color !== null) {
-          const sc = document.getElementById(slot.screwId);
-          if (sc) {
-            if (isScrewCovered(sc, l.id)) {
-              sc.classList.add('covered-screw');
-            } else {
-              sc.classList.remove('covered-screw');
-            }
-          }
-        }
-      });
-    });
-
-    requestAnimationFrame(physicsLoop);
-  }
-  requestAnimationFrame(physicsLoop);
-
-  function handleScrewClick(leafId, screwId, color) {
-    playSound('click');
-
-    let targetBox = boxSlots.find(b => b.type === 'box' && b.color === color && b.count < 3);
-
-    if (targetBox) {
-      targetBox.count++;
-      removeScrewFromBoard(leafId, screwId);
-      if (targetBox.count === 3) {
-        playSound('match');
-        setTimeout(() => recycleBox(targetBox), 320);
-      }
-    } else {
-      let emptyIdx = buffer.indexOf(null);
-      if (emptyIdx !== -1) {
-        buffer[emptyIdx] = color;
-        removeScrewFromBoard(leafId, screwId);
-      } else {
-        playSound('fail');
-        document.getElementById('fail-modal').style.display = 'flex';
-        return;
-      }
-    }
-
-    renderBoxes();
-    renderBuffer();
-    checkBufferToBoxHop();
-    updateProgress();
-  }
-
-  function removeScrewFromBoard(leafId, screwId) {
-    const leaf = leaves.find(l => l.id === leafId);
-    if (!leaf) return;
-
-    leaf.slots.forEach(slot => {
-      if (slot.screwId === screwId) {
-        slot.color = null;
-      }
-    });
-
-    removedScrews++;
-
-    const remainingSlots = leaf.slots.filter(s => s.color !== null);
-
-    if (remainingSlots.length === 0) {
-      leaf.isHanging = false;
-      const leafElem = document.getElementById(leaf.id);
-      if (leafElem) {
-        leafElem.style.transform += ' translateY(480px) rotate(55deg)';
-        leafElem.style.opacity = '0';
-        setTimeout(() => {
-          leaves = leaves.filter(l => l.id !== leafId);
-          renderPlayfield();
-        }, 450);
-      }
-      return;
-    }
-
-    if (remainingSlots.length === 1) {
-      const pivotSlot = remainingSlots[0];
-      const totalSlots = leaf.slots.length;
-      
-      let percentX = (totalSlots === 2) 
-        ? (pivotSlot.slotId === 0 ? '25%' : '75%')
-        : (pivotSlot.slotId === 0 ? '18%' : (pivotSlot.slotId === 1 ? '50%' : '82%'));
-
-      leaf.pivotOrigin = `${percentX} 50%`;
-      leaf.isHanging = true;
-
-      if (totalSlots === 2) {
-        leaf.hangBaseAngle = (pivotSlot.slotId === 0) ? 82 : -82;
-      } else {
-        if (pivotSlot.slotId === 0) {
-          leaf.hangBaseAngle = 82;
-        } else if (pivotSlot.slotId === 2) {
-          leaf.hangBaseAngle = -82;
-        } else {
-          leaf.hangBaseAngle = 80;
-        }
-      }
-
-      leaf.currentRot = leaf.hangBaseAngle;
-      playSound('creak');
-    }
-
-    renderPlayfield();
-  }
-
-  function recycleBox(box) {
-    box.count = 0;
-    const remainingColors = [];
-    leaves.forEach(l => {
-      l.slots.forEach(s => {
-        if (s.color !== null) remainingColors.push(s.color);
-      });
-    });
-    buffer.forEach(c => { if(c) remainingColors.push(c); });
-
-    if (remainingColors.length > 0) {
-      box.color = remainingColors[Math.floor(Math.random() * remainingColors.length)];
-    } else {
-      box.color = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
-    }
-
-    renderBoxes();
-    checkBufferToBoxHop();
-  }
-
-  function checkBufferToBoxHop() {
-    let moved = false;
-    buffer.forEach((color, idx) => {
-      if (color) {
-        let matchingBox = boxSlots.find(b => b.type === 'box' && b.color === color && b.count < 3);
-        if (matchingBox) {
-          matchingBox.count++;
-          buffer[idx] = null;
-          moved = true;
-          if (matchingBox.count === 3) {
-            playSound('match');
-            setTimeout(() => recycleBox(matchingBox), 320);
-          }
-        }
-      }
-    });
-
-    if (moved) {
-      renderBoxes();
-      renderBuffer();
-    }
-  }
-
-  function unlockAdSlot(index) {
-    playSound('click');
-    const activeColors = boxSlots.filter(b => b.type === 'box').map(b => b.color);
-    const candidate = ALL_COLORS.find(c => !activeColors.includes(c)) || 'orange';
-    boxSlots[index] = { type: 'box', color: candidate, count: 0 };
-    renderBoxes();
-    checkBufferToBoxHop();
-  }
-
-  function updateProgress() {
-    let percent = totalScrews > 0 ? Math.min(100, Math.floor((removedScrews / totalScrews) * 100)) : 100;
-    document.getElementById('progress-text').innerText = percent + '%';
-
-    if (removedScrews >= totalScrews && totalScrews > 0) {
-      playSound('match');
-      setTimeout(() => {
-        document.getElementById('win-subtext').innerText = `लेवल ${currentLevel} पूरा हुआ!`;
-        document.getElementById('win-modal').style.display = 'flex';
-      }, 550);
-    }
-  }
-
-  function nextLevel() {
-    document.getElementById('win-modal').style.display = 'none';
-    currentLevel++;
-    localStorage.setItem('screw_game_level', currentLevel);
-    generateLevel(currentLevel);
-  }
-
-  function retryLevel() {
-    document.getElementById('fail-modal').style.display = 'none';
-    generateLevel(currentLevel);
-  }
-
-  function useBooster(type) {
-    if (boosters[type] <= 0) return;
-
-    if (type === 'drill') {
-      for (let i = leaves.length - 1; i >= 0; i--) {
-        let l = leaves[i];
-        for (let s of l.slots) {
-          if (s.color !== null) {
-            const sc = document.getElementById(s.screwId);
-            if (!isScrewCovered(sc, l.id)) {
-              boosters.drill--;
-              document.getElementById('drill-count').innerText = boosters.drill;
-              handleScrewClick(l.id, s.screwId, s.color);
-              return;
-            }
-          }
-        }
-      }
-    } else if (type === 'hammer') {
-      if (leaves.length > 0) {
-        const topLeaf = leaves[leaves.length - 1];
-        boosters.hammer--;
-        document.getElementById('hammer-count').innerText = boosters.hammer;
-        const countOnLeaf = topLeaf.slots.filter(s => s.color !== null).length;
-        removedScrews += countOnLeaf;
-        leaves.pop();
-        playSound('click');
-        renderPlayfield();
-        updateProgress();
-      }
-    } else if (type === 'cleaner') {
-      buffer = [null, null, null, null, null];
-      boosters.cleaner--;
-      document.getElementById('cleaner-count').innerText = boosters.cleaner;
-      playSound('click');
-      renderBuffer();
-    }
-  }
-
-  function resetBoosterCounts() {
-    boosters = { drill: 2, hammer: 1, cleaner: 1 };
-    document.getElementById('drill-count').innerText = boosters.drill;
-    document.getElementById('hammer-count').innerText = boosters.hammer;
-    document.getElementById('cleaner-count').innerText = boosters.cleaner;
-  }
-
-  function togglePause() {
-    alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
-  }
-
-  /* ================= AD VIDEO POPUP LOGIC ================= */
-  let adInterval = null;
-  const adMessages = [
-    "✨ असली 3D फ़िज़िक्स और झूलती प्लेट्स का मज़ा!",
-    "🧠 अपने दिमाग को तेज़ करें - 100+ नए लेवल्स!",
-    "🚀 बिना डाउनलोड झंझट के एक क्लिक में सीधे खेलें!",
-    "🏆 सिर्फ 5% खिलाड़ी ही लेवल 10 पार कर पाते हैं!"
-  ];
-  let adMsgIdx = 0;
-
-  function openAdVideo() {
-    playSound('creak');
-    document.getElementById('ad-video-modal').style.display = 'flex';
-    adMsgIdx = 0;
-    adInterval = setInterval(() => {
-      adMsgIdx = (adMsgIdx + 1) % adMessages.length;
-      const el = document.getElementById('ad-subtext-rotator');
-      if (el) el.innerText = adMessages[adMsgIdx];
-    }, 2200);
-  }
-
-  function closeAdVideo() {
-    clearInterval(adInterval);
-    document.getElementById('ad-video-modal').style.display = 'none';
-  }
-
-  generateLevel(currentLevel);
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const COLORS=['orange','yellow','blue','brown'];
+const PLATE_COLORS=['green','blue','yellow','purple','orange'];
+const state={level:Math.max(1,Number(localStorage.getItem('sp3_level'))||1),coins:Math.max(0,Number(localStorage.getItem('sp3_coins'))||100),boxes:[],buffer:Array(5).fill(null),plates:[],total:0,removed:0,boost:{drill:2,hammer:1,cleaner:1},paused:false,ended:false,won:false,toastTimer:null};
+let audio;
+function sound(kind='tap'){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime;o.connect(g);g.connect(audio.destination);o.type=kind==='bad'?'sawtooth':'sine';o.frequency.setValueAtTime(kind==='win'?520:kind==='bad'?150:420,t);o.frequency.exponentialRampToValueAtTime(kind==='win'?850:kind==='bad'?90:650,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.16);o.start(t);o.stop(t+.17)}catch(e){}}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),1500)}
+function save(){localStorage.setItem('sp3_level',state.level);localStorage.setItem('sp3_coins',state.coins)}
+function levelConfig(){return {count:Math.min(12,2+Math.floor((state.level-1)*.8)),colors:state.level<3?2:state.level<6?3:4}}
+function newLevel(){const cfg=levelConfig();state.boxes=[{color:'orange',count:0},{color:'yellow',count:0},{ad:true},{ad:true}];if(cfg.colors>=3)state.boxes[1].color='blue';state.buffer=Array(5).fill(null);state.plates=[];state.removed=0;state.ended=false;state.won=false;state.paused=false;state.boost={drill:2,hammer:1,cleaner:1};['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k]);
+let id=0;for(let i=0;i<cfg.count;i++){let n=state.level===1?2:(i%2?3:2);let slots=[];for(let j=0;j<n;j++)slots.push({id:'s'+(++id),color:COLORS[(i+j)%cfg.colors]});state.plates.push({id:'p'+i,slots,color:PLATE_COLORS[i%PLATE_COLORS.length],x:8+(i%2)*43+(Math.floor(i/2)%2)*8,y:7+Math.floor(i/2)*17,rot:(i%3-1)*8,hanging:false})}
+state.total=id;$('levelText').textContent='LEVEL '+state.level;hideDialog();render();updateProgress()}
+function render(){renderBoxes();renderBuffer();renderField();updateProgress();$('coinText').textContent=state.coins}
+function renderBoxes(){const root=$('boxes');root.innerHTML='';state.boxes.forEach((b,i)=>{const el=document.createElement('button');el.className='box'+(b.ad?' ad':'');if(b.ad){el.innerHTML='+<small>EXTRA</small>';el.onclick=()=>unlockExtra(i)}else{el.style.background=boxGradient(b.color);el.innerHTML='<div class="box-core"><i class="mini-hole"></i><i class="mini-hole"></i><i class="mini-hole"></i></div><span class="box-count">'+b.count+'/3</span>'}root.appendChild(el)})}
+function boxGradient(c){return ({orange:'linear-gradient(145deg,#ffb15e,#d9650d)',yellow:'linear-gradient(145deg,#ffea69,#d69b08)',blue:'linear-gradient(145deg,#7bd5ff,#1478bd)',brown:'linear-gradient(145deg,#c18b62,#70401e)'})[c]}
+function renderBuffer(){$('buffer').innerHTML='';state.buffer.forEach(c=>{const s=document.createElement('div');s.className='slot';if(c){const screw=document.createElement('i');screw.className='screw '+c;screw.style.width='22px';screw.style.height='22px';s.appendChild(screw)}$('buffer').appendChild(s)})}
+function renderField(){const root=$('field');root.innerHTML='';const sorted=[...state.plates];sorted.forEach((p,index)=>{const el=document.createElement('div');el.className='plate '+p.color+(p.hanging?' hanging':'');el.id=p.id;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.transform=`rotate(${p.rot}deg)`;el.style.zIndex=index+1;el.style.setProperty('--pivot',p.pivot||'50% 50%');p.slots.forEach((s,j)=>{const socket=document.createElement('div');socket.className='socket';if(s.color){const sc=document.createElement('button');sc.className='screw '+s.color;sc.setAttribute('aria-label','स्क्रू निकालें');sc.onclick=()=>takeScrew(p.id,s.id);socket.appendChild(sc)}el.appendChild(socket)});root.appendChild(el)})}
+function findScrew(p,s){return state.plates.find(x=>x.id===p)?.slots.find(x=>x.id===s)}
+function takeScrew(pid,sid){if(state.paused||state.ended)return;const plate=state.plates.find(p=>p.id===pid),slot=findScrew(pid,sid);if(!slot||!slot.color)return;
+const idx=state.plates.indexOf(plate);if(state.plates.slice(idx+1).some(p=>p.slots.some(s=>s.color))){sound('bad');toast('पहले ऊपर वाली प्लेट के स्क्रू निकालें');return}
+sound();const color=slot.color;slot.color=null;state.removed++;
+let box=state.boxes.find(b=>!b.ad&&b.color===color&&b.count<3);
+if(box){box.count++;if(box.count===3){sound('win');setTimeout(()=>recycle(box),450)}}else{const empty=state.buffer.indexOf(null);if(empty<0){slot.color=color;state.removed--;state.ended=true;sound('bad');showDialog('गेम ओवर!','बफर के सभी स्लॉट भर गए हैं।');return}state.buffer[empty]=color}
+const left=plate.slots.filter(s=>s.color);if(left.length===1){plate.hanging=true;plate.pivot=left[0]===plate.slots[0]?'20% 50%':'80% 50%';plate.rot+=left[0]===plate.slots[0]?70:-70}
+if(!left.length){const el=$(pid);if(el)el.classList.add('falling');setTimeout(()=>{state.plates=state.plates.filter(p=>p.id!==pid);renderField()},350)}
+moveBuffer();render();if(state.removed>=state.total)winLevel()}
+function moveBuffer(){state.buffer.forEach((c,i)=>{if(!c)return;const b=state.boxes.find(x=>!x.ad&&x.color===c&&x.count<3);if(b){b.count++;state.buffer[i]=null;if(b.count===3)setTimeout(()=>recycle(b),450)}})}
+function recycle(box){if(state.ended)return;const left=state.plates.flatMap(p=>p.slots.filter(s=>s.color).map(s=>s.color)).concat(state.buffer.filter(Boolean));box.count=0;box.color=left[0]||COLORS[(state.level+state.boxes.indexOf(box))%4];render()}
+function unlockExtra(i){if(state.ended||state.paused)return;if(state.coins<30){toast('अतिरिक्त बॉक्स के लिए 30 सिक्के चाहिए');return}state.coins-=30;const used=state.boxes.filter(b=>!b.ad).map(b=>b.color);state.boxes[i]={color:COLORS.find(c=>!used.includes(c))||'brown',count:0};sound('win');render();save();toast('अतिरिक्त बॉक्स खुल गया!')}
+function updateProgress(){const pct=state.total?Math.min(100,Math.floor(state.removed/state.total*100)):0;$('progress').style.width=pct+'%';$('percent').textContent=pct+'% पूरा'}
+function winLevel(){if(state.ended)return;state.ended=true;state.won=true;state.coins+=25;save();sound('win');setTimeout(()=>showDialog('शानदार जीत! 🏆','लेवल '+state.level+' पूरा हुआ। आपको 25 बोनस सिक्के मिले।'),350)}
+function showDialog(title,msg,second=false){$('dialogTitle').textContent=title;$('dialogText').textContent=msg;$('overlay').style.display='flex';$('mainAction').textContent=state.won?'अगला लेवल ➜':state.paused?'जारी रखें':'फिर कोशिश करें';$('secondAction').style.display=second?'block':'none'}
+function hideDialog(){$('overlay').style.display='none'}
+$('mainAction').onclick=()=>{if(state.won){state.level++;save();newLevel()}else if(state.paused){state.paused=false;hideDialog()}else{newLevel()}};
+$('secondAction').onclick=()=>{newLevel()};
+$('pauseBtn').onclick=()=>{if(state.ended)return;state.paused=true;showDialog('गेम पॉज़ ⏸️','आपका गेम सुरक्षित है। आराम से वापस शुरू करें।',true)};
+function useBoost(type){if(state.paused||state.ended)return;if(state.boost[type]<=0){toast('यह बूस्टर खत्म हो गया है');return}
+if(type==='drill'){let target=null;for(let p of [...state.plates].reverse()){const s=p.slots.find(x=>x.color);if(s){target=[p,s];break}}if(!target){toast('कोई स्क्रू उपलब्ध नहीं');return}state.boost.drill--;takeScrew(target[0].id,target[1].id)}
+if(type==='hammer'){const p=state.plates[state.plates.length-1];if(!p){toast('कोई प्लेट नहीं');return}state.boost.hammer--;const n=p.slots.filter(s=>s.color).length;state.removed+=n;p.slots.forEach(s=>s.color=null);state.plates.pop();sound('win');render();if(state.removed>=state.total)winLevel()}
+if(type==='cleaner'){const colors=state.buffer.filter(Boolean);if(!colors.length){toast('बफर पहले से खाली है');return}state.boost.cleaner--;state.buffer.fill(null);sound();render();toast('बफर साफ कर दिया गया')}
+['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k]);}
+document.querySelectorAll('[data-boost]').forEach(b=>b.onclick=()=>useBoost(b.dataset.boost));
+function resetBoosters(){state.boost={drill:2,hammer:1,cleaner:1};['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k])}
+const originalNewLevel=newLevel;
+function start(){newLevel()}
+start();
+})();
 </script>
 </body>
 </html>
