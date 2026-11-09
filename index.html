@@ -542,7 +542,6 @@
         id: 'leaf_' + (i + 1),
         top: Math.round(topPos),
         left: Math.round(leftPos),
-        baseRot: initialRot,
         currentRot: initialRot,
         pivotOrigin: 'center center',
         color: leafColor,
@@ -742,7 +741,7 @@
 
     const remainingSlots = leaf.slots.filter(s => s.color !== null);
 
-    // 0 स्क्रू बचे: प्लेट गिर जाएगी
+    // 0 स्क्रू: प्लेट नीचे गिर जाएगी
     if (remainingSlots.length === 0) {
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
@@ -756,30 +755,31 @@
       return;
     }
 
-    // सिर्फ 1 स्क्रू बचा: प्लेट हमेशा नीचे की ओर लटकेगी
+    // सिर्फ 1 स्क्रू बचा: शुद्ध नीचे की तरफ लटकना (Pure Downward Gravity)
     if (remainingSlots.length === 1) {
       const pivotSlot = remainingSlots[0];
       const totalSlots = leaf.slots.length;
       
-      // स्लॉट के आधार पर सटीक धुरी केंद्र (Pivot Origin)
+      // स्लॉट के अनुसार धुरी
       let percentX = (totalSlots === 2) 
         ? (pivotSlot.slotId === 0 ? '25%' : '75%')
         : (pivotSlot.slotId === 0 ? '18%' : (pivotSlot.slotId === 1 ? '50%' : '82%'));
 
       leaf.pivotOrigin = `${percentX} 50%`;
 
-      // गुरुत्वाकर्षण दिशा: भारी सिरा हमेशा नीचे गिरेगा
+      // भारी सिरा हमेशा नीचे (Downward Angle Only)
       if (totalSlots === 2) {
-        // अगर बायां स्क्रू बचा है तो दायां भारी हिस्सा नीचे झुकेगा (+85deg)
-        // अगर दायां स्क्रू बचा है तो बायां भारी हिस्सा नीचे झुकेगा (-85deg)
-        leaf.currentRot = (pivotSlot.slotId === 0) ? 84 : -84;
+        // बायां स्क्रू बचा है तो दायां भारी हिस्सा नीचे (+85°)
+        // दायां स्क्रू बचा है तो बायां हिस्सा नीचे झूलने के लिए (-85°)
+        leaf.currentRot = (pivotSlot.slotId === 0) ? 85 : -85;
       } else {
         if (pivotSlot.slotId === 0) {
-          leaf.currentRot = 86; // दायां सिरा नीचे
+          leaf.currentRot = 85;  // दायां भारी हिस्सा नीचे
         } else if (pivotSlot.slotId === 2) {
-          leaf.currentRot = -86; // बायां सिरा नीचे
+          leaf.currentRot = -85; // बायां भारी हिस्सा नीचे
         } else {
-          leaf.currentRot = 90; // बीच का स्क्रू होने पर सीधी नीचे
+          // बीच का स्क्रू बचा होने पर हल्का सा झुकाव नीचे की ओर
+          leaf.currentRot = 80;
         }
       }
 
