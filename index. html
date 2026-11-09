@@ -727,28 +727,4 @@
         renderPlayfield();
         updateProgress();
       }
-    } else if (type === 'cleaner') {
-      buffer = [null, null, null, null, null];
-      boosters.cleaner--;
-      document.getElementById('cleaner-count').innerText = boosters.cleaner;
-      playSound('click');
-      renderBuffer();
-    }
-  }
-
-  function resetBoosterCounts() {
-    boosters = { drill: 2, hammer: 1, cleaner: 1 };
-    document.getElementById('drill-count').innerText = boosters.drill;
-    document.getElementById('hammer-count').innerText = boosters.hammer;
-    document.getElementById('cleaner-count').innerText = boosters.cleaner;
-  }
-
-  function togglePause() {
-    alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
-  }
-
-  // First Run
-  generateLevel(currentLevel);
-</script>
-</body>
-</html>
+    } else if (type === 'cleane
