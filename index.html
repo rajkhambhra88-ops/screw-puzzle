@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Screw Puzzle Game - Infinite Levels</title>
+<title>Screw Puzzle 3D Deluxe</title>
 <style>
   * {
     box-sizing: border-box;
@@ -11,10 +11,10 @@
     padding: 0;
     user-select: none;
     -webkit-user-select: none;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
   body {
-    background-color: #e9dbc5;
+    background: radial-gradient(circle at center, #f5ebd9 0%, #d8c3a5 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,11 +26,11 @@
     max-width: 440px;
     height: 100vh;
     max-height: 920px;
-    background: #eadecb;
+    background: #eaddcb;
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
     overflow: hidden;
   }
 
@@ -39,102 +39,121 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 14px 18px 8px;
     z-index: 10;
   }
   .pause-btn {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
-    color: #4b4b4b;
+    color: #4b443c;
     cursor: pointer;
+    filter: drop-shadow(0 2px 2px rgba(255,255,255,0.7));
   }
   .level-title {
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 900;
-    color: #45403c;
+    color: #403830;
     letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px #fff;
   }
   .top-right-icons {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
   .cart-icon {
     font-size: 26px;
     cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
   }
   .star-badge {
     position: relative;
-    width: 44px;
-    height: 44px;
-    background: #8b888d;
+    width: 46px;
+    height: 46px;
+    background: linear-gradient(135deg, #99939a, #6c666f);
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 900;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
   .star-badge span {
     margin-top: 4px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   }
 
-  /* Target Boxes Row */
+  /* 3D Toy Boxes Area */
   .boxes-container {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     padding: 6px 12px;
     z-index: 10;
   }
   .box-card {
     width: 78px;
     height: 78px;
-    border-radius: 18px;
-    border: 4px solid #333;
+    border-radius: 20px;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    box-shadow: inset 0 3px 2px rgba(255,255,255,0.6),
+                inset 0 -4px 6px rgba(0,0,0,0.25),
+                0 8px 12px rgba(0,0,0,0.18);
+    transition: transform 0.25s ease;
   }
-  .box-orange { background: #ff9d42; border-color: #d86c12; }
-  .box-yellow { background: #ffd43f; border-color: #d19a00; }
-  .box-blue   { background: #56baf8; border-color: #1783c5; }
-  .box-brown  { background: #a46d49; border-color: #64391c; }
+  .box-orange {
+    background: linear-gradient(145deg, #ffa843, #e56f06);
+    border: 3.5px solid #c45700;
+  }
+  .box-yellow {
+    background: linear-gradient(145deg, #ffdf4c, #e7a500);
+    border: 3.5px solid #be8500;
+  }
+  .box-blue {
+    background: linear-gradient(145deg, #64c2ff, #1c88d8);
+    border: 3.5px solid #1369a8;
+  }
+  .box-brown {
+    background: linear-gradient(145deg, #b87b53, #7a4622);
+    border: 3.5px solid #572f13;
+  }
 
   .box-inner {
-    width: 60px;
-    height: 60px;
-    background: #e7e2d9;
-    border-radius: 12px;
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(145deg, #f0ebd9, #dcd4be);
+    border-radius: 14px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     padding: 4px;
     gap: 4px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.8);
   }
   .box-hole {
-    width: 17px;
-    height: 17px;
-    background: #8e95a0;
+    width: 18px;
+    height: 18px;
+    background: #6f7887;
     border-radius: 50%;
-    box-shadow: inset 1px 2px 3px rgba(0,0,0,0.4);
+    box-shadow: inset 2px 2px 5px #000, 0 1px 1px rgba(255,255,255,0.4);
     display: flex;
     justify-content: center;
     align-items: center;
   }
   .box-hole.filled {
     box-shadow: none;
+    background: transparent;
   }
 
   .ad-box {
-    background: #f7ca45;
-    border: 4px solid #cb961a;
+    background: linear-gradient(145deg, #fedc4f, #f1b312);
+    border: 3.5px solid #cb9306;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -144,20 +163,21 @@
   .ad-box .plus {
     font-size: 34px;
     font-weight: 900;
-    color: #6d4b00;
+    color: #5d3f00;
     line-height: 26px;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.6);
   }
   .ad-box .ad-tag {
     position: absolute;
-    bottom: 4px;
-    right: 5px;
-    background: #73c82d;
+    bottom: 5px;
+    right: 6px;
+    background: linear-gradient(180deg, #8fe03d, #5fae1d);
     color: #fff;
     font-size: 9px;
     font-weight: 900;
-    padding: 1px 4px;
-    border-radius: 4px;
-    border: 1px solid #488f12;
+    padding: 2px 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
   }
 
   /* Buffer Holes Row */
@@ -165,86 +185,124 @@
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin: 10px 0 4px;
+    margin: 12px 0 4px;
     z-index: 10;
   }
   .buffer-hole {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: #8d98a7;
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
+    background: #647082;
+    box-shadow: inset 2px 3px 6px #000, 0 1px 2px rgba(255,255,255,0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
 
-  /* Play Board Area */
+  /* Playfield & 3D Leaves */
   .playfield {
     flex: 1;
     position: relative;
-    margin: 8px 12px;
+    margin: 6px 12px;
     overflow: hidden;
   }
   .leaf {
     position: absolute;
-    width: 125px;
-    height: 52px;
-    border-radius: 65px 0px 65px 0px;
-    border: 4px solid #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+    width: 135px;
+    height: 56px;
+    border-radius: 70px 0px 70px 0px;
+    border: 3.5px solid #ffffff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.22),
+                inset 0 3px 6px rgba(255,255,255,0.5),
+                inset 0 -3px 6px rgba(0,0,0,0.2);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 12px;
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.4s;
   }
-  .leaf-green  { background: #5ecba1; }
-  .leaf-blue   { background: #62bdf4; }
-  .leaf-yellow { background: #f3ca65; }
-  .leaf-purple { background: #bda3e6; }
+  /* Central Leaf Rib / Vein */
+  .leaf::after {
+    content: '';
+    position: absolute;
+    width: 75%;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.65), rgba(255,255,255,0.05));
+    border-radius: 2px;
+    z-index: 1;
+    pointer-events: none;
+  }
 
-  /* Screws Styling */
+  .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
+  .leaf-blue   { background: linear-gradient(135deg, #6fd0ff, #319edd); }
+  .leaf-yellow { background: linear-gradient(135deg, #ffdf79, #e0a92f); }
+  .leaf-purple { background: linear-gradient(135deg, #ccb4f7, #9878d6); }
+
+  /* 3D Realistic Metallic Screws */
   .screw {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 2px solid rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 5;
+    cursor: pointer;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.7),
+                inset 0 -3px 4px rgba(0,0,0,0.4),
+                0 5px 8px rgba(0,0,0,0.32);
+    transition: transform 0.12s ease;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.35);
-    position: relative;
-    transition: transform 0.1s ease;
   }
   .screw:active {
-    transform: scale(0.9);
+    transform: scale(0.92) rotate(25deg);
+  }
+  /* Recessed Cross Head Slots */
+  .screw::before, .screw::after {
+    content: '';
+    position: absolute;
+    background: #2b1f1a;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(255,255,255,0.4);
   }
   .screw::before {
-    content: '+';
-    font-size: 20px;
-    font-weight: 900;
-    color: rgba(0,0,0,0.4);
-    line-height: 1;
-    margin-top: -2px;
+    width: 16px;
+    height: 4.5px;
+  }
+  .screw::after {
+    width: 4.5px;
+    height: 16px;
   }
 
-  .screw-orange { background: radial-gradient(circle at 35% 35%, #ff952c, #d85c00); }
-  .screw-yellow { background: radial-gradient(circle at 35% 35%, #fedc3c, #cf9700); }
-  .screw-blue   { background: radial-gradient(circle at 35% 35%, #4bb3f6, #0e72b4); }
-  .screw-brown  { background: radial-gradient(circle at 35% 35%, #9b613c, #573016); }
+  /* Screw Colors (High-gloss domed look) */
+  .screw-orange {
+    background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%);
+    border: 2px solid #a34300;
+  }
+  .screw-yellow {
+    background: radial-gradient(circle at 35% 30%, #fff799 5%, #f7c51e 55%, #b48500 100%);
+    border: 2px solid #9e7500;
+  }
+  .screw-blue {
+    background: radial-gradient(circle at 35% 30%, #9be4ff 5%, #2a9fe5 55%, #0f5c9e 100%);
+    border: 2px solid #0d548f;
+  }
+  .screw-brown {
+    background: radial-gradient(circle at 35% 30%, #c9936e 5%, #8e5229 55%, #4e260c 100%);
+    border: 2px solid #48230b;
+  }
 
   .screw-mini {
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.3);
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
+  .screw-mini::before { width: 10px; height: 3px; }
+  .screw-mini::after  { width: 3px; height: 10px; }
 
-  /* Bottom Boosters */
+  /* 3D Bottom Boosters */
   .bottom-bar {
     display: flex;
     justify-content: space-around;
@@ -253,42 +311,43 @@
     margin-bottom: 30px;
     z-index: 10;
   }
-
   .booster-btn {
-    width: 90px;
+    width: 92px;
     height: 58px;
-    background: #f7ca45;
-    border: 3px solid #cb961a;
-    border-radius: 16px;
+    background: linear-gradient(180deg, #ffdf60 0%, #f1b312 100%);
+    border: 3.5px solid #cb9306;
+    border-radius: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    box-shadow: 0 4px 0 #ab7905;
+    box-shadow: inset 0 2px 2px #fff, 0 5px 0 #9f6c00, 0 7px 10px rgba(0,0,0,0.22);
     cursor: pointer;
   }
   .booster-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #ab7905;
+    transform: translateY(4px);
+    box-shadow: inset 0 2px 2px #fff, 0 1px 0 #9f6c00, 0 2px 4px rgba(0,0,0,0.22);
   }
   .booster-badge {
     position: absolute;
-    top: -8px;
+    top: -7px;
     right: -6px;
     background: #ffffff;
-    border: 2px solid #555;
-    border-radius: 6px;
+    border: 2.5px solid #444;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 900;
-    padding: 0px 5px;
+    padding: 0px 6px;
     color: #222;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   }
 
-  /* Overlays */
+  /* Modals */
   .overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -296,29 +355,34 @@
     z-index: 100;
   }
   .modal-card {
-    background: #fff;
-    padding: 24px 30px;
-    border-radius: 20px;
+    background: #ffffff;
+    padding: 26px 32px;
+    border-radius: 24px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
     max-width: 82%;
   }
   .modal-title {
     font-size: 26px;
     font-weight: 900;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: #333;
   }
   .modal-btn {
-    margin-top: 15px;
-    background: #5ecba1;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #4bd59f, #229f6d);
     color: #fff;
     border: none;
-    padding: 10px 24px;
+    padding: 12px 28px;
     font-size: 18px;
     font-weight: 800;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
+    box-shadow: 0 5px 0 #146b48;
+  }
+  .modal-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #146b48;
   }
 </style>
 </head>
@@ -335,27 +399,27 @@
     </div>
   </div>
 
-  <!-- Target Boxes -->
+  <!-- 3D Target Boxes -->
   <div class="boxes-container" id="boxes-row"></div>
 
   <!-- 5 Buffer Holes -->
   <div class="buffer-row" id="buffer-holes"></div>
 
-  <!-- Playfield -->
+  <!-- 3D Playfield: Leaves & Screws -->
   <div class="playfield" id="playfield"></div>
 
-  <!-- Boosters -->
+  <!-- 3D Boosters -->
   <div class="bottom-bar">
     <div class="booster-btn" onclick="useBooster('drill')">
-      <span style="font-size:28px;">🪛</span>
+      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🪛</span>
       <div class="booster-badge" id="drill-count">2</div>
     </div>
     <div class="booster-btn" onclick="useBooster('hammer')">
-      <span style="font-size:28px;">🔨</span>
+      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🔨</span>
       <div class="booster-badge" id="hammer-count">1</div>
     </div>
     <div class="booster-btn" onclick="useBooster('cleaner')">
-      <span style="font-size:28px;">🧹</span>
+      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🧹</span>
       <div class="booster-badge" id="cleaner-count">1</div>
     </div>
   </div>
@@ -374,7 +438,7 @@
     <div class="modal-card">
       <div class="modal-title" style="color:#d9534f;">गेम ओवर! ⚠️</div>
       <p>सारे बफ़र स्लॉट भर गए हैं।</p>
-      <button class="modal-btn" style="background:#f0ad4e;" onclick="retryLevel()">पुनः प्रयास करें</button>
+      <button class="modal-btn" style="background: linear-gradient(135deg, #f39c12, #d35400); box-shadow: 0 5px 0 #963b00;" onclick="retryLevel()">पुनः प्रयास करें</button>
     </div>
   </div>
 </div>
@@ -391,9 +455,9 @@
 
     const now = audioCtx.currentTime;
     if (type === 'click') {
-      osc.frequency.setValueAtTime(450, now);
-      osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
-      gain.gain.setValueAtTime(0.3, now);
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
+      gain.gain.setValueAtTime(0.35, now);
       gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
       osc.start(now);
       osc.stop(now + 0.08);
@@ -401,14 +465,14 @@
       osc.frequency.setValueAtTime(523, now);
       osc.frequency.setValueAtTime(659, now + 0.09);
       osc.frequency.setValueAtTime(783, now + 0.18);
-      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.setValueAtTime(0.4, now);
       gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
       osc.start(now);
       osc.stop(now + 0.3);
     } else if (type === 'fail') {
       osc.frequency.setValueAtTime(220, now);
-      osc.frequency.setValueAtTime(150, now + 0.15);
-      gain.gain.setValueAtTime(0.3, now);
+      osc.frequency.setValueAtTime(140, now + 0.16);
+      gain.gain.setValueAtTime(0.35, now);
       gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
       osc.start(now);
       osc.stop(now + 0.3);
@@ -427,7 +491,6 @@
   let removedScrews = 0;
   let boosters = { drill: 2, hammer: 1, cleaner: 1 };
 
-  // Generate Level with Progressive Difficulty
   function generateLevel(lvl) {
     let leafCount, activeColorList;
 
@@ -444,12 +507,10 @@
       leafCount = 7 + Math.floor((lvl - 6) * 0.8);
       activeColorList = ['orange', 'yellow', 'blue', 'brown'];
     } else {
-      // Endless hard levels like level 132
       leafCount = Math.min(13, 8 + Math.floor(lvl / 15));
       activeColorList = ALL_COLORS;
     }
 
-    // Boxes Setup
     boxSlots = [
       { type: 'box', color: activeColorList[0], count: 0 },
       { type: 'box', color: activeColorList[1] || activeColorList[0], count: 0 },
@@ -458,16 +519,13 @@
     ];
 
     buffer = [null, null, null, null, null];
-
-    // Generate Leaves Coordinates & Screws
     leaves = [];
     let screwIdCounter = 1;
 
     for (let i = 0; i < leafCount; i++) {
-      // Distribute leaves across canvas
-      let topPos = 70 + (i * 24) + (Math.sin(i * 1.5) * 20);
-      let leftPos = 40 + ((i % 3) * 65) + (Math.cos(i) * 25);
-      let rotation = -40 + ((i * 35) % 85);
+      let topPos = 65 + (i * 24) + (Math.sin(i * 1.5) * 20);
+      let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
+      let rotation = -35 + ((i * 35) % 80);
       let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
 
       let screwsOnThisLeaf = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
@@ -578,7 +636,6 @@
   function handleScrewClick(leafId, screwId, color) {
     playSound('click');
 
-    // 1. Check if matching color box has free slot
     let targetBox = boxSlots.find(b => b.type === 'box' && b.color === color && b.count < 3);
 
     if (targetBox) {
@@ -589,13 +646,11 @@
         setTimeout(() => recycleBox(targetBox), 320);
       }
     } else {
-      // 2. Put into empty buffer hole
       let emptyIdx = buffer.indexOf(null);
       if (emptyIdx !== -1) {
         buffer[emptyIdx] = color;
         removeScrewFromBoard(leafId, screwId);
       } else {
-        // Buffer is completely full -> Game Over
         playSound('fail');
         document.getElementById('fail-modal').style.display = 'flex';
         return;
@@ -614,11 +669,10 @@
     leaf.screws = leaf.screws.filter(s => s.id !== screwId);
     removedScrews++;
 
-    // If no screws left on this leaf, drop it smoothly
     if (leaf.screws.length === 0) {
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
-        leafElem.style.transform += ' translateY(420px) rotate(40deg)';
+        leafElem.style.transform += ' translateY(440px) rotate(45deg)';
         leafElem.style.opacity = '0';
         setTimeout(() => {
           leaves = leaves.filter(l => l.id !== leafId);
@@ -691,7 +745,6 @@
     }
   }
 
-  // Next Level Progression
   function nextLevel() {
     document.getElementById('win-modal').style.display = 'none';
     currentLevel++;
@@ -704,7 +757,6 @@
     generateLevel(currentLevel);
   }
 
-  // Boosters
   function useBooster(type) {
     if (boosters[type] <= 0) return;
 
