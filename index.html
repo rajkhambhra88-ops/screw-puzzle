@@ -47,14 +47,12 @@
     font-weight: 900;
     color: #4b443c;
     cursor: pointer;
-    filter: drop-shadow(0 2px 2px rgba(255,255,255,0.7));
   }
   .level-title {
     font-size: 23px;
     font-weight: 900;
     color: #403830;
     letter-spacing: 0.5px;
-    text-shadow: 0 1px 1px #fff;
   }
   .top-right-icons {
     display: flex;
@@ -64,7 +62,6 @@
   .cart-icon {
     font-size: 26px;
     cursor: pointer;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
   }
   .star-badge {
     position: relative;
@@ -78,14 +75,12 @@
     color: #fff;
     font-size: 11px;
     font-weight: 900;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
   .star-badge span {
     margin-top: 4px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   }
 
-  /* 3D Target Boxes Area */
+  /* Boxes */
   .boxes-container {
     display: flex;
     justify-content: center;
@@ -106,22 +101,10 @@
                 0 8px 12px rgba(0,0,0,0.18);
     transition: transform 0.25s ease;
   }
-  .box-orange {
-    background: linear-gradient(145deg, #ffa843, #e56f06);
-    border: 3.5px solid #c45700;
-  }
-  .box-yellow {
-    background: linear-gradient(145deg, #ffdf4c, #e7a500);
-    border: 3.5px solid #be8500;
-  }
-  .box-blue {
-    background: linear-gradient(145deg, #64c2ff, #1c88d8);
-    border: 3.5px solid #1369a8;
-  }
-  .box-brown {
-    background: linear-gradient(145deg, #b87b53, #7a4622);
-    border: 3.5px solid #572f13;
-  }
+  .box-orange { background: linear-gradient(145deg, #ffa843, #e56f06); border: 3.5px solid #c45700; }
+  .box-yellow { background: linear-gradient(145deg, #ffdf4c, #e7a500); border: 3.5px solid #be8500; }
+  .box-blue   { background: linear-gradient(145deg, #64c2ff, #1c88d8); border: 3.5px solid #1369a8; }
+  .box-brown  { background: linear-gradient(145deg, #b87b53, #7a4622); border: 3.5px solid #572f13; }
 
   .box-inner {
     width: 62px;
@@ -134,14 +117,14 @@
     align-items: center;
     padding: 4px;
     gap: 4px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 1px rgba(255,255,255,0.8);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
   }
   .box-hole {
     width: 18px;
     height: 18px;
     background: #5a6473;
     border-radius: 50%;
-    box-shadow: inset 2px 2px 5px #000, 0 1px 1px rgba(255,255,255,0.4);
+    box-shadow: inset 2px 2px 5px #000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,7 +148,6 @@
     font-weight: 900;
     color: #5d3f00;
     line-height: 26px;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.6);
   }
   .ad-box .ad-tag {
     position: absolute;
@@ -177,10 +159,9 @@
     font-weight: 900;
     padding: 2px 5px;
     border-radius: 5px;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
   }
 
-  /* Buffer Holes Row */
+  /* Buffer Holes */
   .buffer-row {
     display: flex;
     justify-content: center;
@@ -193,14 +174,14 @@
     height: 26px;
     border-radius: 50%;
     background: #566375;
-    box-shadow: inset 2px 3px 6px #000, 0 1px 2px rgba(255,255,255,0.6);
+    box-shadow: inset 2px 3px 6px #000;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
 
-  /* Playfield & 3D Botanical Plates */
+  /* Playfield & Botanical Leaves */
   .playfield {
     flex: 1;
     position: relative;
@@ -209,31 +190,19 @@
   }
   .leaf {
     position: absolute;
-    width: 140px;
+    width: 145px;
     height: 56px;
     border-radius: 70px 0px 70px 0px;
     border: 3.5px solid #ffffff;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.22),
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25),
                 inset 0 3px 6px rgba(255,255,255,0.5),
                 inset 0 -3px 6px rgba(0,0,0,0.2);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    padding: 0 6px;
+    padding: 0 8px;
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.4s;
-  }
-
-  /* Leaf Vein */
-  .leaf::after {
-    content: '';
-    position: absolute;
-    width: 80%;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.65), rgba(255,255,255,0.05));
-    border-radius: 2px;
-    z-index: 1;
-    pointer-events: none;
   }
 
   .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
@@ -241,28 +210,18 @@
   .leaf-yellow { background: linear-gradient(135deg, #ffdf79, #e0a92f); }
   .leaf-purple { background: linear-gradient(135deg, #ccb4f7, #9878d6); }
 
-  /* Plate Screw Socket/Hole (Fixed Position) */
-  .leaf-slot {
+  /* Plate Hole Socket */
+  .leaf-hole-socket {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, #231b17 50%, #4a3b34 85%, #6a574d 100%);
-    box-shadow: inset 2px 2px 5px #000, 0 1px 1px rgba(255,255,255,0.6);
+    background: radial-gradient(circle at center, #18120e 45%, #463730 80%, #685348 100%);
+    box-shadow: inset 2px 2px 4px #000, 0 1px 1px rgba(255,255,255,0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    z-index: 3;
     flex-shrink: 0;
-  }
-  .leaf-slot::before {
-    content: '';
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #110d0a;
-    box-shadow: inset 1px 1px 3px #000;
   }
 
   /* 3D Realistic Metallic Screws */
@@ -270,9 +229,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     z-index: 5;
     cursor: pointer;
     box-shadow: inset 0 2px 3px rgba(255,255,255,0.7),
@@ -320,7 +277,6 @@
   }
 
   .screw-mini {
-    position: relative;
     width: 20px;
     height: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -328,7 +284,7 @@
   .screw-mini::before { width: 10px; height: 3px; }
   .screw-mini::after  { width: 3px; height: 10px; }
 
-  /* 3D Bottom Boosters (Elevated so they won't get cut) */
+  /* Bottom Boosters */
   .bottom-bar {
     display: flex;
     justify-content: space-around;
@@ -365,7 +321,6 @@
     font-weight: 900;
     padding: 0px 6px;
     color: #222;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   }
 
   /* Modals */
@@ -406,10 +361,6 @@
     cursor: pointer;
     box-shadow: 0 5px 0 #146b48;
   }
-  .modal-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #146b48;
-  }
 </style>
 </head>
 <body>
@@ -425,27 +376,27 @@
     </div>
   </div>
 
-  <!-- 3D Target Boxes -->
+  <!-- Target Boxes -->
   <div class="boxes-container" id="boxes-row"></div>
 
-  <!-- 5 Buffer Holes -->
+  <!-- Buffer Holes -->
   <div class="buffer-row" id="buffer-holes"></div>
 
-  <!-- 3D Playfield: Leaves & Screws -->
+  <!-- Playfield -->
   <div class="playfield" id="playfield"></div>
 
-  <!-- 3D Boosters -->
+  <!-- Boosters -->
   <div class="bottom-bar">
     <div class="booster-btn" onclick="useBooster('drill')">
-      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🪛</span>
+      <span style="font-size:28px;">🪛</span>
       <div class="booster-badge" id="drill-count">2</div>
     </div>
     <div class="booster-btn" onclick="useBooster('hammer')">
-      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🔨</span>
+      <span style="font-size:28px;">🔨</span>
       <div class="booster-badge" id="hammer-count">1</div>
     </div>
     <div class="booster-btn" onclick="useBooster('cleaner')">
-      <span style="font-size:28px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));">🧹</span>
+      <span style="font-size:28px;">🧹</span>
       <div class="booster-badge" id="cleaner-count">1</div>
     </div>
   </div>
@@ -470,42 +421,42 @@
 </div>
 
 <script>
-  // Web Audio Synthesizer
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   function playSound(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
 
-    const now = audioCtx.currentTime;
-    if (type === 'click') {
-      osc.frequency.setValueAtTime(480, now);
-      osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-      osc.start(now);
-      osc.stop(now + 0.08);
-    } else if (type === 'match') {
-      osc.frequency.setValueAtTime(523, now);
-      osc.frequency.setValueAtTime(659, now + 0.09);
-      osc.frequency.setValueAtTime(783, now + 0.18);
-      gain.gain.setValueAtTime(0.4, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    } else if (type === 'fail') {
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.setValueAtTime(140, now + 0.16);
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    }
+      if (type === 'click') {
+        osc.frequency.setValueAtTime(480, now);
+        osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === 'match') {
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.09);
+        osc.frequency.setValueAtTime(783, now + 0.18);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'fail') {
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(140, now + 0.16);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    } catch(e){}
   }
 
-  // Master State
   let currentLevel = parseInt(localStorage.getItem('screw_game_level') || '1');
   const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
   const LEAF_COLORS = ['leaf-green', 'leaf-blue', 'leaf-yellow', 'leaf-purple'];
@@ -549,22 +500,20 @@
     let screwIdCounter = 1;
 
     for (let i = 0; i < leafCount; i++) {
-      let topPos = 65 + (i * 24) + (Math.sin(i * 1.5) * 20);
+      let topPos = 65 + (i * 26) + (Math.sin(i * 1.5) * 18);
       let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
       let rotation = -35 + ((i * 35) % 80);
       let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
 
-      let totalSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
-      let leafSlots = [];
+      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
+      let slots = [];
 
-      for (let s = 0; s < totalSlots; s++) {
+      for (let s = 0; s < numSlots; s++) {
         let scColor = activeColorList[(i + s) % activeColorList.length];
-        leafSlots.push({
-          slotIndex: s,
-          screw: {
-            id: 's_' + (screwIdCounter++),
-            color: scColor
-          }
+        slots.push({
+          slotId: s,
+          color: scColor,
+          screwId: 's_' + (screwIdCounter++)
         });
       }
 
@@ -574,14 +523,14 @@
         left: Math.round(leftPos),
         rot: rotation,
         color: leafColor,
-        slots: leafSlots
+        slots: slots
       });
     }
 
     totalScrews = 0;
     leaves.forEach(l => {
       l.slots.forEach(slot => {
-        if (slot.screw) totalScrews++;
+        if (slot.color !== null) totalScrews++;
       });
     });
     removedScrews = 0;
@@ -653,22 +602,20 @@
       leafEl.style.zIndex = leafIndex + 1;
 
       l.slots.forEach((slot) => {
-        // Static hole inside the leaf
-        const slotEl = document.createElement('div');
-        slotEl.className = 'leaf-slot';
+        const socket = document.createElement('div');
+        socket.className = 'leaf-hole-socket';
 
-        // If screw is present, render it inside fixed hole
-        if (slot.screw) {
+        if (slot.color !== null) {
           const sc = document.createElement('div');
-          sc.className = `screw screw-${slot.screw.color}`;
+          sc.className = `screw screw-${slot.color}`;
           sc.onclick = (e) => {
             e.stopPropagation();
-            handleScrewClick(l.id, slot.screw.id, slot.screw.color);
+            handleScrewClick(l.id, slot.screwId, slot.color);
           };
-          slotEl.appendChild(sc);
+          socket.appendChild(sc);
         }
 
-        leafEl.appendChild(slotEl);
+        leafEl.appendChild(socket);
       });
 
       pf.appendChild(leafEl);
@@ -709,19 +656,16 @@
     const leaf = leaves.find(l => l.id === leafId);
     if (!leaf) return;
 
-    // Remove screw from slot while keeping slot position permanent
     leaf.slots.forEach(slot => {
-      if (slot.screw && slot.screw.id === screwId) {
-        slot.screw = null;
+      if (slot.screwId === screwId) {
+        slot.color = null;
       }
     });
 
     removedScrews++;
 
-    // Check if any screws remain on this leaf
-    const remainingOnLeaf = leaf.slots.filter(s => s.screw !== null).length;
-
-    if (remainingOnLeaf === 0) {
+    const remaining = leaf.slots.filter(s => s.color !== null).length;
+    if (remaining === 0) {
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
         leafElem.style.transform += ' translateY(440px) rotate(45deg)';
@@ -741,7 +685,7 @@
     const remainingColors = [];
     leaves.forEach(l => {
       l.slots.forEach(s => {
-        if (s.screw) remainingColors.push(s.screw.color);
+        if (s.color !== null) remainingColors.push(s.color);
       });
     });
     buffer.forEach(c => { if(c) remainingColors.push(c); });
@@ -819,10 +763,10 @@
     if (type === 'drill') {
       for (let l of leaves) {
         for (let s of l.slots) {
-          if (s.screw) {
+          if (s.color !== null) {
             boosters.drill--;
             document.getElementById('drill-count').innerText = boosters.drill;
-            handleScrewClick(l.id, s.screw.id, s.screw.color);
+            handleScrewClick(l.id, s.screwId, s.color);
             return;
           }
         }
@@ -832,7 +776,7 @@
         const topLeaf = leaves[leaves.length - 1];
         boosters.hammer--;
         document.getElementById('hammer-count').innerText = boosters.hammer;
-        const countOnLeaf = topLeaf.slots.filter(s => s.screw !== null).length;
+        const countOnLeaf = topLeaf.slots.filter(s => s.color !== null).length;
         removedScrews += countOnLeaf;
         leaves.pop();
         playSound('click');
@@ -859,7 +803,7 @@
     alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
   }
 
-  // First Run
+  // Start Level
   generateLevel(currentLevel);
 </script>
 </body>
