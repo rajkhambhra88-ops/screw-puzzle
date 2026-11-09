@@ -201,8 +201,7 @@
     justify-content: space-evenly;
     align-items: center;
     padding: 0 8px;
-    transform-origin: center center;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.4s;
+    transition: transform 0.65s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.4s;
   }
 
   .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
@@ -243,9 +242,8 @@
   .screw:active {
     transform: scale(0.92);
   }
-  /* जब स्क्रू किसी पत्ती के नीचे दबा हो */
   .screw.covered-screw {
-    filter: brightness(0.68) saturate(0.85);
+    filter: brightness(0.72) saturate(0.85);
   }
   .screw.shake {
     animation: shakeAnim 0.3s ease;
@@ -460,8 +458,16 @@
         gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
         osc.start(now);
         osc.stop(now + 0.3);
+      } else if (type === 'creak') {
+        // Wooden/plate gravity creak sound when hanging
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
       } else if (type === 'blocked') {
-        // Locked / Blocked Buzz Sound
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(160, now);
         osc.frequency.setValueAtTime(110, now + 0.08);
@@ -518,7 +524,7 @@
     for (let i = 0; i < leafCount; i++) {
       let topPos = 65 + (i * 26) + (Math.sin(i * 1.5) * 18);
       let leftPos = 35 + ((i % 3) * 65) + (Math.cos(i) * 25);
-      let rotation = -35 + ((i * 35) % 80);
+      let initialRot = -30 + ((i * 35) % 75);
       let leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
 
       let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
@@ -537,7 +543,9 @@
         id: 'leaf_' + (i + 1),
         top: Math.round(topPos),
         left: Math.round(leftPos),
-        rot: rotation,
+        baseRot: initialRot,
+        currentRot: initialRot,
+        pivotOrigin: 'center center',
         color: leafColor,
         slots: slots
       });
@@ -558,24 +566,25 @@
     renderPlayfield();
   }
 
-  // Exact Physical Screen Collision Check
-  function isScrewCovered(screwElement, leafIndex) {
+  // Exact Pixel-Precise Raycast Detection
+  function isScrewCovered(screwElement, leafId) {
     if (!screwElement) return false;
     const sRect = screwElement.getBoundingClientRect();
     const scX = sRect.left + sRect.width / 2;
     const scY = sRect.top + sRect.height / 2;
 
-    // Check all leaves that lie ABOVE this leaf (higher in z-index / array order)
-    for (let j = leafIndex + 1; j < leaves.length; j++) {
-      const topLeafElem = document.getElementById(leaves[j].id);
-      if (!topLeafElem) continue;
+    // Get all DOM elements stacked at the exact center of this screw
+    const elementsAtPoint = document.elementsFromPoint(scX, scY);
+    const targetLeafIdx = leaves.findIndex(l => l.id === leafId);
 
-      const topRect = topLeafElem.getBoundingClientRect();
-
-      // Check if center of screw falls inside bounding boundary of an upper leaf
-      if (scX >= topRect.left && scX <= topRect.right &&
-          scY >= topRect.top && scY <= topRect.bottom) {
-        return true;
+    for (let el of elementsAtPoint) {
+      const parentLeaf = el.closest('.leaf');
+      if (parentLeaf && parentLeaf.id !== leafId) {
+        const topLeafIdx = leaves.findIndex(l => l.id === parentLeaf.id);
+        // Only elements from leaves with higher z-index block this screw
+        if (topLeafIdx > targetLeafIdx) {
+          return true;
+        }
       }
     }
     return false;
@@ -637,7 +646,8 @@
       leafEl.id = l.id;
       leafEl.style.top = l.top + 'px';
       leafEl.style.left = l.left + 'px';
-      leafEl.style.transform = `rotate(${l.rot}deg)`;
+      leafEl.style.transformOrigin = l.pivotOrigin;
+      leafEl.style.transform = `rotate(${l.currentRot}deg)`;
       leafEl.style.zIndex = leafIndex + 1;
 
       l.slots.forEach((slot) => {
@@ -652,11 +662,10 @@
           sc.onclick = (e) => {
             e.stopPropagation();
 
-            // Check if this specific screw is physically covered by an upper leaf
-            if (isScrewCovered(sc, leafIndex)) {
+            if (isScrewCovered(sc, l.id)) {
               playSound('blocked');
               sc.classList.remove('shake');
-              void sc.offsetWidth; // reset CSS animation
+              void sc.offsetWidth;
               sc.classList.add('shake');
               return;
             }
@@ -673,19 +682,25 @@
       pf.appendChild(leafEl);
     });
 
-    // Mark covered screws visually
-    setTimeout(() => {
-      leaves.forEach((l, leafIndex) => {
-        l.slots.forEach((slot) => {
-          if (slot.color !== null) {
-            const sc = document.getElementById(slot.screwId);
-            if (sc && isScrewCovered(sc, leafIndex)) {
+    // Refresh covered states with precise raycast
+    setTimeout(updateCoveredVisuals, 60);
+  }
+
+  function updateCoveredVisuals() {
+    leaves.forEach((l) => {
+      l.slots.forEach((slot) => {
+        if (slot.color !== null) {
+          const sc = document.getElementById(slot.screwId);
+          if (sc) {
+            if (isScrewCovered(sc, l.id)) {
               sc.classList.add('covered-screw');
+            } else {
+              sc.classList.remove('covered-screw');
             }
           }
-        });
+        }
       });
-    }, 50);
+    });
   }
 
   function handleScrewClick(leafId, screwId, color) {
@@ -730,20 +745,40 @@
 
     removedScrews++;
 
-    const remaining = leaf.slots.filter(s => s.color !== null).length;
-    if (remaining === 0) {
+    const remainingSlots = leaf.slots.filter(s => s.color !== null);
+
+    // ZERO screws: Leaf falls off completely
+    if (remainingSlots.length === 0) {
       const leafElem = document.getElementById(leaf.id);
       if (leafElem) {
-        leafElem.style.transform += ' translateY(440px) rotate(45deg)';
+        leafElem.style.transform += ' translateY(460px) rotate(55deg)';
         leafElem.style.opacity = '0';
         setTimeout(() => {
           leaves = leaves.filter(l => l.id !== leafId);
           renderPlayfield();
         }, 450);
       }
-    } else {
-      renderPlayfield();
+      return;
     }
+
+    // EXACTLY 1 SCREW REMAINING: Plate hangs down & swings around this pivot screw!
+    if (remainingSlots.length === 1) {
+      const pivotSlot = remainingSlots[0];
+      const totalSlots = leaf.slots.length;
+      
+      // Calculate dynamic pivot point based on socket position
+      let percentX = (totalSlots === 2) 
+        ? (pivotSlot.slotId === 0 ? '28%' : '72%')
+        : (pivotSlot.slotId === 0 ? '22%' : (pivotSlot.slotId === 1 ? '50%' : '78%'));
+
+      leaf.pivotOrigin = `${percentX} 50%`;
+      // Hang down naturally by gravity (~70 to 85 degrees downward)
+      leaf.currentRot = (leaf.baseRot > 0) ? 78 : 84;
+
+      playSound('creak');
+    }
+
+    renderPlayfield();
   }
 
   function recycleBox(box) {
@@ -827,13 +862,12 @@
     if (boosters[type] <= 0) return;
 
     if (type === 'drill') {
-      // Find top exposed screw
       for (let i = leaves.length - 1; i >= 0; i--) {
         let l = leaves[i];
         for (let s of l.slots) {
           if (s.color !== null) {
             const sc = document.getElementById(s.screwId);
-            if (!isScrewCovered(sc, i)) {
+            if (!isScrewCovered(sc, l.id)) {
               boosters.drill--;
               document.getElementById('drill-count').innerText = boosters.drill;
               handleScrewClick(l.id, s.screwId, s.color);
