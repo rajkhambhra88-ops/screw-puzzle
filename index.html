@@ -40,7 +40,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 14px 18px 8px;
-    z-index: 10;
+    z-index: 100;
   }
   .pause-btn {
     font-size: 24px;
@@ -86,7 +86,7 @@
     justify-content: center;
     gap: 10px;
     padding: 6px 12px;
-    z-index: 10;
+    z-index: 100;
   }
   .box-card {
     width: 78px;
@@ -167,7 +167,7 @@
     justify-content: center;
     gap: 12px;
     margin: 12px 0 4px;
-    z-index: 10;
+    z-index: 100;
   }
   .buffer-hole {
     width: 26px;
@@ -181,7 +181,7 @@
     position: relative;
   }
 
-  /* Playfield & Botanical Leaves */
+  /* Playfield & Plates */
   .playfield {
     flex: 1;
     position: relative;
@@ -224,7 +224,7 @@
     flex-shrink: 0;
   }
 
-  /* 3D Realistic Metallic Screws */
+  /* 3D Screws */
   .screw {
     width: 32px;
     height: 32px;
@@ -241,8 +241,20 @@
     align-items: center;
   }
   .screw:active {
-    transform: scale(0.92) rotate(25deg);
+    transform: scale(0.92);
   }
+  .screw.locked {
+    filter: brightness(0.85);
+  }
+  .screw.shake {
+    animation: shakeAnim 0.3s ease;
+  }
+  @keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px) rotate(-10deg); }
+    75% { transform: translateX(4px) rotate(10deg); }
+  }
+
   .screw::before, .screw::after {
     content: '';
     position: absolute;
@@ -250,14 +262,8 @@
     border-radius: 2px;
     box-shadow: 0 1px 1px rgba(255,255,255,0.4);
   }
-  .screw::before {
-    width: 16px;
-    height: 4.5px;
-  }
-  .screw::after {
-    width: 4.5px;
-    height: 16px;
-  }
+  .screw::before { width: 16px; height: 4.5px; }
+  .screw::after { width: 4.5px; height: 16px; }
 
   .screw-orange {
     background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%);
@@ -291,7 +297,7 @@
     align-items: center;
     padding: 10px 16px 15px;
     margin-bottom: 65px;
-    z-index: 10;
+    z-index: 100;
   }
   .booster-btn {
     width: 92px;
@@ -333,7 +339,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 200;
   }
   .modal-card {
     background: #ffffff;
@@ -453,6 +459,12 @@
         gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
         osc.start(now);
         osc.stop(now + 0.3);
+      } else if (type === 'blocked') {
+        osc.frequency.setValueAtTime(180, now);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
       }
     } catch(e){}
   }
@@ -519,6 +531,7 @@
 
       leaves.push({
         id: 'leaf_' + (i + 1),
+        layerIndex: i, // 0 = lowest background plate, higher = top plate
         top: Math.round(topPos),
         left: Math.round(leftPos),
         rot: rotation,
@@ -540,6 +553,22 @@
     renderBoxes();
     renderBuffer();
     renderPlayfield();
+  }
+
+  // Check if a leaf is covered by another leaf above it
+  function isLeafCovered(targetLeaf) {
+    let targetIdx = leaves.findIndex(l => l.id === targetLeaf.id);
+    // Any leaf with a higher index in the leaves array sits on top
+    for (let j = targetIdx + 1; j < leaves.length; j++) {
+      let topL = leaves[j];
+      let dx = Math.abs(topL.left - targetLeaf.left);
+      let dy = Math.abs(topL.top - targetLeaf.top);
+      // Overlap detection threshold
+      if (dx < 100 && dy < 48) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function renderBoxes() {
@@ -601,17 +630,30 @@
       leafEl.style.transform = `rotate(${l.rot}deg)`;
       leafEl.style.zIndex = leafIndex + 1;
 
+      const isCovered = isLeafCovered(l);
+
       l.slots.forEach((slot) => {
         const socket = document.createElement('div');
         socket.className = 'leaf-hole-socket';
 
         if (slot.color !== null) {
           const sc = document.createElement('div');
-          sc.className = `screw screw-${slot.color}`;
+          sc.className = `screw screw-${slot.color} ${isCovered ? 'locked' : ''}`;
+          sc.id = slot.screwId;
+
           sc.onclick = (e) => {
             e.stopPropagation();
+            if (isLeafCovered(l)) {
+              // Blocked: Bottom plate screw cannot be opened!
+              playSound('blocked');
+              sc.classList.remove('shake');
+              void sc.offsetWidth; // re-trigger css animation
+              sc.classList.add('shake');
+              return;
+            }
             handleScrewClick(l.id, slot.screwId, slot.color);
           };
+
           socket.appendChild(sc);
         }
 
@@ -671,6 +713,7 @@
         leafElem.style.transform += ' translateY(440px) rotate(45deg)';
         leafElem.style.opacity = '0';
         setTimeout(() => {
+          // Remove leaf from array; automatically uncovering lower leaves
           leaves = leaves.filter(l => l.id !== leafId);
           renderPlayfield();
         }, 450);
@@ -761,13 +804,17 @@
     if (boosters[type] <= 0) return;
 
     if (type === 'drill') {
-      for (let l of leaves) {
-        for (let s of l.slots) {
-          if (s.color !== null) {
-            boosters.drill--;
-            document.getElementById('drill-count').innerText = boosters.drill;
-            handleScrewClick(l.id, s.screwId, s.color);
-            return;
+      // Drill uncovers and removes an exposed screw
+      for (let i = leaves.length - 1; i >= 0; i--) {
+        let l = leaves[i];
+        if (!isLeafCovered(l)) {
+          for (let s of l.slots) {
+            if (s.color !== null) {
+              boosters.drill--;
+              document.getElementById('drill-count').innerText = boosters.drill;
+              handleScrewClick(l.id, s.screwId, s.color);
+              return;
+            }
           }
         }
       }
@@ -803,7 +850,6 @@
     alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
   }
 
-  // Start Level
   generateLevel(currentLevel);
 </script>
 </body>
