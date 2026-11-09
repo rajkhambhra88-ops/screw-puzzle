@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Screw Jam 3D Real Physics</title>
+<title>Screw Puzzle 3D Deluxe</title>
 <style>
   * {
     box-sizing: border-box;
@@ -57,16 +57,22 @@
   .top-right-icons {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
   }
-  .cart-icon {
-    font-size: 26px;
+  .ad-showcase-btn {
+    background: #e67e22;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 8px;
+    border-radius: 8px;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   .star-badge {
     position: relative;
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     background: linear-gradient(135deg, #99939a, #6c666f);
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     display: flex;
@@ -76,9 +82,7 @@
     font-size: 11px;
     font-weight: 900;
   }
-  .star-badge span {
-    margin-top: 4px;
-  }
+  .star-badge span { margin-top: 4px; }
 
   /* 3D Toy Boxes */
   .boxes-container {
@@ -129,10 +133,7 @@
     justify-content: center;
     align-items: center;
   }
-  .box-hole.filled {
-    box-shadow: none;
-    background: transparent;
-  }
+  .box-hole.filled { box-shadow: none; background: transparent; }
 
   .ad-box {
     background: linear-gradient(145deg, #fedc4f, #f1b312);
@@ -143,12 +144,7 @@
     align-items: center;
     cursor: pointer;
   }
-  .ad-box .plus {
-    font-size: 34px;
-    font-weight: 900;
-    color: #5d3f00;
-    line-height: 26px;
-  }
+  .ad-box .plus { font-size: 34px; font-weight: 900; color: #5d3f00; line-height: 26px; }
   .ad-box .ad-tag {
     position: absolute;
     bottom: 5px;
@@ -181,15 +177,13 @@
     position: relative;
   }
 
-  /* 3D Playfield Canvas */
+  /* Playfield & Plates */
   .playfield {
     flex: 1;
     position: relative;
     margin: 6px 12px;
     overflow: hidden;
   }
-
-  /* Various Plate Shapes */
   .plate {
     position: absolute;
     display: flex;
@@ -203,37 +197,16 @@
     transition: opacity 0.4s;
     will-change: transform;
   }
-  /* Shape 1: Leaf */
-  .shape-leaf {
-    width: 145px;
-    height: 56px;
-    border-radius: 70px 0px 70px 0px;
-  }
-  /* Shape 2: Curved Arch / Crescent */
-  .shape-arch {
-    width: 145px;
-    height: 54px;
-    border-radius: 40px 40px 15px 15px;
-  }
-  /* Shape 3: Straight Mechanical Bar */
-  .shape-bar {
-    width: 140px;
-    height: 50px;
-    border-radius: 25px;
-  }
-  /* Shape 4: Wedge Plate */
-  .shape-wedge {
-    width: 135px;
-    height: 54px;
-    border-radius: 35px 8px 35px 8px;
-  }
+  .shape-leaf { width: 145px; height: 56px; border-radius: 70px 0px 70px 0px; }
+  .shape-arch { width: 145px; height: 54px; border-radius: 40px 40px 15px 15px; }
+  .shape-bar  { width: 140px; height: 50px; border-radius: 25px; }
+  .shape-wedge { width: 135px; height: 54px; border-radius: 35px 8px 35px 8px; }
 
   .leaf-green  { background: linear-gradient(135deg, #6ae0b2, #39b384); }
   .leaf-blue   { background: linear-gradient(135deg, #6fd0ff, #319edd); }
   .leaf-yellow { background: linear-gradient(135deg, #ffdf79, #e0a92f); }
   .leaf-purple { background: linear-gradient(135deg, #ccb4f7, #9878d6); }
 
-  /* Plate Hole Socket */
   .leaf-hole-socket {
     width: 32px;
     height: 32px;
@@ -247,7 +220,7 @@
     flex-shrink: 0;
   }
 
-  /* 3D Realistic Screws */
+  /* 3D Screws */
   .screw {
     width: 32px;
     height: 32px;
@@ -263,15 +236,9 @@
     justify-content: center;
     align-items: center;
   }
-  .screw:active {
-    transform: scale(0.92);
-  }
-  .screw.covered-screw {
-    filter: brightness(0.68) saturate(0.85);
-  }
-  .screw.shake {
-    animation: shakeAnim 0.3s ease;
-  }
+  .screw:active { transform: scale(0.92); }
+  .screw.covered-screw { filter: brightness(0.68) saturate(0.85); }
+  .screw.shake { animation: shakeAnim 0.3s ease; }
   @keyframes shakeAnim {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px) rotate(-12deg); }
@@ -288,28 +255,12 @@
   .screw::before { width: 16px; height: 4.5px; }
   .screw::after  { width: 4.5px; height: 16px; }
 
-  .screw-orange {
-    background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%);
-    border: 2px solid #a34300;
-  }
-  .screw-yellow {
-    background: radial-gradient(circle at 35% 30%, #fff799 5%, #f7c51e 55%, #b48500 100%);
-    border: 2px solid #9e7500;
-  }
-  .screw-blue {
-    background: radial-gradient(circle at 35% 30%, #9be4ff 5%, #2a9fe5 55%, #0f5c9e 100%);
-    border: 2px solid #0d548f;
-  }
-  .screw-brown {
-    background: radial-gradient(circle at 35% 30%, #c9936e 5%, #8e5229 55%, #4e260c 100%);
-    border: 2px solid #48230b;
-  }
+  .screw-orange { background: radial-gradient(circle at 35% 30%, #ffbe73 5%, #ff7e14 55%, #b74a00 100%); border: 2px solid #a34300; }
+  .screw-yellow { background: radial-gradient(circle at 35% 30%, #fff799 5%, #f7c51e 55%, #b48500 100%); border: 2px solid #9e7500; }
+  .screw-blue   { background: radial-gradient(circle at 35% 30%, #9be4ff 5%, #2a9fe5 55%, #0f5c9e 100%); border: 2px solid #0d548f; }
+  .screw-brown  { background: radial-gradient(circle at 35% 30%, #c9936e 5%, #8e5229 55%, #4e260c 100%); border: 2px solid #48230b; }
 
-  .screw-mini {
-    width: 20px;
-    height: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
+  .screw-mini { width: 20px; height: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
   .screw-mini::before { width: 10px; height: 3px; }
   .screw-mini::after  { width: 3px; height: 10px; }
 
@@ -335,10 +286,6 @@
     box-shadow: inset 0 2px 2px #fff, 0 5px 0 #9f6c00, 0 7px 10px rgba(0,0,0,0.22);
     cursor: pointer;
   }
-  .booster-btn:active {
-    transform: translateY(4px);
-    box-shadow: inset 0 2px 2px #fff, 0 1px 0 #9f6c00, 0 2px 4px rgba(0,0,0,0.22);
-  }
   .booster-badge {
     position: absolute;
     top: -7px;
@@ -352,7 +299,103 @@
     color: #222;
   }
 
-  /* Modals */
+  /* ================= 3D Video Ad Overlay ================= */
+  #ad-video-modal {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(18, 14, 11, 0.95);
+    backdrop-filter: blur(8px);
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 20px;
+    z-index: 500;
+  }
+  .ad-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ad-badge {
+    background: #f1c40f;
+    color: #2c3e50;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .ad-close {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .ad-screen {
+    width: 100%;
+    height: 380px;
+    background: radial-gradient(circle at center, #2e2825, #141110);
+    border: 3px solid #ffbe73;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .ad-leaf-demo {
+    position: absolute;
+    width: 160px;
+    height: 60px;
+    border-radius: 80px 0px 80px 0px;
+    background: linear-gradient(135deg, #6ae0b2, #39b384);
+    border: 4px solid #fff;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    animation: adSwing 2.2s infinite ease-in-out;
+    transform-origin: 25% 50%;
+  }
+  @keyframes adSwing {
+    0%, 100% { transform: rotate(70deg); }
+    50% { transform: rotate(95deg); }
+  }
+  .ad-subtext {
+    position: absolute;
+    bottom: 20px;
+    background: rgba(0,0,0,0.75);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fedc4f;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  .ad-install-btn {
+    width: 100%;
+    padding: 16px 0;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: 900;
+    border-radius: 20px;
+    box-shadow: 0 6px 0 #1e8449, 0 12px 25px rgba(46,204,113,0.45);
+    display: block;
+    cursor: pointer;
+  }
+  .ad-install-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #1e8449;
+  }
+
+  /* Win/Fail Modals */
   .overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -372,12 +415,7 @@
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
     max-width: 82%;
   }
-  .modal-title {
-    font-size: 26px;
-    font-weight: 900;
-    margin-bottom: 8px;
-    color: #333;
-  }
+  .modal-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; color: #333; }
   .modal-btn {
     margin-top: 18px;
     background: linear-gradient(135deg, #4bd59f, #229f6d);
@@ -400,12 +438,13 @@
     <div class="pause-btn" onclick="togglePause()">❚❚</div>
     <div class="level-title" id="level-display">LEVEL 1</div>
     <div class="top-right-icons">
-      <div class="cart-icon" onclick="resetBoosterCounts()">🛒</div>
+      <!-- सुंदर वीडियो ऐड देखने का बटन -->
+      <div class="ad-showcase-btn" onclick="openAdVideo()">🎬 Ad Video</div>
       <div class="star-badge"><span id="progress-text">0%</span></div>
     </div>
   </div>
 
-  <!-- Target Boxes -->
+  <!-- Boxes Row -->
   <div class="boxes-container" id="boxes-row"></div>
 
   <!-- Buffer Holes -->
@@ -414,7 +453,7 @@
   <!-- Playfield -->
   <div class="playfield" id="playfield"></div>
 
-  <!-- Boosters -->
+  <!-- Boosters Bar -->
   <div class="bottom-bar">
     <div class="booster-btn" onclick="useBooster('drill')">
       <span style="font-size:28px;">🪛</span>
@@ -428,6 +467,32 @@
       <span style="font-size:28px;">🧹</span>
       <div class="booster-badge" id="cleaner-count">1</div>
     </div>
+  </div>
+
+  <!-- ================= सुंदर वीडियो ऐड पॉपअप ================= -->
+  <div id="ad-video-modal">
+    <div class="ad-header">
+      <div class="ad-badge">⭐ SPONSORED PROMO</div>
+      <div class="ad-close" onclick="closeAdVideo()">✕</div>
+    </div>
+
+    <div class="ad-screen">
+      <div style="font-size: 38px; position: absolute; top: 25px;">🔩 🧩 ⚙️</div>
+      <!-- 3D झूलती प्लेट का डेमो वीडियो एनिमेशन -->
+      <div class="ad-leaf-demo">
+        <div class="screw screw-mini screw-yellow"></div>
+        <div class="screw screw-mini screw-orange"></div>
+      </div>
+      <div class="ad-subtext" id="ad-subtext-rotator">✨ असली 3D फ़िज़िक्स और झूलती प्लेट्स का मज़ा!</div>
+    </div>
+
+    <!-- इंस्टॉल / प्ले लिंक बटन -->
+    <a href="https://rajkhambhra88-ops.github.io/screw-puzzle/index.html" 
+       target="_blank" 
+       class="ad-install-btn" 
+       onclick="closeAdVideo()">
+       📲 INSTALL / PLAY NOW
+    </a>
   </div>
 
   <!-- Win Modal -->
@@ -575,9 +640,9 @@
         slots: slots,
         isHanging: false,
         hangBaseAngle: 0,
-        swingPhase: Math.random() * Math.PI * 2, // Natural offset for swing
+        swingPhase: Math.random() * Math.PI * 2,
         swingSpeed: 1.8 + Math.random() * 0.8,
-        swingAmplitude: 14 + Math.random() * 6 // Degrees of gentle sway
+        swingAmplitude: 14 + Math.random() * 6
       });
     }
 
@@ -596,7 +661,6 @@
     renderPlayfield();
   }
 
-  // Exact Pixel-Collision: Raycasting through elementsFromPoint
   function isScrewCovered(screwElement, leafId) {
     if (!screwElement) return false;
     const sRect = screwElement.getBoundingClientRect();
@@ -610,7 +674,6 @@
       const parentLeaf = el.closest('.plate');
       if (parentLeaf && parentLeaf.id !== leafId) {
         const topLeafIdx = leaves.findIndex(l => l.id === parentLeaf.id);
-        // If an upper leaf is hovering over this screw, it is locked!
         if (topLeafIdx > targetLeafIdx) {
           return true;
         }
@@ -718,12 +781,9 @@
     const dt = (now - lastTime) / 1000;
     lastTime = now;
 
-    let anySwinging = false;
     leaves.forEach((l) => {
       if (l.isHanging) {
-        anySwinging = true;
         l.swingPhase += l.swingSpeed * dt;
-        // Harmonic smooth pendulum oscillation
         const sway = Math.sin(l.swingPhase) * l.swingAmplitude;
         l.currentRot = l.hangBaseAngle + sway;
 
@@ -735,7 +795,6 @@
       }
     });
 
-    // Real-time lock / unlock check as plates swing dynamically over screws
     leaves.forEach((l) => {
       l.slots.forEach((slot) => {
         if (slot.color !== null) {
@@ -799,7 +858,6 @@
 
     const remainingSlots = leaf.slots.filter(s => s.color !== null);
 
-    // ZERO screws: Drop off
     if (remainingSlots.length === 0) {
       leaf.isHanging = false;
       const leafElem = document.getElementById(leaf.id);
@@ -814,7 +872,6 @@
       return;
     }
 
-    // EXACTLY 1 SCREW REMAINING: Hang down & begin real-time physics swing!
     if (remainingSlots.length === 1) {
       const pivotSlot = remainingSlots[0];
       const totalSlots = leaf.slots.length;
@@ -826,7 +883,6 @@
       leaf.pivotOrigin = `${percentX} 50%`;
       leaf.isHanging = true;
 
-      // Base gravity angle (always pointing downward)
       if (totalSlots === 2) {
         leaf.hangBaseAngle = (pivotSlot.slotId === 0) ? 82 : -82;
       } else {
@@ -973,35 +1029,33 @@
     alert("गेम पॉज़ है। जारी रखने के लिए OK दबाएं।");
   }
 
+  /* ================= AD VIDEO POPUP LOGIC ================= */
+  let adInterval = null;
+  const adMessages = [
+    "✨ असली 3D फ़िज़िक्स और झूलती प्लेट्स का मज़ा!",
+    "🧠 अपने दिमाग को तेज़ करें - 100+ नए लेवल्स!",
+    "🚀 बिना डाउनलोड झंझट के एक क्लिक में सीधे खेलें!",
+    "🏆 सिर्फ 5% खिलाड़ी ही लेवल 10 पार कर पाते हैं!"
+  ];
+  let adMsgIdx = 0;
+
+  function openAdVideo() {
+    playSound('creak');
+    document.getElementById('ad-video-modal').style.display = 'flex';
+    adMsgIdx = 0;
+    adInterval = setInterval(() => {
+      adMsgIdx = (adMsgIdx + 1) % adMessages.length;
+      const el = document.getElementById('ad-subtext-rotator');
+      if (el) el.innerText = adMessages[adMsgIdx];
+    }, 2200);
+  }
+
+  function closeAdVideo() {
+    clearInterval(adInterval);
+    document.getElementById('ad-video-modal').style.display = 'none';
+  }
+
   generateLevel(currentLevel);
 </script>
-<div style="max-width: 360px; margin: 20px auto; padding: 24px; background: radial-gradient(circle at center, #fff8ee 0%, #ecd7ba 100%); border-radius: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); text-align: center; border: 4px solid #fff; font-family: 'Segoe UI', Roboto, sans-serif;">
-  
-  <!-- आकर्षक 3D स्क्रू ग्राफ़िक -->
-  <div style="font-size: 54px; margin-bottom: 8px; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.25)); animation: bounce 1.5s infinite alternate;">
-    🔩 ✨ 🧩
-  </div>
-  
-  <h2 style="font-size: 24px; color: #3d3126; margin-bottom: 6px; font-weight: 900;">
-    Screw Puzzle 3D Deluxe
-  </h2>
-  
-  <p style="font-size: 14px; color: #6e5845; margin-bottom: 18px; line-height: 1.4; font-weight: 600;">
-    असली 3D फ़िज़िक्स और झूलती प्लेट्स का रोमांच! सही स्क्रू खोलें और अपने दिमाग की परीक्षा लें।
-  </p>
-
-  <!-- फ़ीचर बैज -->
-  <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
-    <span style="background: #e1f4e5; color: #217336; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;">✓ फ्री गेम</span>
-    <span style="background: #e3f2fd; color: #1565c0; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;">✓ 3D रियल फ़िज़िक्स</span>
-  </div>
-
-  <!-- इंस्टॉल / प्ले लिंक बटन -->
-  <a href="https://rajkhambhra88-ops.github.io/screw-puzzle/index.html" 
-     target="_blank" 
-     style="display: block; width: 100%; padding: 14px 0; background: linear-gradient(135deg, #2ecc71, #27ae60); color: #ffffff; text-decoration: none; font-size: 18px; font-weight: 900; border-radius: 16px; box-shadow: 0 6px 0 #1e8449, 0 10px 20px rgba(46,204,113,0.4); text-transform: uppercase; letter-spacing: 0.5px;">
-    📲 अभी खेलें / इंस्टॉल करें
-  </a>
-</div>
 </body>
 </html>
