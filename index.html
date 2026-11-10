@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0d14">
-<title>Screw Jam 3D - Cinematic Neon</title>
+<title>Screw Jam 3D - Ultimate Deluxe Master</title>
 <style>
+  :root {
+    --c-blue: #00d4ff;
+    --c-pink: #ff007f;
+    --c-yellow: #ffb700;
+    --c-green: #00e676;
+  }
   * {
     box-sizing: border-box;
     margin: 0;
@@ -16,7 +22,7 @@
   }
   body {
     min-height: 100dvh;
-    background: radial-gradient(circle at 50% 30%, #172033 0%, #080b12 75%, #020408 100%);
+    background: radial-gradient(circle at 50% 30%, #151e2f 0%, #070a10 80%, #020305 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,23 +32,23 @@
     width: min(100%, 450px);
     height: 100dvh;
     max-height: 920px;
-    background: radial-gradient(ellipse at 50% 25%, #161e2e 0%, #0c1017 65%, #05070a 100%);
+    background: radial-gradient(ellipse at 50% 25%, #141b29 0%, #090d14 65%, #040508 100%);
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 0 60px rgba(0, 229, 255, 0.15);
+    box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
     overflow: hidden;
   }
 
-  /* HUD Header */
+  /* HUD Top Bar */
   .top-hud {
-    height: 60px;
+    height: 58px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
-    background: linear-gradient(180deg, rgba(20, 28, 44, 0.95), rgba(10, 14, 22, 0.95));
-    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
+    background: linear-gradient(180deg, rgba(20, 28, 44, 0.95), rgba(8, 12, 18, 0.95));
+    border-bottom: 1.5px solid rgba(0, 212, 255, 0.3);
     z-index: 100;
   }
   .hud-btn {
@@ -51,13 +57,13 @@
     border-radius: 12px;
     background: linear-gradient(145deg, #1e293b, #0f172a);
     border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 3px 6px rgba(0,0,0,0.6);
     font-size: 17px;
     font-weight: 900;
-    color: #00e5ff;
+    color: #00d4ff;
     cursor: pointer;
     display: grid;
     place-items: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.6);
   }
   .hud-btn:active { transform: scale(0.92); }
   .hud-title { text-align: center; }
@@ -73,17 +79,17 @@
     font-size: 9px;
     font-weight: 900;
     letter-spacing: 2px;
-    color: #00e5ff;
+    color: #00d4ff;
   }
   .coin-pill {
     background: linear-gradient(145deg, #1e293b, #0f172a);
-    border: 1px solid #eab308;
+    border: 1px solid #ffb700;
     padding: 5px 12px;
     border-radius: 14px;
     font-weight: 900;
-    color: #facc15;
+    color: #ffb700;
     font-size: 13px;
-    box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+    box-shadow: 0 0 10px rgba(255, 183, 0, 0.25);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -92,51 +98,78 @@
   /* Progress Line */
   .rail-bar {
     height: 4px;
-    background: #111827;
+    background: #0f172a;
     width: 100%;
     z-index: 90;
   }
   #fill-line {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #00e5ff, #00ff66, #ffea00);
-    box-shadow: 0 0 10px #00e5ff;
+    background: linear-gradient(90deg, #00d4ff, #00e676, #ffb700);
+    box-shadow: 0 0 10px #00d4ff;
     transition: width 0.35s ease;
   }
 
-  /* 3D Toolboxes */
+  /* 3D Distinct Colored Toolboxes */
   .boxes-dock {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    padding: 12px 14px 6px;
+    gap: 9px;
+    padding: 10px 12px 6px;
     z-index: 90;
   }
   .tool-box {
     width: clamp(74px, 21vw, 88px);
-    height: clamp(66px, 18vw, 76px);
-    border-radius: 16px;
-    background: linear-gradient(145deg, #1a2333, #0a0e17);
-    border: 2px solid rgba(255,255,255,0.12);
+    height: clamp(68px, 18vw, 78px);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #162030, #0a0e17);
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     padding: 0 4px;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.15),
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.18),
                 0 10px 20px rgba(0,0,0,0.6);
+    transition: transform 0.2s cubic-bezier(0.34, 1.5, 0.64, 1);
   }
-  .tool-box.box-blue   { border-color: #00e5ff; box-shadow: 0 0 16px rgba(0, 229, 255, 0.35); }
-  .tool-box.box-pink   { border-color: #ff0055; box-shadow: 0 0 16px rgba(255, 0, 85, 0.35); }
-  .tool-box.box-yellow { border-color: #ffea00; box-shadow: 0 0 16px rgba(255, 234, 0, 0.35); }
-  .tool-box.box-green  { border-color: #00ff66; box-shadow: 0 0 16px rgba(0, 255, 102, 0.35); }
+  .tool-box.box-blue {
+    border: 2.5px solid var(--c-blue);
+    box-shadow: 0 0 18px rgba(0, 212, 255, 0.45);
+  }
+  .tool-box.box-pink {
+    border: 2.5px solid var(--c-pink);
+    box-shadow: 0 0 18px rgba(255, 0, 127, 0.45);
+  }
+  .tool-box.box-yellow {
+    border: 2.5px solid var(--c-yellow);
+    box-shadow: 0 0 18px rgba(255, 183, 0, 0.45);
+  }
+  .tool-box.box-green {
+    border: 2.5px solid var(--c-green);
+    box-shadow: 0 0 18px rgba(0, 230, 118, 0.45);
+  }
+
+  .box-label-pill {
+    position: absolute;
+    top: -8px;
+    font-size: 8px;
+    font-weight: 1000;
+    padding: 1px 6px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .pill-blue   { background: var(--c-blue); color: #000; }
+  .pill-pink   { background: var(--c-pink); color: #fff; }
+  .pill-yellow { background: var(--c-yellow); color: #000; }
+  .pill-green  { background: var(--c-green); color: #000; }
 
   .box-socket {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, #020305, #121824);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: radial-gradient(circle at center, #020305, #0f1622);
+    border: 1px solid rgba(255,255,255,0.12);
     box-shadow: inset 2px 2px 5px #000;
     display: flex;
     justify-content: center;
@@ -145,115 +178,106 @@
   }
 
   .tool-box.ad-slot {
-    border: 2px dashed #ffea00;
+    border: 2px dashed #ffb700;
     cursor: pointer;
     flex-direction: column;
     justify-content: center;
     gap: 2px;
   }
-  .tool-box.ad-slot span { font-size: 26px; color: #ffea00; line-height: 1; }
-  .tool-box.ad-slot small { font-size: 8px; font-weight: 900; background: #eab308; color: #000; padding: 1px 5px; border-radius: 4px; }
+  .tool-box.ad-slot span { font-size: 26px; color: #ffb700; line-height: 1; }
+  .tool-box.ad-slot small { font-size: 8px; font-weight: 900; background: #ffb700; color: #000; padding: 1px 5px; border-radius: 4px; }
 
   /* Buffer Rack */
   .buffer-deck {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    padding: 6px 14px 10px;
+    gap: 11px;
+    padding: 4px 14px 8px;
     z-index: 90;
   }
   .buffer-cup {
-    width: 28px;
-    height: 28px;
+    width: 29px;
+    height: 29px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #1e293b, #05070a);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    box-shadow: inset 3px 3px 6px #000, 0 0 8px rgba(0, 229, 255, 0.15);
+    background: radial-gradient(circle at 35% 35%, #1c2738, #05070a);
+    border: 1.5px solid rgba(0, 212, 255, 0.35);
+    box-shadow: inset 3px 3px 6px #000, 0 0 8px rgba(0, 212, 255, 0.15);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
 
-  /* 3D Dark Studio Arena */
+  /* 3D Dark Arena */
   .arena {
     flex: 1;
     position: relative;
     margin: 4px 12px 10px;
     border-radius: 26px;
-    background: radial-gradient(ellipse at 50% 40%, #151d2c 0%, #0d121c 65%, #06090e 100%);
+    background: radial-gradient(ellipse at 50% 40%, #131b28 0%, #0b0f17 65%, #05070a 100%);
     border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: inset 0 0 35px rgba(0,0,0,0.8);
+    box-shadow: inset 0 0 35px rgba(0,0,0,0.85);
     overflow: hidden;
   }
   .arena::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(0, 229, 255, 0.12) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(rgba(0, 212, 255, 0.12) 1.5px, transparent 1.5px);
     background-size: 22px 22px;
     pointer-events: none;
   }
 
-  /* Glowing Acrylic Neon Plates */
+  /* Diverse Geometric 3D Neon Plates */
   .neon-plate {
     position: absolute;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     padding: 0 10px;
-    border-radius: 20px;
     backdrop-filter: blur(4px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.6);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.65), inset 0 1px 3px rgba(255,255,255,0.7);
     transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s;
     will-change: transform;
   }
-  .neon-plate::after {
-    content: '';
-    position: absolute;
-    width: 80%;
-    height: 3px;
-    border-radius: 2px;
-    pointer-events: none;
-    opacity: 0.8;
-  }
+  /* Different Unique Plate Shapes */
+  .shape-leaf      { width: 145px; height: 56px; border-radius: 70px 0 70px 0; }
+  .shape-beam      { width: 140px; height: 48px; border-radius: 24px; }
+  .shape-square    { width: 100px; height: 95px; border-radius: 22px; }
+  .shape-circle    { width: 95px;  height: 95px; border-radius: 50%; }
+  .shape-arch      { width: 145px; height: 55px; border-radius: 40px 40px 12px 12px; }
+  .shape-trapezoid { width: 140px; height: 54px; border-radius: 35px 8px 35px 8px; }
 
-  .plate-blue {
-    background: rgba(0, 180, 255, 0.35);
-    border: 3px solid #00e5ff;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 12px rgba(0, 229, 255, 0.3);
+  /* Plate Glow Themes */
+  .theme-blue {
+    background: rgba(0, 212, 255, 0.28);
+    border: 3px solid var(--c-blue);
+    box-shadow: 0 0 22px rgba(0, 212, 255, 0.45), inset 0 0 12px rgba(0, 212, 255, 0.3);
   }
-  .plate-blue::after { background: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
-
-  .plate-pink {
-    background: rgba(255, 0, 85, 0.35);
-    border: 3px solid #ff0055;
-    box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 12px rgba(255, 0, 85, 0.3);
+  .theme-pink {
+    background: rgba(255, 0, 127, 0.28);
+    border: 3px solid var(--c-pink);
+    box-shadow: 0 0 22px rgba(255, 0, 127, 0.45), inset 0 0 12px rgba(255, 0, 127, 0.3);
   }
-  .plate-pink::after { background: #ff0055; box-shadow: 0 0 8px #ff0055; }
-
-  .plate-yellow {
-    background: rgba(255, 234, 0, 0.35);
-    border: 3px solid #ffea00;
-    box-shadow: 0 0 20px rgba(255, 234, 0, 0.4), inset 0 0 12px rgba(255, 234, 0, 0.3);
+  .theme-yellow {
+    background: rgba(255, 183, 0, 0.28);
+    border: 3px solid var(--c-yellow);
+    box-shadow: 0 0 22px rgba(255, 183, 0, 0.45), inset 0 0 12px rgba(255, 183, 0, 0.3);
   }
-  .plate-yellow::after { background: #ffea00; box-shadow: 0 0 8px #ffea00; }
-
-  .plate-green {
-    background: rgba(0, 255, 102, 0.35);
-    border: 3px solid #00ff66;
-    box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 0 12px rgba(0, 255, 102, 0.3);
+  .theme-green {
+    background: rgba(0, 230, 118, 0.28);
+    border: 3px solid var(--c-green);
+    box-shadow: 0 0 22px rgba(0, 230, 118, 0.45), inset 0 0 12px rgba(0, 230, 118, 0.3);
   }
-  .plate-green::after { background: #00ff66; box-shadow: 0 0 8px #00ff66; }
 
   /* Plate Hole Socket */
   .acrylic-hole {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, #05070a 45%, #131b26 80%, #202d40 100%);
-    border: 1.5px solid rgba(255,255,255,0.4);
-    box-shadow: inset 2px 2px 5px #000, 0 0 8px rgba(0, 229, 255, 0.3);
+    background: radial-gradient(circle at center, #030507 45%, #111722 80%, #1b2636 100%);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    box-shadow: inset 2px 2px 5px #000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -261,48 +285,56 @@
     flex-shrink: 0;
   }
 
-  /* 3D Chrome Screws */
+  /* High-Contrast Screws (दूर से साफ पहचान) */
   .metallic-screw {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #cbd5e1 35%, #475569 70%, #1e293b 100%);
-    border: 2px solid #94a3b8;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.9),
-                inset 0 -3px 4px rgba(0,0,0,0.8),
-                0 6px 12px rgba(0,0,0,0.6);
     cursor: pointer;
     position: relative;
     z-index: 5;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.9),
+                inset 0 -3px 4px rgba(0,0,0,0.8),
+                0 6px 12px rgba(0,0,0,0.7);
     transition: filter 0.2s, transform 0.1s;
   }
   .metallic-screw::before, .metallic-screw::after {
     content: '';
     position: absolute;
-    background: #0f172a;
+    background: #090d14;
     border-radius: 2px;
-    box-shadow: 0 1px 1px rgba(255,255,255,0.6);
+    box-shadow: 0 1px 1px rgba(255,255,255,0.7);
   }
   .metallic-screw::before { width: 15px; height: 3.5px; }
   .metallic-screw::after  { width: 3.5px; height: 15px; }
 
-  .screw-ring {
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0.85;
+  /* Screws matching box colors directly with rich gradients */
+  .screw-blue {
+    background: radial-gradient(circle at 35% 30%, #b3f4ff 0%, #00d4ff 50%, #006b80 100%);
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
   }
-  .ring-blue   { border: 2px solid #00e5ff; box-shadow: 0 0 8px #00e5ff; }
-  .ring-pink   { border: 2px solid #ff0055; box-shadow: 0 0 8px #ff0055; }
-  .ring-yellow { border: 2px solid #ffea00; box-shadow: 0 0 8px #ffea00; }
-  .ring-green  { border: 2px solid #00ff66; box-shadow: 0 0 8px #00ff66; }
+  .screw-pink {
+    background: radial-gradient(circle at 35% 30%, #ffb3d9 0%, #ff007f 50%, #800040 100%);
+    border: 2px solid #ff007f;
+    box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
+  }
+  .screw-yellow {
+    background: radial-gradient(circle at 35% 30%, #fff2b3 0%, #ffb700 50%, #805c00 100%);
+    border: 2px solid #ffb700;
+    box-shadow: 0 0 12px rgba(255, 183, 0, 0.6);
+  }
+  .screw-green {
+    background: radial-gradient(circle at 35% 30%, #b3ffd9 0%, #00e676 50%, #00733b 100%);
+    border: 2px solid #00e676;
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
+  }
 
   .metallic-screw.locked {
-    filter: brightness(0.4) saturate(0.5);
+    filter: brightness(0.38) saturate(0.4);
     cursor: not-allowed;
   }
   .metallic-screw.shake {
@@ -334,14 +366,14 @@
     align-items: center;
     padding: 8px 16px 65px;
     background: linear-gradient(180deg, rgba(16, 24, 38, 0.95), #06090e);
-    border-top: 1px solid rgba(0, 229, 255, 0.2);
+    border-top: 1px solid rgba(0, 212, 255, 0.2);
     z-index: 90;
   }
   .boost-card {
     width: 30%;
     height: 54px;
     background: linear-gradient(145deg, #1e293b, #0f172a);
-    border: 1.5px solid rgba(0, 229, 255, 0.4);
+    border: 1.5px solid rgba(0, 212, 255, 0.4);
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -354,7 +386,7 @@
   .boost-badge {
     font-size: 11px;
     font-weight: 1000;
-    background: #00e5ff;
+    background: #00d4ff;
     color: #000;
     padding: 1px 6px;
     border-radius: 6px;
@@ -376,8 +408,8 @@
   .glow-dialog {
     width: min(340px, 90%);
     background: linear-gradient(145deg, #131c2e, #090e17);
-    border: 2px solid #00e5ff;
-    box-shadow: 0 0 35px rgba(0, 229, 255, 0.35);
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 35px rgba(0, 212, 255, 0.35);
     border-radius: 24px;
     padding: 24px 20px;
     text-align: center;
@@ -398,13 +430,13 @@
     margin-top: 18px;
     width: 100%;
     padding: 12px 0;
-    background: linear-gradient(135deg, #00e5ff, #0284c7);
+    background: linear-gradient(135deg, #00d4ff, #0284c7);
     color: #000;
     border: none;
     font-size: 16px;
     font-weight: 1000;
     border-radius: 14px;
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
     cursor: pointer;
   }
   .glow-btn.sec {
@@ -420,8 +452,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(15, 23, 42, 0.95);
-    border: 1px solid #00e5ff;
-    color: #00e5ff;
+    border: 1px solid #00d4ff;
+    color: #00d4ff;
     padding: 10px 18px;
     border-radius: 12px;
     font-size: 13px;
@@ -430,6 +462,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
     white-space: nowrap;
   }
   .toast.show { opacity: 1; }
@@ -482,9 +515,9 @@
 
   <div class="overlay" id="fail-modal">
     <div class="glow-dialog">
-      <h2 style="color:#ff0055;">गेम ओवर! ⚠️</h2>
+      <h2 style="color:#ff007f;">गेम ओवर! ⚠️</h2>
       <p>बफ़र के सभी स्लॉट भर गए हैं।</p>
-      <button class="glow-btn" style="background:#ff0055; color:#fff;" onclick="retryLevel()">पुनः प्रयास करें</button>
+      <button class="glow-btn" style="background:#ff007f; color:#fff;" onclick="retryLevel()">पुनः प्रयास करें</button>
     </div>
   </div>
 
@@ -567,6 +600,7 @@
   }
 
   const NEON_COLORS = ['blue', 'pink', 'yellow', 'green'];
+  const SHAPE_STYLES = ['shape-leaf', 'shape-beam', 'shape-square', 'shape-circle', 'shape-arch', 'shape-trapezoid'];
 
   let level = Math.max(1, parseInt(localStorage.getItem('sj3_level') || '1'));
   let coins = Math.max(0, parseInt(localStorage.getItem('sj3_coins') || '100'));
@@ -584,17 +618,23 @@
     localStorage.setItem('sj3_coins', coins);
   }
 
+  // 100% सटीक गणितीय संतुलन: हमेशा 3 के गुणक में स्क्रू बनेंगे ताकि कोई बॉक्स अधूरा न रहे
   function buildLevel(lvl) {
-    let plateCount, activeColors;
-    if (lvl === 1) {
-      plateCount = 2;
-      activeColors = ['blue', 'yellow'];
-    } else if (lvl === 2) {
-      plateCount = 3;
-      activeColors = ['blue', 'pink', 'yellow'];
-    } else {
-      plateCount = Math.min(10, 4 + Math.floor((lvl - 3) * 0.7));
-      activeColors = NEON_COLORS;
+    let activeColors = (lvl === 1) ? ['blue', 'yellow'] : (lvl === 2 ? ['blue', 'pink', 'yellow'] : NEON_COLORS);
+
+    let setsPerColor = (lvl === 1) ? 2 : (lvl <= 3 ? 3 : 4); // हर रंग के कितने सेट (3x) बनेंगे
+    let screwPool = [];
+
+    activeColors.forEach(c => {
+      for (let s = 0; s < setsPerColor; s++) {
+        screwPool.push(c, c, c); // 3 स्क्रू प्रति सेट
+      }
+    });
+
+    // स्क्रू को यादृच्छिक रूप से मिलाएं (Shuffle)
+    for (let i = screwPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [screwPool[i], screwPool[j]] = [screwPool[j], screwPool[i]];
     }
 
     boxes = [
@@ -608,17 +648,13 @@
     plates = [];
     let screwCounter = 1;
 
-    for (let i = 0; i < plateCount; i++) {
-      let topPos = 45 + (i * 28) + (Math.sin(i * 1.5) * 16);
-      let leftPos = 22 + ((i % 3) * 65) + (Math.cos(i) * 20);
-      let baseRot = -25 + ((i * 35) % 65);
-      let pColor = activeColors[i % activeColors.length];
-
-      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
+    let pIdx = 0;
+    while (screwPool.length > 0) {
+      let numSlots = (screwPool.length === 2 || (pIdx % 2 === 0 && screwPool.length >= 2)) ? 2 : Math.min(3, screwPool.length);
       let slots = [];
 
       for (let s = 0; s < numSlots; s++) {
-        let scColor = activeColors[(i + s) % activeColors.length];
+        let scColor = screwPool.pop();
         slots.push({
           slotId: s,
           color: scColor,
@@ -626,14 +662,21 @@
         });
       }
 
+      let shape = SHAPE_STYLES[pIdx % SHAPE_STYLES.length];
+      let pColor = slots[0].color;
+      let topPos = 40 + (pIdx * 25) + (Math.sin(pIdx * 1.5) * 16);
+      let leftPos = 20 + ((pIdx % 3) * 65) + (Math.cos(pIdx) * 20);
+      let baseRot = -25 + ((pIdx * 35) % 65);
+
       plates.push({
-        id: 'p_' + (i + 1),
-        layer: i,
+        id: 'p_' + (pIdx + 1),
+        layer: pIdx,
         top: Math.round(topPos),
         left: Math.round(leftPos),
         currentRot: baseRot,
         pivotOrigin: 'center center',
         color: pColor,
+        shape: shape,
         slots: slots,
         isHanging: false,
         hangBaseAngle: 0,
@@ -641,6 +684,8 @@
         swingSpeed: 1.8 + Math.random() * 0.6,
         swingAmplitude: 12 + Math.random() * 6
       });
+
+      pIdx++;
     }
 
     totalScrews = 0;
@@ -687,16 +732,18 @@
 
       if (b.type === 'box') {
         card.classList.add('box-' + b.color);
+        const pill = document.createElement('div');
+        pill.className = `box-label-pill pill-${b.color}`;
+        pill.textContent = b.color;
+        card.appendChild(pill);
+
         for (let i = 0; i < 3; i++) {
           const socket = document.createElement('div');
           socket.className = 'box-socket';
           socket.id = `box-hole-${idx}-${i}`;
           if (i < b.count) {
             const sc = document.createElement('div');
-            sc.className = 'metallic-screw screw-mini';
-            const ring = document.createElement('div');
-            ring.className = `screw-ring ring-${b.color}`;
-            sc.appendChild(ring);
+            sc.className = `metallic-screw screw-mini screw-${b.color}`;
             socket.appendChild(sc);
           }
           card.appendChild(socket);
@@ -719,10 +766,7 @@
       cup.id = 'buffer-cup-' + idx;
       if (c) {
         const sc = document.createElement('div');
-        sc.className = 'metallic-screw screw-mini';
-        const ring = document.createElement('div');
-        ring.className = `screw-ring ring-${c}`;
-        sc.appendChild(ring);
+        sc.className = `metallic-screw screw-mini screw-${c}`;
         cup.appendChild(sc);
       }
       root.appendChild(cup);
@@ -735,10 +779,8 @@
 
     plates.forEach((p, pIdx) => {
       const pEl = document.createElement('div');
-      pEl.className = `neon-plate plate-${p.color}`;
+      pEl.className = `neon-plate theme-${p.color} ${p.shape}`;
       pEl.id = p.id;
-      pEl.style.width = (p.slots.length === 2 ? 140 : 155) + 'px';
-      pEl.style.height = '56px';
       pEl.style.top = p.top + 'px';
       pEl.style.left = p.left + 'px';
       pEl.style.transformOrigin = p.pivotOrigin;
@@ -751,12 +793,8 @@
 
         if (s.color) {
           const sc = document.createElement('div');
-          sc.className = 'metallic-screw';
+          sc.className = `metallic-screw screw-${s.color}`;
           sc.id = s.screwId;
-
-          const ring = document.createElement('div');
-          ring.className = `screw-ring ring-${s.color}`;
-          sc.appendChild(ring);
 
           sc.onclick = (e) => {
             e.stopPropagation();
@@ -771,6 +809,7 @@
     });
   }
 
+  // Physics Loop
   let lastTime = performance.now();
   function physicsEngine(now) {
     const dt = (now - lastTime) / 1000;
@@ -814,11 +853,7 @@
     const tRect = targetElem.getBoundingClientRect();
 
     const ghost = document.createElement('div');
-    ghost.className = 'metallic-screw flying-screw';
-    const ring = document.createElement('div');
-    ring.className = `screw-ring ring-${color}`;
-    ghost.appendChild(ring);
-
+    ghost.className = `metallic-screw screw-${color} flying-screw`;
     ghost.style.left = (sRect.left + sRect.width / 2) + 'px';
     ghost.style.top = (sRect.top + sRect.height / 2) + 'px';
     document.body.appendChild(ghost);
@@ -952,16 +987,19 @@
     });
   }
 
+  // रीसाइक्लिंग: बॉक्स पूरा होने पर बोर्ड पर बचे हुए रंग का ही अगला बॉक्स आएगा
   function recycleBox(box) {
     box.count = 0;
     const remaining = [];
     plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
     buffer.forEach(c => { if (c) remaining.push(c); });
 
-    if (remaining.length > 0) {
-      box.color = remaining[Math.floor(Math.random() * remaining.length)];
-    } else {
-      box.color = NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)];
+    // सक्रिय बॉक्स के रंगों को छोड़कर कोई अन्य रंग चुनें
+    const activeBoxColors = boxes.filter(b => b.type === 'box' && b !== box).map(b => b.color);
+    const candidate = remaining.find(c => !activeBoxColors.includes(c)) || remaining[0];
+
+    if (candidate) {
+      box.color = candidate;
     }
 
     renderBoxes();
@@ -987,8 +1025,13 @@
         clearInterval(timer);
         modal.style.display = 'none';
 
+        const remaining = [];
+        plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
+        buffer.forEach(c => { if (c) remaining.push(c); });
+
         const active = boxes.filter(b => b.type === 'box').map(b => b.color);
-        const nextColor = NEON_COLORS.find(c => !active.includes(c)) || 'green';
+        const nextColor = remaining.find(c => !active.includes(c)) || 'green';
+
         boxes[boxIdx] = { type: 'box', color: nextColor, count: 0, unlocked: true };
 
         playSound('box-full');
