@@ -3,139 +3,1177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#18243b">
-<title>Screw Puzzle 3D Deluxe</title>
+<meta name="theme-color" content="#1a2536">
+<title>Screw Puzzle 3D Master</title>
 <style>
-:root{--ink:#17243b;--gold:#ffd36a;--cream:#f5ead7}
-*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
-body{min-height:100dvh;background:radial-gradient(circle at 50% 12%,#435879,#111a2d 72%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center;color:#263044;overflow:hidden}
-button{font:inherit;cursor:pointer;border:0}
-#app{width:min(100%,480px);height:100dvh;min-height:560px;position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#f8eddb,#ddc7a6);box-shadow:0 0 45px #0008}
-.top{height:66px;display:flex;align-items:center;justify-content:space-between;padding:9px 15px;background:linear-gradient(180deg,#fff8e9,#ead8bd);box-shadow:0 3px 9px #65452630;z-index:5}
-.iconbtn{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#fff,#d7c4a9);box-shadow:inset 0 2px 3px #fff,0 3px 6px #674c3035;color:#38445a;font-size:19px;font-weight:900}
-.level{text-align:center;font-weight:1000;font-size:19px;letter-spacing:1px;color:#34415a}
-.sublevel{font-size:10px;color:#8b765a;letter-spacing:2px}
-.coins{background:linear-gradient(135deg,#fff0b4,#e9ae37);padding:8px 11px;border-radius:13px;font-weight:900;box-shadow:0 3px 0 #a87520;color:#68440c;font-size:13px}
-.progress-wrap{height:7px;background:#b9a78d;z-index:4}
-#progress{height:100%;width:0;background:linear-gradient(90deg,#4fc9a0,#a5e36e);transition:width .3s}
-.status{display:flex;justify-content:space-between;padding:8px 17px 3px;font-size:11px;font-weight:800;color:#806c52;letter-spacing:.7px}
-.boxes{display:flex;justify-content:center;gap:10px;padding:5px 10px 9px;z-index:3}
-.box{width:clamp(62px,17vw,76px);height:clamp(62px,17vw,76px);border-radius:19px;display:grid;place-items:center;position:relative;border:3px solid #ffffffa8;box-shadow:inset 0 4px 5px #fff9,inset 0 -7px 8px #0003,0 7px 10px #45301e45;transform:translateY(0);transition:transform .2s}
-.box:active{transform:translateY(3px)}
-.box-core{width:75%;height:75%;border-radius:13px;background:linear-gradient(145deg,#e9e4d4,#c8bda7);box-shadow:inset 0 3px 6px #0004;display:flex;align-items:center;justify-content:center;gap:3px}
-.mini-hole{width:23%;aspect-ratio:1;border-radius:50%;background:#526073;box-shadow:inset 2px 3px 5px #111}
-.box-count{position:absolute;right:-5px;top:-7px;border-radius:9px;background:#fff;color:#263044;font-size:11px;font-weight:1000;padding:2px 6px;box-shadow:0 2px 5px #0004}
-.box.ad{background:linear-gradient(145deg,#ffe56d,#e9a51b);color:#624300;font-size:29px;font-weight:1000}
-.box.ad small{position:absolute;bottom:3px;right:6px;font-size:9px;background:#4c9e43;color:#fff;border-radius:5px;padding:1px 4px}
-.buffer-label{text-align:center;font-size:10px;font-weight:900;letter-spacing:2px;color:#8c7555;margin:1px 0 5px}
-.buffer{display:flex;justify-content:center;gap:10px;padding:0 10px 8px}
-.slot{width:31px;height:31px;border-radius:50%;background:linear-gradient(145deg,#758398,#39465b);box-shadow:inset 3px 4px 7px #101827,0 2px 2px #fff8;display:grid;place-items:center}
-.playfield{flex:1;position:relative;margin:2px 10px 7px;border-radius:25px;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#f6e9d4 0,#e6d3b7 66%,#d0b995 100%);box-shadow:inset 0 5px 16px #765a3525,inset 0 -3px 10px #fff8}
-.playfield:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#9c80531c 1px,transparent 1px);background-size:17px 17px;pointer-events:none}
-.plate{position:absolute;width:clamp(126px,37vw,166px);height:58px;border:4px solid #fff;border-radius:23px 10px 23px 10px;display:flex;align-items:center;justify-content:space-evenly;padding:0 10px;box-shadow:inset 0 4px 6px #fff9,inset 0 -6px 7px #0003,0 11px 0 #0002,0 15px 17px #47321e42;transform-style:preserve-3d;transition:transform .42s ease,opacity .35s;z-index:1}
-.plate.green{background:linear-gradient(145deg,#8af0c7,#36ae87);border-color:#f4fff9}
-.plate.blue{background:linear-gradient(145deg,#91ddff,#328bc9)}
-.plate.yellow{background:linear-gradient(145deg,#fff09b,#dca52c)}
-.plate.purple{background:linear-gradient(145deg,#dfcaff,#9273d0)}
-.plate.orange{background:linear-gradient(145deg,#ffc17e,#dc762c)}
-.plate.hanging{animation:sway 2.3s ease-in-out infinite alternate;transform-origin:var(--pivot,50% 50%)}
-@keyframes sway{from{rotate:-7deg}to{rotate:7deg}}
-.plate.falling{transform:translateY(430px) rotate(65deg)!important;opacity:0}
-.socket{width:33px;height:33px;border-radius:50%;background:radial-gradient(circle,#17130f 42%,#59483b 70%,#8b7660 100%);display:grid;place-items:center;flex:none;box-shadow:inset 2px 3px 5px #0009,0 1px 1px #fff8}
-.screw{width:27px;height:27px;border-radius:50%;position:relative;border:2px solid #684c2d;box-shadow:inset 0 3px 4px #fff9,inset 0 -4px 5px #0005,0 4px 6px #0006;display:grid;place-items:center;z-index:2}
-.screw:before,.screw:after{content:"";position:absolute;background:#493426;border-radius:2px;box-shadow:0 1px 1px #fff8}
-.screw:before{width:14px;height:4px}.screw:after{width:4px;height:14px}
-.orange{--s:#ff8d32}.yellow{--s:#f4c52e}.blue{--s:#36a9e8}.brown{--s:#95603b}
-.screw.orange{background:radial-gradient(circle at 32% 27%,#ffe0ad,#ff8d32 58%,#a9480c)}
-.screw.yellow{background:radial-gradient(circle at 32% 27%,#fffbd0,#f4c52e 58%,#9b7000)}
-.screw.blue{background:radial-gradient(circle at 32% 27%,#d4f5ff,#36a9e8 58%,#07558b)}
-.screw.brown{background:radial-gradient(circle at 32% 27%,#f0c49c,#95603b 58%,#4b2916)}
-.screw:active{transform:scale(.9)}
-.screw.blocked{filter:brightness(.58)}
-.boosters{display:flex;justify-content:space-around;padding:9px 13px 15px;background:linear-gradient(180deg,#e5d2b6,#d6bd9b);z-index:3}
-.boost{width:29%;height:57px;border-radius:17px;background:linear-gradient(180deg,#fff0a2,#e7ad27);border:2px solid #c38a16;box-shadow:inset 0 2px 2px #fff,0 5px 0 #986b17,0 7px 9px #0003;display:flex;align-items:center;justify-content:center;gap:8px;font-size:24px;position:relative}
-.boost:active{transform:translateY(3px);box-shadow:inset 0 2px 2px #fff,0 2px 0 #986b17}
-.boost b{font-size:12px;background:#fff;border-radius:8px;padding:2px 6px;color:#263044}
-.toast{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);background:#26344d;color:#fff;padding:11px 18px;border-radius:14px;font-size:13px;font-weight:800;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap;box-shadow:0 5px 18px #0004}
-.toast.show{opacity:1}
-.overlay{position:absolute;inset:0;background:#101827b9;backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:20;padding:22px}
-.dialog{width:min(340px,100%);background:linear-gradient(145deg,#fff9ed,#e9d7bb);border:3px solid #fff;border-radius:26px;padding:25px 20px;text-align:center;box-shadow:0 20px 50px #0007}
-.dialog h2{font-size:25px;color:#33415b;margin-bottom:9px}.dialog p{font-size:14px;color:#79684e;line-height:1.5}
-.action{margin-top:17px;padding:12px 22px;border-radius:14px;background:linear-gradient(135deg,#55d5a7,#239b75);color:#fff;font-weight:900;box-shadow:0 5px 0 #176c50;width:100%}
-.secondary{background:linear-gradient(135deg,#8194b1,#53647f);box-shadow:0 5px 0 #34435b}
-@media(max-height:680px){.top{height:57px}.boxes{padding:2px 8px 5px}.box{width:59px;height:59px}.buffer{padding-bottom:4px}.plate{height:52px}.boosters{padding:7px 12px 10px}.boost{height:49px}}
+  :root {
+    --bg-wood: #eedbc2;
+    --panel-border: #ffffff;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  body {
+    min-height: 100dvh;
+    background: radial-gradient(circle at 50% 20%, #3a4b66, #111827 85%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  #app {
+    width: min(100%, 460px);
+    height: 100dvh;
+    max-height: 920px;
+    background: radial-gradient(ellipse at 50% 30%, #fdf5ea 0%, #ecd7be 60%, #debfa0 100%);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(243,230,211,0.95));
+    box-shadow: 0 4px 12px rgba(80,50,20,0.12);
+    z-index: 100;
+  }
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #ffffff, #ded0be);
+    border: 2px solid #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    font-size: 18px;
+    font-weight: 900;
+    color: #3b485e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .level-info {
+    text-align: center;
+  }
+  .level-title {
+    font-size: 20px;
+    font-weight: 1000;
+    color: #2c384e;
+    letter-spacing: 0.5px;
+  }
+  .level-sub {
+    font-size: 10px;
+    font-weight: 800;
+    color: #927556;
+    letter-spacing: 2px;
+  }
+  .coin-badge {
+    background: linear-gradient(135deg, #ffe082, #f59e0b);
+    border: 2px solid #fff;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-weight: 900;
+    color: #633806;
+    font-size: 13px;
+    box-shadow: 0 3px 0 #b45309;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Progress Bar */
+  .progress-rail {
+    height: 6px;
+    background: #d4be9f;
+    width: 100%;
+    z-index: 90;
+  }
+  #progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #10b981, #34d399, #facc15);
+    transition: width 0.3s ease;
+  }
+
+  /* 3D Target Boxes Area */
+  .boxes-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 12px 6px;
+    z-index: 90;
+  }
+  .box-card {
+    width: clamp(74px, 21vw, 88px);
+    height: clamp(74px, 21vw, 88px);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 3.5px solid rgba(255,255,255,0.9);
+    box-shadow: inset 0 4px 6px rgba(255,255,255,0.7),
+                inset 0 -6px 8px rgba(0,0,0,0.25),
+                0 8px 15px rgba(60,40,20,0.25);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .box-orange { background: linear-gradient(145deg, #ff9e42, #e65c00); }
+  .box-yellow { background: linear-gradient(145deg, #fde047, #d97706); }
+  .box-blue   { background: linear-gradient(145deg, #60a5fa, #1d4ed8); }
+  .box-brown  { background: linear-gradient(145deg, #b4784a, #6d3a14); }
+
+  .box-inner-tray {
+    width: 82%;
+    height: 82%;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #f7efe1, #ded2bf);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.35), 0 1px 1px #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 2px 4px;
+  }
+  .box-hole-target {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #475569;
+    box-shadow: inset 2px 2px 4px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .box-card.ad-lock {
+    background: linear-gradient(145deg, #fde047, #eab308);
+    cursor: pointer;
+    border-color: #fef08a;
+  }
+  .box-card.ad-lock .plus-sign {
+    font-size: 34px;
+    font-weight: 1000;
+    color: #633806;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .box-card.ad-lock .ad-pill {
+    position: absolute;
+    bottom: 5px;
+    background: #15803d;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Buffer Holes */
+  .buffer-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 900;
+    color: #927556;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+  }
+  .buffer-bar {
+    display: flex;
+    justify-content: center;
+    gap: 11px;
+    padding: 4px 10px 8px;
+    z-index: 90;
+  }
+  .buffer-hole {
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #526075, #222d3d);
+    box-shadow: inset 3px 3px 6px #090e17, 0 1px 2px rgba(255,255,255,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Playfield & Plates */
+  .playfield {
+    flex: 1;
+    position: relative;
+    margin: 4px 12px 10px;
+    border-radius: 26px;
+    background: radial-gradient(ellipse at 50% 35%, #fff5e6 0%, #edd8bf 70%, #d8bea0 100%);
+    box-shadow: inset 0 4px 16px rgba(100,60,20,0.18), 0 2px 4px #fff;
+    overflow: hidden;
+  }
+  .playfield::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(#9a7b531a 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+
+  /* Diverse 3D Plates */
+  .plate {
+    position: absolute;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0 10px;
+    border: 4px solid #ffffff;
+    box-shadow: inset 0 3px 5px rgba(255,255,255,0.8),
+                inset 0 -5px 6px rgba(0,0,0,0.25),
+                0 10px 18px rgba(45,25,10,0.25),
+                0 4px 0 rgba(0,0,0,0.12);
+    transform-origin: center center;
+    transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s;
+    will-change: transform;
+  }
+  .plate::after {
+    content: '';
+    position: absolute;
+    width: 75%;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.7), rgba(255,255,255,0.05));
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  .shape-leaf   { width: 148px; height: 56px; border-radius: 70px 0 70px 0; }
+  .shape-arch   { width: 145px; height: 54px; border-radius: 40px 40px 15px 15px; }
+  .shape-bar    { width: 140px; height: 50px; border-radius: 25px; }
+  .shape-wedge  { width: 135px; height: 55px; border-radius: 35px 8px 35px 8px; }
+
+  .plate-green  { background: linear-gradient(135deg, #5eead4, #0d9488); }
+  .plate-blue   { background: linear-gradient(135deg, #7dd3fc, #0284c7); }
+  .plate-yellow { background: linear-gradient(135deg, #fde047, #ca8a04); }
+  .plate-purple { background: linear-gradient(135deg, #d8b4fe, #7e22ce); }
+  .plate-orange { background: linear-gradient(135deg, #fdba74, #ea580c); }
+
+  /* Plate Hole Socket */
+  .leaf-hole-socket {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #110d0a 45%, #423229 80%, #634e42 100%);
+    box-shadow: inset 2px 2px 4px #000, 0 1px 1px rgba(255,255,255,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* 3D Metallic Screws */
+  .screw {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 5;
+    cursor: pointer;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.8),
+                inset 0 -3px 4px rgba(0,0,0,0.45),
+                0 4px 8px rgba(0,0,0,0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 0.2s, transform 0.1s;
+  }
+  .screw::before, .screw::after {
+    content: '';
+    position: absolute;
+    background: #2b1f1a;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .screw::before { width: 15px; height: 4px; }
+  .screw::after  { width: 4px; height: 15px; }
+
+  .screw-orange {
+    background: radial-gradient(circle at 35% 30%, #ffd099 5%, #ff851a 55%, #ad3e00 100%);
+    border: 2px solid #943500;
+  }
+  .screw-yellow {
+    background: radial-gradient(circle at 35% 30%, #fffcb0 5%, #eab308 55%, #a16207 100%);
+    border: 2px solid #854d0e;
+  }
+  .screw-blue {
+    background: radial-gradient(circle at 35% 30%, #bae6fd 5%, #0284c7 55%, #03456e 100%);
+    border: 2px solid #075985;
+  }
+  .screw-brown {
+    background: radial-gradient(circle at 35% 30%, #deb897 5%, #8d4f23 55%, #46220a 100%);
+    border: 2px solid #431c07;
+  }
+
+  .screw.covered-screw {
+    filter: brightness(0.62) saturate(0.75);
+    cursor: not-allowed;
+  }
+  .screw.shake {
+    animation: shakeAnim 0.3s ease;
+  }
+  @keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-15deg); }
+    75% { transform: translateX(5px) rotate(15deg); }
+  }
+
+  /* Screw Mini in Box/Buffer */
+  .screw-mini {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .screw-mini::before { width: 9px; height: 2.5px; }
+  .screw-mini::after  { width: 2.5px; height: 9px; }
+
+  /* 3D Flying Screw Ghost */
+  .flying-ghost {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    transition: all 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    transform: translate(-50%, -50%) scale(1.15) rotate(360deg);
+  }
+
+  /* Bottom Boosters */
+  .boosters-wrap {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 16px 20px;
+    background: linear-gradient(180deg, #ecd9be, #debe97);
+    border-top: 2px solid #fff6ea;
+    z-index: 90;
+  }
+  .boost-btn {
+    width: 30%;
+    height: 56px;
+    background: linear-gradient(180deg, #ffea85 0%, #f59e0b 100%);
+    border: 2px solid #d97706;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    box-shadow: inset 0 2px 2px #fff, 0 4px 0 #92400e, 0 6px 10px rgba(0,0,0,0.18);
+    cursor: pointer;
+  }
+  .boost-btn:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 2px 2px #fff, 0 1px 0 #92400e;
+  }
+  .boost-icon { font-size: 24px; }
+  .boost-count {
+    font-size: 12px;
+    font-weight: 1000;
+    background: #fff;
+    color: #1e293b;
+    padding: 2px 7px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  /* Modals & Dialogs */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(5px);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+    padding: 20px;
+  }
+  .dialog-card {
+    width: min(340px, 90%);
+    background: linear-gradient(145deg, #fffcf6, #f3e5d0);
+    border: 3.5px solid #ffffff;
+    border-radius: 26px;
+    padding: 24px 22px;
+    text-align: center;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+  }
+  .dialog-card h2 {
+    font-size: 26px;
+    font-weight: 1000;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  .dialog-card p {
+    font-size: 14px;
+    font-weight: 700;
+    color: #71583d;
+    line-height: 1.5;
+  }
+  .dialog-btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 13px 0;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    border: none;
+    font-size: 17px;
+    font-weight: 900;
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #047857;
+    cursor: pointer;
+  }
+  .dialog-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #047857;
+  }
+  .dialog-btn.sec {
+    background: linear-gradient(135deg, #64748b, #475569);
+    box-shadow: 0 4px 0 #334155;
+    margin-top: 10px;
+  }
+
+  /* Ad Simulation Modal */
+  #ad-timer-modal .ad-box-anim {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    margin: 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    animation: pulse 1s infinite alternate;
+  }
+  @keyframes pulse { from { transform: scale(0.95); } to { transform: scale(1.08); } }
+
+  .toast {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 36, 54, 0.94);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    z-index: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
+
 <div id="app">
-  <header class="top">
-    <button class="iconbtn" id="pauseBtn" aria-label="Pause">Ⅱ</button>
-    <div class="level"><div id="levelText">LEVEL 1</div><div class="sublevel">SCREW PUZZLE 3D</div></div>
-    <div class="coins">🪙 <span id="coinText">100</span></div>
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <button class="icon-btn" onclick="togglePause()">❚❚</button>
+    <div class="level-info">
+      <div class="level-title" id="lvl-display">LEVEL 1</div>
+      <div class="level-sub">3D REAL PHYSICS</div>
+    </div>
+    <div class="coin-badge">🪙 <span id="coin-display">100</span></div>
   </header>
-  <div class="progress-wrap"><div id="progress"></div></div>
-  <div class="status"><span>🎯 प्लेटों से स्क्रू निकालें</span><span id="percent">0% पूरा</span></div>
-  <section class="boxes" id="boxes"></section>
+
+  <!-- Progress Bar -->
+  <div class="progress-rail">
+    <div id="progress-fill"></div>
+  </div>
+
+  <!-- Boxes Container -->
+  <section class="boxes-wrap" id="boxes-container"></section>
+
+  <!-- Buffer Holes -->
   <div class="buffer-label">BUFFER SLOTS</div>
-  <section class="buffer" id="buffer"></section>
-  <main class="playfield" id="field" aria-label="Game board"></main>
-  <footer class="boosters">
-    <button class="boost" data-boost="drill" aria-label="Drill"><span>🪛</span><b id="drillCount">2</b></button>
-    <button class="boost" data-boost="hammer" aria-label="Hammer"><span>🔨</span><b id="hammerCount">1</b></button>
-    <button class="boost" data-boost="cleaner" aria-label="Cleaner"><span>🧹</span><b id="cleanerCount">1</b></button>
+  <section class="buffer-bar" id="buffer-container"></section>
+
+  <!-- 3D Playfield Canvas -->
+  <main class="playfield" id="playfield"></main>
+
+  <!-- Boosters Bar -->
+  <footer class="boosters-wrap">
+    <button class="boost-btn" onclick="useBooster('drill')">
+      <span class="boost-icon">🪛</span>
+      <span class="boost-count" id="drill-count">2</span>
+    </button>
+    <button class="boost-btn" onclick="useBooster('hammer')">
+      <span class="boost-icon">🔨</span>
+      <span class="boost-count" id="hammer-count">1</span>
+    </button>
+    <button class="boost-btn" onclick="useBooster('cleaner')">
+      <span class="boost-icon">🧹</span>
+      <span class="boost-count" id="cleaner-count">1</span>
+    </button>
   </footer>
+
+  <!-- Toast -->
   <div class="toast" id="toast"></div>
-  <div class="overlay" id="overlay"><div class="dialog"><h2 id="dialogTitle">गेम रुका हुआ है</h2><p id="dialogText">जारी रखने के लिए नीचे दबाएँ।</p><button class="action" id="mainAction">जारी रखें</button><button class="action secondary" id="secondAction" style="display:none">फिर से शुरू करें</button></div></div>
+
+  <!-- Win Modal -->
+  <div class="overlay" id="win-modal">
+    <div class="dialog-card">
+      <h2>शानदार जीत! 🏆</h2>
+      <p id="win-desc">लेवल पूरा हुआ! आपको 25 बोनस सिक्के मिले।</p>
+      <button class="dialog-btn" onclick="nextLevel()">अगला लेवल ➔</button>
+    </div>
+  </div>
+
+  <!-- Fail Modal -->
+  <div class="overlay" id="fail-modal">
+    <div class="dialog-card">
+      <h2 style="color:#dc2626;">गेम ओवर! ⚠️</h2>
+      <p>बफ़र के सभी 5 स्लॉट भर गए हैं।</p>
+      <button class="dialog-btn" style="background:#ea580c; box-shadow:0 4px 0 #9a3412;" onclick="retryLevel()">पुनः प्रयास करें</button>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div class="overlay" id="pause-modal">
+    <div class="dialog-card">
+      <h2>गेम रुका हुआ है ⏸️</h2>
+      <p>प्रगति सुरक्षित है। खेलने के लिए जारी रखें।</p>
+      <button class="dialog-btn" onclick="togglePause()">जारी रखें</button>
+      <button class="dialog-btn sec" onclick="retryLevel()">लेवल दोबारा शुरू करें</button>
+    </div>
+  </div>
+
+  <!-- Rewarded Ad Simulation Modal -->
+  <div class="overlay" id="ad-timer-modal">
+    <div class="dialog-card">
+      <h2>प्रचार देखा जा रहा है... 🎬</h2>
+      <div class="ad-box-anim">🎁</div>
+      <p id="ad-timer-text">अतिरिक्त बॉक्स अनलॉक हो रहा है: 5s</p>
+    </div>
+  </div>
 </div>
+
 <script>
-(()=>{
-'use strict';
-const $=id=>document.getElementById(id);
-const COLORS=['orange','yellow','blue','brown'];
-const PLATE_COLORS=['green','blue','yellow','purple','orange'];
-const state={level:Math.max(1,Number(localStorage.getItem('sp3_level'))||1),coins:Math.max(0,Number(localStorage.getItem('sp3_coins'))||100),boxes:[],buffer:Array(5).fill(null),plates:[],total:0,removed:0,boost:{drill:2,hammer:1,cleaner:1},paused:false,ended:false,won:false,toastTimer:null};
-let audio;
-function sound(kind='tap'){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime;o.connect(g);g.connect(audio.destination);o.type=kind==='bad'?'sawtooth':'sine';o.frequency.setValueAtTime(kind==='win'?520:kind==='bad'?150:420,t);o.frequency.exponentialRampToValueAtTime(kind==='win'?850:kind==='bad'?90:650,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.16);o.start(t);o.stop(t+.17)}catch(e){}}
-function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),1500)}
-function save(){localStorage.setItem('sp3_level',state.level);localStorage.setItem('sp3_coins',state.coins)}
-function levelConfig(){return {count:Math.min(12,2+Math.floor((state.level-1)*.8)),colors:state.level<3?2:state.level<6?3:4}}
-function newLevel(){const cfg=levelConfig();state.boxes=[{color:'orange',count:0},{color:'yellow',count:0},{ad:true},{ad:true}];if(cfg.colors>=3)state.boxes[1].color='blue';state.buffer=Array(5).fill(null);state.plates=[];state.removed=0;state.ended=false;state.won=false;state.paused=false;state.boost={drill:2,hammer:1,cleaner:1};['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k]);
-let id=0;for(let i=0;i<cfg.count;i++){let n=state.level===1?2:(i%2?3:2);let slots=[];for(let j=0;j<n;j++)slots.push({id:'s'+(++id),color:COLORS[(i+j)%cfg.colors]});state.plates.push({id:'p'+i,slots,color:PLATE_COLORS[i%PLATE_COLORS.length],x:8+(i%2)*43+(Math.floor(i/2)%2)*8,y:7+Math.floor(i/2)*17,rot:(i%3-1)*8,hanging:false})}
-state.total=id;$('levelText').textContent='LEVEL '+state.level;hideDialog();render();updateProgress()}
-function render(){renderBoxes();renderBuffer();renderField();updateProgress();$('coinText').textContent=state.coins}
-function renderBoxes(){const root=$('boxes');root.innerHTML='';state.boxes.forEach((b,i)=>{const el=document.createElement('button');el.className='box'+(b.ad?' ad':'');if(b.ad){el.innerHTML='+<small>EXTRA</small>';el.onclick=()=>unlockExtra(i)}else{el.style.background=boxGradient(b.color);el.innerHTML='<div class="box-core"><i class="mini-hole"></i><i class="mini-hole"></i><i class="mini-hole"></i></div><span class="box-count">'+b.count+'/3</span>'}root.appendChild(el)})}
-function boxGradient(c){return ({orange:'linear-gradient(145deg,#ffb15e,#d9650d)',yellow:'linear-gradient(145deg,#ffea69,#d69b08)',blue:'linear-gradient(145deg,#7bd5ff,#1478bd)',brown:'linear-gradient(145deg,#c18b62,#70401e)'})[c]}
-function renderBuffer(){$('buffer').innerHTML='';state.buffer.forEach(c=>{const s=document.createElement('div');s.className='slot';if(c){const screw=document.createElement('i');screw.className='screw '+c;screw.style.width='22px';screw.style.height='22px';s.appendChild(screw)}$('buffer').appendChild(s)})}
-function renderField(){const root=$('field');root.innerHTML='';const sorted=[...state.plates];sorted.forEach((p,index)=>{const el=document.createElement('div');el.className='plate '+p.color+(p.hanging?' hanging':'');el.id=p.id;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.transform=`rotate(${p.rot}deg)`;el.style.zIndex=index+1;el.style.setProperty('--pivot',p.pivot||'50% 50%');p.slots.forEach((s,j)=>{const socket=document.createElement('div');socket.className='socket';if(s.color){const sc=document.createElement('button');sc.className='screw '+s.color;sc.setAttribute('aria-label','स्क्रू निकालें');sc.onclick=()=>takeScrew(p.id,s.id);socket.appendChild(sc)}el.appendChild(socket)});root.appendChild(el)})}
-function findScrew(p,s){return state.plates.find(x=>x.id===p)?.slots.find(x=>x.id===s)}
-function takeScrew(pid,sid){if(state.paused||state.ended)return;const plate=state.plates.find(p=>p.id===pid),slot=findScrew(pid,sid);if(!slot||!slot.color)return;
-const idx=state.plates.indexOf(plate);if(state.plates.slice(idx+1).some(p=>p.slots.some(s=>s.color))){sound('bad');toast('पहले ऊपर वाली प्लेट के स्क्रू निकालें');return}
-sound();const color=slot.color;slot.color=null;state.removed++;
-let box=state.boxes.find(b=>!b.ad&&b.color===color&&b.count<3);
-if(box){box.count++;if(box.count===3){sound('win');setTimeout(()=>recycle(box),450)}}else{const empty=state.buffer.indexOf(null);if(empty<0){slot.color=color;state.removed--;state.ended=true;sound('bad');showDialog('गेम ओवर!','बफर के सभी स्लॉट भर गए हैं।');return}state.buffer[empty]=color}
-const left=plate.slots.filter(s=>s.color);if(left.length===1){plate.hanging=true;plate.pivot=left[0]===plate.slots[0]?'20% 50%':'80% 50%';plate.rot+=left[0]===plate.slots[0]?70:-70}
-if(!left.length){const el=$(pid);if(el)el.classList.add('falling');setTimeout(()=>{state.plates=state.plates.filter(p=>p.id!==pid);renderField()},350)}
-moveBuffer();render();if(state.removed>=state.total)winLevel()}
-function moveBuffer(){state.buffer.forEach((c,i)=>{if(!c)return;const b=state.boxes.find(x=>!x.ad&&x.color===c&&x.count<3);if(b){b.count++;state.buffer[i]=null;if(b.count===3)setTimeout(()=>recycle(b),450)}})}
-function recycle(box){if(state.ended)return;const left=state.plates.flatMap(p=>p.slots.filter(s=>s.color).map(s=>s.color)).concat(state.buffer.filter(Boolean));box.count=0;box.color=left[0]||COLORS[(state.level+state.boxes.indexOf(box))%4];render()}
-function unlockExtra(i){if(state.ended||state.paused)return;if(state.coins<30){toast('अतिरिक्त बॉक्स के लिए 30 सिक्के चाहिए');return}state.coins-=30;const used=state.boxes.filter(b=>!b.ad).map(b=>b.color);state.boxes[i]={color:COLORS.find(c=>!used.includes(c))||'brown',count:0};sound('win');render();save();toast('अतिरिक्त बॉक्स खुल गया!')}
-function updateProgress(){const pct=state.total?Math.min(100,Math.floor(state.removed/state.total*100)):0;$('progress').style.width=pct+'%';$('percent').textContent=pct+'% पूरा'}
-function winLevel(){if(state.ended)return;state.ended=true;state.won=true;state.coins+=25;save();sound('win');setTimeout(()=>showDialog('शानदार जीत! 🏆','लेवल '+state.level+' पूरा हुआ। आपको 25 बोनस सिक्के मिले।'),350)}
-function showDialog(title,msg,second=false){$('dialogTitle').textContent=title;$('dialogText').textContent=msg;$('overlay').style.display='flex';$('mainAction').textContent=state.won?'अगला लेवल ➜':state.paused?'जारी रखें':'फिर कोशिश करें';$('secondAction').style.display=second?'block':'none'}
-function hideDialog(){$('overlay').style.display='none'}
-$('mainAction').onclick=()=>{if(state.won){state.level++;save();newLevel()}else if(state.paused){state.paused=false;hideDialog()}else{newLevel()}};
-$('secondAction').onclick=()=>{newLevel()};
-$('pauseBtn').onclick=()=>{if(state.ended)return;state.paused=true;showDialog('गेम पॉज़ ⏸️','आपका गेम सुरक्षित है। आराम से वापस शुरू करें।',true)};
-function useBoost(type){if(state.paused||state.ended)return;if(state.boost[type]<=0){toast('यह बूस्टर खत्म हो गया है');return}
-if(type==='drill'){let target=null;for(let p of [...state.plates].reverse()){const s=p.slots.find(x=>x.color);if(s){target=[p,s];break}}if(!target){toast('कोई स्क्रू उपलब्ध नहीं');return}state.boost.drill--;takeScrew(target[0].id,target[1].id)}
-if(type==='hammer'){const p=state.plates[state.plates.length-1];if(!p){toast('कोई प्लेट नहीं');return}state.boost.hammer--;const n=p.slots.filter(s=>s.color).length;state.removed+=n;p.slots.forEach(s=>s.color=null);state.plates.pop();sound('win');render();if(state.removed>=state.total)winLevel()}
-if(type==='cleaner'){const colors=state.buffer.filter(Boolean);if(!colors.length){toast('बफर पहले से खाली है');return}state.boost.cleaner--;state.buffer.fill(null);sound();render();toast('बफर साफ कर दिया गया')}
-['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k]);}
-document.querySelectorAll('[data-boost]').forEach(b=>b.onclick=()=>useBoost(b.dataset.boost));
-function resetBoosters(){state.boost={drill:2,hammer:1,cleaner:1};['drill','hammer','cleaner'].forEach(k=>$(k+'Count').textContent=state.boost[k])}
-const originalNewLevel=newLevel;
-function start(){newLevel()}
-start();
+(() => {
+  'use strict';
+
+  // Sound Engine
+  let audioCtx;
+  function playSound(type) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'unscrew') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.linearRampToValueAtTime(750, now + 0.14);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } else if (type === 'land') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(540, now);
+        osc.frequency.setValueAtTime(720, now + 0.06);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'box-full') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.setValueAtTime(659, now + 0.08);
+        osc.frequency.setValueAtTime(783, now + 0.16);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      } else if (type === 'blocked') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.setValueAtTime(100, now + 0.09);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'creak') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.linearRampToValueAtTime(130, now + 0.22);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+    } catch(e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+  }
+
+  // Master State
+  const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
+  const PLATE_SHAPES = ['shape-leaf', 'shape-arch', 'shape-bar', 'shape-wedge'];
+  const PLATE_COLORS = ['plate-green', 'plate-blue', 'plate-yellow', 'plate-purple', 'plate-orange'];
+
+  let level = Math.max(1, parseInt(localStorage.getItem('sp3_level') || '1'));
+  let coins = Math.max(0, parseInt(localStorage.getItem('sp3_coins') || '100'));
+  let boxes = [];
+  let buffer = [null, null, null, null, null];
+  let plates = [];
+  let totalScrews = 0;
+  let removedCount = 0;
+  let boosters = { drill: 2, hammer: 1, cleaner: 1 };
+  let isPaused = false;
+  let isGameOver = false;
+
+  function saveGame() {
+    localStorage.setItem('sp3_level', level);
+    localStorage.setItem('sp3_coins', coins);
+  }
+
+  // Generate Balanced Levels
+  function buildLevel(lvl) {
+    let plateCount, activeColors;
+    if (lvl === 1) {
+      plateCount = 2;
+      activeColors = ['orange', 'yellow'];
+    } else if (lvl === 2) {
+      plateCount = 3;
+      activeColors = ['orange', 'yellow'];
+    } else if (lvl <= 5) {
+      plateCount = 4 + (lvl - 3);
+      activeColors = ['orange', 'yellow', 'blue'];
+    } else {
+      plateCount = Math.min(12, 7 + Math.floor((lvl - 6) * 0.7));
+      activeColors = ALL_COLORS;
+    }
+
+    boxes = [
+      { type: 'box', color: activeColors[0], count: 0 },
+      { type: 'box', color: activeColors[1] || activeColors[0], count: 0 },
+      { type: 'ad', unlocked: false },
+      { type: 'ad', unlocked: false }
+    ];
+
+    buffer = [null, null, null, null, null];
+    plates = [];
+    let screwCounter = 1;
+
+    for (let i = 0; i < plateCount; i++) {
+      let topPos = 40 + (i * 24) + (Math.sin(i * 1.6) * 16);
+      let leftPos = 24 + ((i % 3) * 65) + (Math.cos(i) * 22);
+      let baseRot = -32 + ((i * 38) % 76);
+      let shape = PLATE_SHAPES[i % PLATE_SHAPES.length];
+      let pColor = PLATE_COLORS[i % PLATE_COLORS.length];
+
+      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
+      let slots = [];
+
+      for (let s = 0; s < numSlots; s++) {
+        let scColor = activeColors[(i + s) % activeColors.length];
+        slots.push({
+          slotId: s,
+          color: scColor,
+          screwId: 's_' + (screwCounter++)
+        });
+      }
+
+      plates.push({
+        id: 'p_' + (i + 1),
+        layer: i,
+        top: Math.round(topPos),
+        left: Math.round(leftPos),
+        currentRot: baseRot,
+        pivotOrigin: 'center center',
+        shape: shape,
+        color: pColor,
+        slots: slots,
+        isHanging: false,
+        hangBaseAngle: 0,
+        swingPhase: Math.random() * Math.PI * 2,
+        swingSpeed: 1.8 + Math.random() * 0.7,
+        swingAmplitude: 12 + Math.random() * 6
+      });
+    }
+
+    totalScrews = 0;
+    plates.forEach(p => p.slots.forEach(s => { if (s.color) totalScrews++; }));
+    removedCount = 0;
+    isGameOver = false;
+    isPaused = false;
+
+    document.getElementById('lvl-display').textContent = `LEVEL ${lvl}`;
+    document.getElementById('coin-display').textContent = coins;
+    updateProgress();
+    renderBoxes();
+    renderBuffer();
+    renderPlayfield();
+  }
+
+  // Precise Hit Testing Raycast
+  function isScrewPhysicallyBlocked(screwElem, plateId) {
+    if (!screwElem) return false;
+    const r = screwElem.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+
+    const stack = document.elementsFromPoint(cx, cy);
+    const myIdx = plates.findIndex(p => p.id === plateId);
+
+    for (let el of stack) {
+      const parent = el.closest('.plate');
+      if (parent && parent.id !== plateId) {
+        const otherIdx = plates.findIndex(p => p.id === parent.id);
+        if (otherIdx > myIdx) return true;
+      }
+    }
+    return false;
+  }
+
+  function renderBoxes() {
+    const root = document.getElementById('boxes-container');
+    root.innerHTML = '';
+
+    boxes.forEach((b, idx) => {
+      const card = document.createElement('div');
+      card.className = 'box-card';
+      card.id = 'box-card-' + idx;
+
+      if (b.type === 'box') {
+        card.classList.add('box-' + b.color);
+        const tray = document.createElement('div');
+        tray.className = 'box-inner-tray';
+
+        for (let i = 0; i < 3; i++) {
+          const hole = document.createElement('div');
+          hole.className = 'box-hole-target';
+          hole.id = `box-hole-${idx}-${i}`;
+          if (i < b.count) {
+            const sc = document.createElement('div');
+            sc.className = `screw screw-mini screw-${b.color}`;
+            hole.appendChild(sc);
+          }
+          tray.appendChild(hole);
+        }
+        card.appendChild(tray);
+      } else {
+        card.classList.add('ad-lock');
+        card.innerHTML = `<span class="plus-sign">+</span><span class="ad-pill">AD</span>`;
+        card.onclick = () => watchRewardedAd(idx);
+      }
+      root.appendChild(card);
+    });
+  }
+
+  function renderBuffer() {
+    const root = document.getElementById('buffer-container');
+    root.innerHTML = '';
+    buffer.forEach((c, idx) => {
+      const hole = document.createElement('div');
+      hole.className = 'buffer-hole';
+      hole.id = 'buffer-hole-' + idx;
+      if (c) {
+        const sc = document.createElement('div');
+        sc.className = `screw screw-mini screw-${c}`;
+        hole.appendChild(sc);
+      }
+      root.appendChild(hole);
+    });
+  }
+
+  function renderPlayfield() {
+    const root = document.getElementById('playfield');
+    root.innerHTML = '';
+
+    plates.forEach((p, pIdx) => {
+      const pEl = document.createElement('div');
+      pEl.className = `plate ${p.shape} ${p.color}`;
+      pEl.id = p.id;
+      pEl.style.top = p.top + 'px';
+      pEl.style.left = p.left + 'px';
+      pEl.style.transformOrigin = p.pivotOrigin;
+      pEl.style.transform = `rotate(${p.currentRot}deg)`;
+      pEl.style.zIndex = pIdx + 1;
+
+      p.slots.forEach(s => {
+        const socket = document.createElement('div');
+        socket.className = 'leaf-hole-socket';
+
+        if (s.color) {
+          const sc = document.createElement('div');
+          sc.className = `screw screw-${s.color}`;
+          sc.id = s.screwId;
+          sc.onclick = (e) => {
+            e.stopPropagation();
+            onScrewTap(p.id, s.screwId, s.color, sc);
+          };
+          socket.appendChild(sc);
+        }
+        pEl.appendChild(socket);
+      });
+
+      root.appendChild(pEl);
+    });
+  }
+
+  // Real-Time Physics Pendulum Loop
+  let lastTime = performance.now();
+  function physicsEngine(now) {
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    plates.forEach(p => {
+      if (p.isHanging) {
+        p.swingPhase += p.swingSpeed * dt;
+        const sway = Math.sin(p.swingPhase) * p.swingAmplitude;
+        p.currentRot = p.hangBaseAngle + sway;
+
+        const el = document.getElementById(p.id);
+        if (el) {
+          el.style.transformOrigin = p.pivotOrigin;
+          el.style.transform = `rotate(${p.currentRot}deg)`;
+        }
+      }
+    });
+
+    // Dynamic Overlap Highlight
+    plates.forEach(p => {
+      p.slots.forEach(s => {
+        if (s.color) {
+          const sc = document.getElementById(s.screwId);
+          if (sc) {
+            if (isScrewPhysicallyBlocked(sc, p.id)) {
+              sc.classList.add('covered-screw');
+            } else {
+              sc.classList.remove('covered-screw');
+            }
+          }
+        }
+      });
+    });
+
+    requestAnimationFrame(physicsEngine);
+  }
+  requestAnimationFrame(physicsEngine);
+
+  // Flying Screw Animation to Destination
+  function animateScrewFlight(startElem, targetElem, color, onComplete) {
+    const sRect = startElem.getBoundingClientRect();
+    const tRect = targetElem.getBoundingClientRect();
+
+    const ghost = document.createElement('div');
+    ghost.className = `screw screw-${color} flying-ghost`;
+    ghost.style.left = (sRect.left + sRect.width / 2) + 'px';
+    ghost.style.top = (sRect.top + sRect.height / 2) + 'px';
+    document.body.appendChild(ghost);
+
+    playSound('unscrew');
+
+    requestAnimationFrame(() => {
+      ghost.style.left = (tRect.left + tRect.width / 2) + 'px';
+      ghost.style.top = (tRect.top + tRect.height / 2) + 'px';
+      ghost.style.transform = 'translate(-50%, -50%) scale(0.7) rotate(720deg)';
+    });
+
+    setTimeout(() => {
+      ghost.remove();
+      playSound('land');
+      if (onComplete) onComplete();
+    }, 420);
+  }
+
+  function onScrewTap(plateId, screwId, color, screwElem) {
+    if (isPaused || isGameOver) return;
+
+    if (isScrewPhysicallyBlocked(screwElem, plateId)) {
+      playSound('blocked');
+      screwElem.classList.remove('shake');
+      void screwElem.offsetWidth;
+      screwElem.classList.add('shake');
+      showToast('ऊपर की प्लेट हटने तक यह लॉक है!');
+      return;
+    }
+
+    // Determine target location: Box or Buffer
+    let targetBoxIdx = boxes.findIndex(b => b.type === 'box' && b.color === color && b.count < 3);
+    let destElem = null;
+    let targetMode = '';
+
+    if (targetBoxIdx !== -1) {
+      targetMode = 'box';
+      const slotNum = boxes[targetBoxIdx].count;
+      destElem = document.getElementById(`box-hole-${targetBoxIdx}-${slotNum}`);
+    } else {
+      let emptyBuf = buffer.indexOf(null);
+      if (emptyBuf !== -1) {
+        targetMode = 'buffer';
+        destElem = document.getElementById(`buffer-hole-${emptyBuf}`);
+      } else {
+        playSound('blocked');
+        showToast('बफ़र स्लॉट भर गए हैं!');
+        checkFailCondition();
+        return;
+      }
+    }
+
+    // Remove from plate visually immediately to avoid double clicks
+    const plate = plates.find(p => p.id === plateId);
+    if (!plate) return;
+    const slot = plate.slots.find(s => s.screwId === screwId);
+    if (!slot) return;
+    slot.color = null;
+    screwElem.remove();
+
+    animateScrewFlight(screwElem, destElem, color, () => {
+      removedCount++;
+      if (targetMode === 'box') {
+        boxes[targetBoxIdx].count++;
+        if (boxes[targetBoxIdx].count === 3) {
+          playSound('box-full');
+          setTimeout(() => recycleBox(boxes[targetBoxIdx]), 350);
+        }
+      } else {
+        const emptyBuf = buffer.indexOf(null);
+        if (emptyBuf !== -1) buffer[emptyBuf] = color;
+      }
+
+      checkBufferHops();
+      renderBoxes();
+      renderBuffer();
+      updateProgress();
+      checkWinCondition();
+    });
+
+    handlePlateBalance(plate);
+  }
+
+  function handlePlateBalance(plate) {
+    const leftSlots = plate.slots.filter(s => s.color !== null);
+
+    // 0 Screws: Plate Falls Off
+    if (leftSlots.length === 0) {
+      plate.isHanging = false;
+      const el = document.getElementById(plate.id);
+      if (el) {
+        el.style.transform += ' translateY(480px) rotate(60deg)';
+        el.style.opacity = '0';
+        setTimeout(() => {
+          plates = plates.filter(p => p.id !== plate.id);
+          renderPlayfield();
+        }, 450);
+      }
+      return;
+    }
+
+    // 1 Screw: Hang & Swing
+    if (leftSlots.length === 1) {
+      const pivot = leftSlots[0];
+      const tot = plate.slots.length;
+      let pct = (tot === 2)
+        ? (pivot.slotId === 0 ? '25%' : '75%')
+        : (pivot.slotId === 0 ? '18%' : (pivot.slotId === 1 ? '50%' : '82%'));
+
+      plate.pivotOrigin = `${pct} 50%`;
+      plate.isHanging = true;
+
+      if (tot === 2) {
+        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : -82;
+      } else {
+        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : (pivot.slotId === 2 ? -82 : 80);
+      }
+      plate.currentRot = plate.hangBaseAngle;
+      playSound('creak');
+    }
+  }
+
+  function checkBufferHops() {
+    buffer.forEach((c, i) => {
+      if (!c) return;
+      let match = boxes.find(b => b.type === 'box' && b.color === c && b.count < 3);
+      if (match) {
+        match.count++;
+        buffer[i] = null;
+        if (match.count === 3) {
+          playSound('box-full');
+          setTimeout(() => recycleBox(match), 350);
+        }
+      }
+    });
+  }
+
+  function recycleBox(box) {
+    box.count = 0;
+    const remaining = [];
+    plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
+    buffer.forEach(c => { if (c) remaining.push(c); });
+
+    if (remaining.length > 0) {
+      box.color = remaining[Math.floor(Math.random() * remaining.length)];
+    } else {
+      box.color = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
+    }
+
+    renderBoxes();
+    checkBufferHops();
+  }
+
+  function watchRewardedAd(boxIdx) {
+    if (boxes[boxIdx].unlocked) return;
+    playSound('unscrew');
+
+    const modal = document.getElementById('ad-timer-modal');
+    const timerText = document.getElementById('ad-timer-text');
+    modal.style.display = 'flex';
+
+    let sec = 5;
+    timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
+
+    const timer = setInterval(() => {
+      sec--;
+      if (sec > 0) {
+        timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
+      } else {
+        clearInterval(timer);
+        modal.style.display = 'none';
+
+        // Unlock 4th box
+        const active = boxes.filter(b => b.type === 'box').map(b => b.color);
+        const nextColor = ALL_COLORS.find(c => !active.includes(c)) || 'brown';
+        boxes[boxIdx] = { type: 'box', color: nextColor, count: 0, unlocked: true };
+
+        playSound('box-full');
+        showToast('चौथा बॉक्स सफलतापूर्वक अनलॉक हुआ! 🎉');
+        renderBoxes();
+        checkBufferHops();
+      }
+    }, 1000);
+  }
+
+  function updateProgress() {
+    const pct = totalScrews > 0 ? Math.min(100, Math.floor((removedCount / totalScrews) * 100)) : 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+
+  function checkWinCondition() {
+    if (removedCount >= totalScrews && totalScrews > 0) {
+      isGameOver = true;
+      coins += 25;
+      saveGame();
+      playSound('box-full');
+      setTimeout(() => {
+        document.getElementById('win-modal').style.display = 'flex';
+      }, 550);
+    }
+  }
+
+  function checkFailCondition() {
+    if (buffer.every(c => c !== null)) {
+      isGameOver = true;
+      playSound('blocked');
+      document.getElementById('fail-modal').style.display = 'flex';
+    }
+  }
+
+  window.nextLevel = function() {
+    document.getElementById('win-modal').style.display = 'none';
+    level++;
+    saveGame();
+    buildLevel(level);
+  };
+
+  window.retryLevel = function() {
+    document.getElementById('fail-modal').style.display = 'none';
+    document.getElementById('pause-modal').style.display = 'none';
+    buildLevel(level);
+  };
+
+  window.togglePause = function() {
+    isPaused = !isPaused;
+    document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
+  };
+
+  window.useBooster = function(type) {
+    if (isPaused || isGameOver) return;
+    if (boosters[type] <= 0) {
+      showToast('यह बूस्टर समाप्त हो गया है!');
+      return;
+    }
+
+    if (type === 'drill') {
+      // Direct remove first available unblocked screw
+      for (let i = plates.length - 1; i >= 0; i--) {
+        const p = plates[i];
+        for (let s of p.slots) {
+          if (s.color) {
+            const sc = document.getElementById(s.screwId);
+            if (sc && !isScrewPhysicallyBlocked(sc, p.id)) {
+              boosters.drill--;
+              document.getElementById('drill-count').textContent = boosters.drill;
+              onScrewTap(p.id, s.screwId, s.color, sc);
+              return;
+            }
+          }
+        }
+      }
+      showToast('कोई अनलॉक स्क्रू नहीं मिला!');
+    } else if (type === 'hammer') {
+      if (plates.length > 0) {
+        const topPlate = plates[plates.length - 1];
+        boosters.hammer--;
+        document.getElementById('hammer-count').textContent = boosters.hammer;
+        removedCount += topPlate.slots.filter(s => s.color !== null).length;
+        plates.pop();
+        playSound('box-full');
+        renderPlayfield();
+        updateProgress();
+        checkWinCondition();
+        showToast('हथौड़े से शीर्ष प्लेट तोड़ दी गई!');
+      }
+    } else if (type === 'cleaner') {
+      if (buffer.every(c => c === null)) {
+        showToast('बफ़र पहले से खाली है!');
+        return;
+      }
+      boosters.cleaner--;
+      document.getElementById('cleaner-count').textContent = boosters.cleaner;
+      buffer = [null, null, null, null, null];
+      playSound('unscrew');
+      renderBuffer();
+      showToast('बफ़र पूरी तरह साफ़ कर दिया गया!');
+    }
+  };
+
+  // Start Level
+  buildLevel(level);
 })();
 </script>
 </body>
