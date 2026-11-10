@@ -2,13 +2,12 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a2536">
-<title>Screw Puzzle 3D Master</title>
+<title>Screw Jam 3D - Ultimate Deluxe</title>
 <style>
   :root {
-    --bg-wood: #eedbc2;
-    --panel-border: #ffffff;
+    --bg-grad: radial-gradient(circle at 50% 18%, #3e5270 0%, #151e2e 90%);
   }
   * {
     box-sizing: border-box;
@@ -16,87 +15,97 @@
     padding: 0;
     user-select: none;
     -webkit-user-select: none;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   body {
     min-height: 100dvh;
-    background: radial-gradient(circle at 50% 20%, #3a4b66, #111827 85%);
+    background: var(--bg-grad);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
   }
-  #app {
-    width: min(100%, 460px);
+  #app-frame {
+    width: min(100%, 450px);
     height: 100dvh;
     max-height: 920px;
-    background: radial-gradient(ellipse at 50% 30%, #fdf5ea 0%, #ecd7be 60%, #debfa0 100%);
+    background: radial-gradient(ellipse at 50% 30%, #fffbf2 0%, #f3e4d0 55%, #dfc3a3 100%);
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    box-shadow: 0 0 60px rgba(0,0,0,0.65);
     overflow: hidden;
   }
 
+  /* Confetti Overlay */
+  #confetti-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 600;
+  }
+
   /* Top Bar */
-  .top-bar {
-    height: 60px;
+  .top-header {
+    height: 64px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 16px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(243,230,211,0.95));
-    box-shadow: 0 4px 12px rgba(80,50,20,0.12);
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(246,236,223,0.95));
+    box-shadow: 0 4px 15px rgba(85,55,25,0.14);
     z-index: 100;
   }
-  .icon-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+  .hud-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
     background: linear-gradient(145deg, #ffffff, #ded0be);
-    border: 2px solid #fff;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    font-size: 18px;
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.16);
+    font-size: 19px;
     font-weight: 900;
     color: #3b485e;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
   }
-  .level-info {
-    text-align: center;
-  }
+  .hud-btn:active { transform: scale(0.92); }
+
+  .level-hub { text-align: center; }
   .level-title {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 1000;
-    color: #2c384e;
+    color: #2b3952;
     letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px #fff;
   }
   .level-sub {
     font-size: 10px;
-    font-weight: 800;
-    color: #927556;
+    font-weight: 900;
+    color: #8c7152;
     letter-spacing: 2px;
   }
+
   .coin-badge {
     background: linear-gradient(135deg, #ffe082, #f59e0b);
     border: 2px solid #fff;
-    padding: 6px 12px;
-    border-radius: 14px;
+    padding: 7px 13px;
+    border-radius: 16px;
     font-weight: 900;
     color: #633806;
     font-size: 13px;
-    box-shadow: 0 3px 0 #b45309;
+    box-shadow: 0 3px 0 #b45309, 0 4px 8px rgba(0,0,0,0.18);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
   }
 
-  /* Progress Bar */
+  /* Progress Gauge */
   .progress-rail {
-    height: 6px;
-    background: #d4be9f;
+    height: 7px;
+    background: #d8c2a3;
     width: 100%;
     z-index: 90;
   }
@@ -104,41 +113,41 @@
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #10b981, #34d399, #facc15);
-    transition: width 0.3s ease;
+    transition: width 0.35s cubic-bezier(0.2, 0.8, 0.4, 1);
   }
 
-  /* 3D Target Boxes Area */
+  /* Target Boxes */
   .boxes-wrap {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 9px;
     padding: 10px 12px 6px;
     z-index: 90;
   }
   .box-card {
     width: clamp(74px, 21vw, 88px);
     height: clamp(74px, 21vw, 88px);
-    border-radius: 20px;
+    border-radius: 22px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 3.5px solid rgba(255,255,255,0.9);
-    box-shadow: inset 0 4px 6px rgba(255,255,255,0.7),
-                inset 0 -6px 8px rgba(0,0,0,0.25),
-                0 8px 15px rgba(60,40,20,0.25);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 3.5px solid rgba(255,255,255,0.92);
+    box-shadow: inset 0 4px 6px rgba(255,255,255,0.8),
+                inset 0 -6px 8px rgba(0,0,0,0.28),
+                0 9px 18px rgba(65,42,20,0.26);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .box-orange { background: linear-gradient(145deg, #ff9e42, #e65c00); }
-  .box-yellow { background: linear-gradient(145deg, #fde047, #d97706); }
+  .box-card:active { transform: translateY(3px); }
+  .box-orange { background: linear-gradient(145deg, #ffa347, #e65c00); }
+  .box-yellow { background: linear-gradient(145deg, #ffdf4c, #d97706); }
   .box-blue   { background: linear-gradient(145deg, #60a5fa, #1d4ed8); }
-  .box-brown  { background: linear-gradient(145deg, #b4784a, #6d3a14); }
+  .box-brown  { background: linear-gradient(145deg, #b87b4d, #6d3a14); }
 
   .box-inner-tray {
     width: 82%;
     height: 82%;
-    border-radius: 14px;
+    border-radius: 16px;
     background: linear-gradient(145deg, #f7efe1, #ded2bf);
     box-shadow: inset 0 3px 6px rgba(0,0,0,0.35), 0 1px 1px #fff;
     display: flex;
@@ -151,34 +160,37 @@
     height: 20px;
     border-radius: 50%;
     background: #475569;
-    box-shadow: inset 2px 2px 4px #000;
+    box-shadow: inset 2px 2px 5px #000;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
+
   .box-card.ad-lock {
-    background: linear-gradient(145deg, #fde047, #eab308);
+    background: linear-gradient(145deg, #fedc4f, #eab308);
     cursor: pointer;
     border-color: #fef08a;
   }
   .box-card.ad-lock .plus-sign {
-    font-size: 34px;
+    font-size: 36px;
     font-weight: 1000;
     color: #633806;
     line-height: 1;
     margin-bottom: 2px;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.7);
   }
   .box-card.ad-lock .ad-pill {
     position: absolute;
     bottom: 5px;
-    background: #15803d;
+    background: linear-gradient(180deg, #16a34a, #15803d);
     color: #fff;
     font-size: 9px;
     font-weight: 900;
     padding: 2px 6px;
     border-radius: 6px;
     letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   }
 
   /* Buffer Holes */
@@ -187,7 +199,7 @@
     font-size: 10px;
     font-weight: 900;
     color: #927556;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     margin-top: 4px;
   }
   .buffer-bar {
@@ -198,37 +210,37 @@
     z-index: 90;
   }
   .buffer-hole {
-    width: 29px;
-    height: 29px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: radial-gradient(circle at 40% 40%, #526075, #222d3d);
-    box-shadow: inset 3px 3px 6px #090e17, 0 1px 2px rgba(255,255,255,0.7);
+    background: radial-gradient(circle at 35% 35%, #58677d, #1e2634);
+    box-shadow: inset 3px 3px 6px #090e17, 0 1px 2px rgba(255,255,255,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
 
-  /* Playfield & Plates */
+  /* 3D Playfield */
   .playfield {
     flex: 1;
     position: relative;
     margin: 4px 12px 10px;
-    border-radius: 26px;
-    background: radial-gradient(ellipse at 50% 35%, #fff5e6 0%, #edd8bf 70%, #d8bea0 100%);
-    box-shadow: inset 0 4px 16px rgba(100,60,20,0.18), 0 2px 4px #fff;
+    border-radius: 28px;
+    background: radial-gradient(ellipse at 50% 35%, #fff6e8 0%, #ecd7be 70%, #d8bda0 100%);
+    box-shadow: inset 0 4px 18px rgba(100,60,20,0.18), 0 2px 4px #fff;
     overflow: hidden;
   }
   .playfield::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(#9a7b531a 1.5px, transparent 1.5px);
+    background-image: radial-gradient(#9a7b531c 1.5px, transparent 1.5px);
     background-size: 20px 20px;
     pointer-events: none;
   }
 
-  /* Diverse 3D Plates */
+  /* 3D Acrylic Plates */
   .plate {
     position: absolute;
     display: flex;
@@ -236,10 +248,10 @@
     align-items: center;
     padding: 0 10px;
     border: 4px solid #ffffff;
-    box-shadow: inset 0 3px 5px rgba(255,255,255,0.8),
+    box-shadow: inset 0 3px 6px rgba(255,255,255,0.85),
                 inset 0 -5px 6px rgba(0,0,0,0.25),
-                0 10px 18px rgba(45,25,10,0.25),
-                0 4px 0 rgba(0,0,0,0.12);
+                0 12px 22px rgba(45,25,10,0.28),
+                0 5px 0 rgba(0,0,0,0.12);
     transform-origin: center center;
     transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s;
     will-change: transform;
@@ -265,7 +277,6 @@
   .plate-purple { background: linear-gradient(135deg, #d8b4fe, #7e22ce); }
   .plate-orange { background: linear-gradient(135deg, #fdba74, #ea580c); }
 
-  /* Plate Hole Socket */
   .leaf-hole-socket {
     width: 32px;
     height: 32px;
@@ -279,7 +290,7 @@
     flex-shrink: 0;
   }
 
-  /* 3D Metallic Screws */
+  /* 3D Realistic Screws */
   .screw {
     width: 30px;
     height: 30px;
@@ -335,7 +346,6 @@
     75% { transform: translateX(5px) rotate(15deg); }
   }
 
-  /* Screw Mini in Box/Buffer */
   .screw-mini {
     width: 18px;
     height: 18px;
@@ -351,6 +361,22 @@
     pointer-events: none;
     transition: all 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2);
     transform: translate(-50%, -50%) scale(1.15) rotate(360deg);
+  }
+
+  /* Score Popup Bubble */
+  .floating-score {
+    position: fixed;
+    z-index: 1050;
+    font-weight: 1000;
+    font-size: 18px;
+    color: #10b981;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4), 0 0 2px #fff;
+    pointer-events: none;
+    animation: floatUp 0.8s forwards ease-out;
+  }
+  @keyframes floatUp {
+    0% { transform: translate(-50%, 0) scale(0.8); opacity: 1; }
+    100% { transform: translate(-50%, -45px) scale(1.3); opacity: 0; }
   }
 
   /* Bottom Boosters */
@@ -381,7 +407,7 @@
     transform: translateY(3px);
     box-shadow: inset 0 2px 2px #fff, 0 1px 0 #92400e;
   }
-  .boost-icon { font-size: 24px; }
+  .boost-icon { font-size: 24px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25)); }
   .boost-count {
     font-size: 12px;
     font-weight: 1000;
@@ -392,12 +418,12 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
 
-  /* Modals & Dialogs */
+  /* Dialogs */
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(5px);
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(6px);
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -409,13 +435,13 @@
     width: min(340px, 90%);
     background: linear-gradient(145deg, #fffcf6, #f3e5d0);
     border: 3.5px solid #ffffff;
-    border-radius: 26px;
-    padding: 24px 22px;
+    border-radius: 28px;
+    padding: 26px 22px;
     text-align: center;
-    box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
   .dialog-card h2 {
-    font-size: 26px;
+    font-size: 27px;
     font-weight: 1000;
     color: #1e293b;
     margin-bottom: 8px;
@@ -435,7 +461,7 @@
     border: none;
     font-size: 17px;
     font-weight: 900;
-    border-radius: 14px;
+    border-radius: 16px;
     box-shadow: 0 4px 0 #047857;
     cursor: pointer;
   }
@@ -453,13 +479,13 @@
   #ad-timer-modal .ad-box-anim {
     width: 80px;
     height: 80px;
-    border-radius: 20px;
+    border-radius: 22px;
     background: linear-gradient(135deg, #f59e0b, #d97706);
     margin: 15px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 38px;
+    display: grid;
+    place-items: center;
+    font-size: 40px;
+    box-shadow: 0 8px 20px rgba(245,158,11,0.4);
     animation: pulse 1s infinite alternate;
   }
   @keyframes pulse { from { transform: scale(0.95); } to { transform: scale(1.08); } }
@@ -471,15 +497,15 @@
     transform: translate(-50%, -50%);
     background: rgba(26, 36, 54, 0.94);
     color: #fff;
-    padding: 10px 18px;
-    border-radius: 12px;
+    padding: 11px 18px;
+    border-radius: 14px;
     font-size: 13px;
     font-weight: 800;
     z-index: 600;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
     white-space: nowrap;
   }
   .toast.show { opacity: 1; }
@@ -487,11 +513,13 @@
 </head>
 <body>
 
-<div id="app">
+<div id="app-frame">
+  <canvas id="confetti-canvas"></canvas>
+
   <!-- Top Bar -->
-  <header class="top-bar">
-    <button class="icon-btn" onclick="togglePause()">❚❚</button>
-    <div class="level-info">
+  <header class="top-header">
+    <button class="hud-btn" onclick="togglePause()">❚❚</button>
+    <div class="level-hub">
       <div class="level-title" id="lvl-display">LEVEL 1</div>
       <div class="level-sub">3D REAL PHYSICS</div>
     </div>
@@ -529,7 +557,7 @@
     </button>
   </footer>
 
-  <!-- Toast -->
+  <!-- Toast Message -->
   <div class="toast" id="toast"></div>
 
   <!-- Win Modal -->
@@ -554,13 +582,13 @@
   <div class="overlay" id="pause-modal">
     <div class="dialog-card">
       <h2>गेम रुका हुआ है ⏸️</h2>
-      <p>प्रगति सुरक्षित है। खेलने के लिए जारी रखें।</p>
+      <p>आपकी प्रगति सुरक्षित है।</p>
       <button class="dialog-btn" onclick="togglePause()">जारी रखें</button>
       <button class="dialog-btn sec" onclick="retryLevel()">लेवल दोबारा शुरू करें</button>
     </div>
   </div>
 
-  <!-- Rewarded Ad Simulation Modal -->
+  <!-- Rewarded Ad Modal -->
   <div class="overlay" id="ad-timer-modal">
     <div class="dialog-card">
       <h2>प्रचार देखा जा रहा है... 🎬</h2>
@@ -574,7 +602,60 @@
 (() => {
   'use strict';
 
-  // Sound Engine
+  // Confetti Particle Engine
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function fireConfetti() {
+    particles = [];
+    const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+    for (let i = 0; i < 90; i++) {
+      particles.push({
+        x: canvas.width / 2,
+        y: canvas.height * 0.45,
+        vx: (Math.random() - 0.5) * 12,
+        vy: -Math.random() * 14 - 3,
+        size: Math.random() * 7 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 10,
+        alpha: 1
+      });
+    }
+  }
+
+  function renderConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.38; // gravity
+      p.rotation += p.vr;
+      p.alpha -= 0.012;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+
+      if (p.alpha <= 0) particles.splice(i, 1);
+    }
+    requestAnimationFrame(renderConfetti);
+  }
+  renderConfetti();
+
+  // Audio Engine
   let audioCtx;
   function playSound(type) {
     try {
@@ -589,8 +670,8 @@
       if (type === 'unscrew') {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(320, now);
-        osc.frequency.linearRampToValueAtTime(750, now + 0.14);
-        gain.gain.setValueAtTime(0.2, now);
+        osc.frequency.linearRampToValueAtTime(780, now + 0.14);
+        gain.gain.setValueAtTime(0.22, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
         osc.start(now);
         osc.stop(now + 0.15);
@@ -607,10 +688,10 @@
         osc.frequency.setValueAtTime(523, now);
         osc.frequency.setValueAtTime(659, now + 0.08);
         osc.frequency.setValueAtTime(783, now + 0.16);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+        gain.gain.setValueAtTime(0.32, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
         osc.start(now);
-        osc.stop(now + 0.28);
+        osc.stop(now + 0.3);
       } else if (type === 'blocked') {
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(160, now);
@@ -620,561 +701,4 @@
         osc.start(now);
         osc.stop(now + 0.12);
       } else if (type === 'creak') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(240, now);
-        osc.frequency.linearRampToValueAtTime(130, now + 0.22);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
-        osc.start(now);
-        osc.stop(now + 0.22);
-      }
-    } catch(e) {}
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
-  }
-
-  // Master State
-  const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
-  const PLATE_SHAPES = ['shape-leaf', 'shape-arch', 'shape-bar', 'shape-wedge'];
-  const PLATE_COLORS = ['plate-green', 'plate-blue', 'plate-yellow', 'plate-purple', 'plate-orange'];
-
-  let level = Math.max(1, parseInt(localStorage.getItem('sp3_level') || '1'));
-  let coins = Math.max(0, parseInt(localStorage.getItem('sp3_coins') || '100'));
-  let boxes = [];
-  let buffer = [null, null, null, null, null];
-  let plates = [];
-  let totalScrews = 0;
-  let removedCount = 0;
-  let boosters = { drill: 2, hammer: 1, cleaner: 1 };
-  let isPaused = false;
-  let isGameOver = false;
-
-  function saveGame() {
-    localStorage.setItem('sp3_level', level);
-    localStorage.setItem('sp3_coins', coins);
-  }
-
-  // Generate Balanced Levels
-  function buildLevel(lvl) {
-    let plateCount, activeColors;
-    if (lvl === 1) {
-      plateCount = 2;
-      activeColors = ['orange', 'yellow'];
-    } else if (lvl === 2) {
-      plateCount = 3;
-      activeColors = ['orange', 'yellow'];
-    } else if (lvl <= 5) {
-      plateCount = 4 + (lvl - 3);
-      activeColors = ['orange', 'yellow', 'blue'];
-    } else {
-      plateCount = Math.min(12, 7 + Math.floor((lvl - 6) * 0.7));
-      activeColors = ALL_COLORS;
-    }
-
-    boxes = [
-      { type: 'box', color: activeColors[0], count: 0 },
-      { type: 'box', color: activeColors[1] || activeColors[0], count: 0 },
-      { type: 'ad', unlocked: false },
-      { type: 'ad', unlocked: false }
-    ];
-
-    buffer = [null, null, null, null, null];
-    plates = [];
-    let screwCounter = 1;
-
-    for (let i = 0; i < plateCount; i++) {
-      let topPos = 40 + (i * 24) + (Math.sin(i * 1.6) * 16);
-      let leftPos = 24 + ((i % 3) * 65) + (Math.cos(i) * 22);
-      let baseRot = -32 + ((i * 38) % 76);
-      let shape = PLATE_SHAPES[i % PLATE_SHAPES.length];
-      let pColor = PLATE_COLORS[i % PLATE_COLORS.length];
-
-      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
-      let slots = [];
-
-      for (let s = 0; s < numSlots; s++) {
-        let scColor = activeColors[(i + s) % activeColors.length];
-        slots.push({
-          slotId: s,
-          color: scColor,
-          screwId: 's_' + (screwCounter++)
-        });
-      }
-
-      plates.push({
-        id: 'p_' + (i + 1),
-        layer: i,
-        top: Math.round(topPos),
-        left: Math.round(leftPos),
-        currentRot: baseRot,
-        pivotOrigin: 'center center',
-        shape: shape,
-        color: pColor,
-        slots: slots,
-        isHanging: false,
-        hangBaseAngle: 0,
-        swingPhase: Math.random() * Math.PI * 2,
-        swingSpeed: 1.8 + Math.random() * 0.7,
-        swingAmplitude: 12 + Math.random() * 6
-      });
-    }
-
-    totalScrews = 0;
-    plates.forEach(p => p.slots.forEach(s => { if (s.color) totalScrews++; }));
-    removedCount = 0;
-    isGameOver = false;
-    isPaused = false;
-
-    document.getElementById('lvl-display').textContent = `LEVEL ${lvl}`;
-    document.getElementById('coin-display').textContent = coins;
-    updateProgress();
-    renderBoxes();
-    renderBuffer();
-    renderPlayfield();
-  }
-
-  // Precise Hit Testing Raycast
-  function isScrewPhysicallyBlocked(screwElem, plateId) {
-    if (!screwElem) return false;
-    const r = screwElem.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-
-    const stack = document.elementsFromPoint(cx, cy);
-    const myIdx = plates.findIndex(p => p.id === plateId);
-
-    for (let el of stack) {
-      const parent = el.closest('.plate');
-      if (parent && parent.id !== plateId) {
-        const otherIdx = plates.findIndex(p => p.id === parent.id);
-        if (otherIdx > myIdx) return true;
-      }
-    }
-    return false;
-  }
-
-  function renderBoxes() {
-    const root = document.getElementById('boxes-container');
-    root.innerHTML = '';
-
-    boxes.forEach((b, idx) => {
-      const card = document.createElement('div');
-      card.className = 'box-card';
-      card.id = 'box-card-' + idx;
-
-      if (b.type === 'box') {
-        card.classList.add('box-' + b.color);
-        const tray = document.createElement('div');
-        tray.className = 'box-inner-tray';
-
-        for (let i = 0; i < 3; i++) {
-          const hole = document.createElement('div');
-          hole.className = 'box-hole-target';
-          hole.id = `box-hole-${idx}-${i}`;
-          if (i < b.count) {
-            const sc = document.createElement('div');
-            sc.className = `screw screw-mini screw-${b.color}`;
-            hole.appendChild(sc);
-          }
-          tray.appendChild(hole);
-        }
-        card.appendChild(tray);
-      } else {
-        card.classList.add('ad-lock');
-        card.innerHTML = `<span class="plus-sign">+</span><span class="ad-pill">AD</span>`;
-        card.onclick = () => watchRewardedAd(idx);
-      }
-      root.appendChild(card);
-    });
-  }
-
-  function renderBuffer() {
-    const root = document.getElementById('buffer-container');
-    root.innerHTML = '';
-    buffer.forEach((c, idx) => {
-      const hole = document.createElement('div');
-      hole.className = 'buffer-hole';
-      hole.id = 'buffer-hole-' + idx;
-      if (c) {
-        const sc = document.createElement('div');
-        sc.className = `screw screw-mini screw-${c}`;
-        hole.appendChild(sc);
-      }
-      root.appendChild(hole);
-    });
-  }
-
-  function renderPlayfield() {
-    const root = document.getElementById('playfield');
-    root.innerHTML = '';
-
-    plates.forEach((p, pIdx) => {
-      const pEl = document.createElement('div');
-      pEl.className = `plate ${p.shape} ${p.color}`;
-      pEl.id = p.id;
-      pEl.style.top = p.top + 'px';
-      pEl.style.left = p.left + 'px';
-      pEl.style.transformOrigin = p.pivotOrigin;
-      pEl.style.transform = `rotate(${p.currentRot}deg)`;
-      pEl.style.zIndex = pIdx + 1;
-
-      p.slots.forEach(s => {
-        const socket = document.createElement('div');
-        socket.className = 'leaf-hole-socket';
-
-        if (s.color) {
-          const sc = document.createElement('div');
-          sc.className = `screw screw-${s.color}`;
-          sc.id = s.screwId;
-          sc.onclick = (e) => {
-            e.stopPropagation();
-            onScrewTap(p.id, s.screwId, s.color, sc);
-          };
-          socket.appendChild(sc);
-        }
-        pEl.appendChild(socket);
-      });
-
-      root.appendChild(pEl);
-    });
-  }
-
-  // Real-Time Physics Pendulum Loop
-  let lastTime = performance.now();
-  function physicsEngine(now) {
-    const dt = (now - lastTime) / 1000;
-    lastTime = now;
-
-    plates.forEach(p => {
-      if (p.isHanging) {
-        p.swingPhase += p.swingSpeed * dt;
-        const sway = Math.sin(p.swingPhase) * p.swingAmplitude;
-        p.currentRot = p.hangBaseAngle + sway;
-
-        const el = document.getElementById(p.id);
-        if (el) {
-          el.style.transformOrigin = p.pivotOrigin;
-          el.style.transform = `rotate(${p.currentRot}deg)`;
-        }
-      }
-    });
-
-    // Dynamic Overlap Highlight
-    plates.forEach(p => {
-      p.slots.forEach(s => {
-        if (s.color) {
-          const sc = document.getElementById(s.screwId);
-          if (sc) {
-            if (isScrewPhysicallyBlocked(sc, p.id)) {
-              sc.classList.add('covered-screw');
-            } else {
-              sc.classList.remove('covered-screw');
-            }
-          }
-        }
-      });
-    });
-
-    requestAnimationFrame(physicsEngine);
-  }
-  requestAnimationFrame(physicsEngine);
-
-  // Flying Screw Animation to Destination
-  function animateScrewFlight(startElem, targetElem, color, onComplete) {
-    const sRect = startElem.getBoundingClientRect();
-    const tRect = targetElem.getBoundingClientRect();
-
-    const ghost = document.createElement('div');
-    ghost.className = `screw screw-${color} flying-ghost`;
-    ghost.style.left = (sRect.left + sRect.width / 2) + 'px';
-    ghost.style.top = (sRect.top + sRect.height / 2) + 'px';
-    document.body.appendChild(ghost);
-
-    playSound('unscrew');
-
-    requestAnimationFrame(() => {
-      ghost.style.left = (tRect.left + tRect.width / 2) + 'px';
-      ghost.style.top = (tRect.top + tRect.height / 2) + 'px';
-      ghost.style.transform = 'translate(-50%, -50%) scale(0.7) rotate(720deg)';
-    });
-
-    setTimeout(() => {
-      ghost.remove();
-      playSound('land');
-      if (onComplete) onComplete();
-    }, 420);
-  }
-
-  function onScrewTap(plateId, screwId, color, screwElem) {
-    if (isPaused || isGameOver) return;
-
-    if (isScrewPhysicallyBlocked(screwElem, plateId)) {
-      playSound('blocked');
-      screwElem.classList.remove('shake');
-      void screwElem.offsetWidth;
-      screwElem.classList.add('shake');
-      showToast('ऊपर की प्लेट हटने तक यह लॉक है!');
-      return;
-    }
-
-    // Determine target location: Box or Buffer
-    let targetBoxIdx = boxes.findIndex(b => b.type === 'box' && b.color === color && b.count < 3);
-    let destElem = null;
-    let targetMode = '';
-
-    if (targetBoxIdx !== -1) {
-      targetMode = 'box';
-      const slotNum = boxes[targetBoxIdx].count;
-      destElem = document.getElementById(`box-hole-${targetBoxIdx}-${slotNum}`);
-    } else {
-      let emptyBuf = buffer.indexOf(null);
-      if (emptyBuf !== -1) {
-        targetMode = 'buffer';
-        destElem = document.getElementById(`buffer-hole-${emptyBuf}`);
-      } else {
-        playSound('blocked');
-        showToast('बफ़र स्लॉट भर गए हैं!');
-        checkFailCondition();
-        return;
-      }
-    }
-
-    // Remove from plate visually immediately to avoid double clicks
-    const plate = plates.find(p => p.id === plateId);
-    if (!plate) return;
-    const slot = plate.slots.find(s => s.screwId === screwId);
-    if (!slot) return;
-    slot.color = null;
-    screwElem.remove();
-
-    animateScrewFlight(screwElem, destElem, color, () => {
-      removedCount++;
-      if (targetMode === 'box') {
-        boxes[targetBoxIdx].count++;
-        if (boxes[targetBoxIdx].count === 3) {
-          playSound('box-full');
-          setTimeout(() => recycleBox(boxes[targetBoxIdx]), 350);
-        }
-      } else {
-        const emptyBuf = buffer.indexOf(null);
-        if (emptyBuf !== -1) buffer[emptyBuf] = color;
-      }
-
-      checkBufferHops();
-      renderBoxes();
-      renderBuffer();
-      updateProgress();
-      checkWinCondition();
-    });
-
-    handlePlateBalance(plate);
-  }
-
-  function handlePlateBalance(plate) {
-    const leftSlots = plate.slots.filter(s => s.color !== null);
-
-    // 0 Screws: Plate Falls Off
-    if (leftSlots.length === 0) {
-      plate.isHanging = false;
-      const el = document.getElementById(plate.id);
-      if (el) {
-        el.style.transform += ' translateY(480px) rotate(60deg)';
-        el.style.opacity = '0';
-        setTimeout(() => {
-          plates = plates.filter(p => p.id !== plate.id);
-          renderPlayfield();
-        }, 450);
-      }
-      return;
-    }
-
-    // 1 Screw: Hang & Swing
-    if (leftSlots.length === 1) {
-      const pivot = leftSlots[0];
-      const tot = plate.slots.length;
-      let pct = (tot === 2)
-        ? (pivot.slotId === 0 ? '25%' : '75%')
-        : (pivot.slotId === 0 ? '18%' : (pivot.slotId === 1 ? '50%' : '82%'));
-
-      plate.pivotOrigin = `${pct} 50%`;
-      plate.isHanging = true;
-
-      if (tot === 2) {
-        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : -82;
-      } else {
-        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : (pivot.slotId === 2 ? -82 : 80);
-      }
-      plate.currentRot = plate.hangBaseAngle;
-      playSound('creak');
-    }
-  }
-
-  function checkBufferHops() {
-    buffer.forEach((c, i) => {
-      if (!c) return;
-      let match = boxes.find(b => b.type === 'box' && b.color === c && b.count < 3);
-      if (match) {
-        match.count++;
-        buffer[i] = null;
-        if (match.count === 3) {
-          playSound('box-full');
-          setTimeout(() => recycleBox(match), 350);
-        }
-      }
-    });
-  }
-
-  function recycleBox(box) {
-    box.count = 0;
-    const remaining = [];
-    plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
-    buffer.forEach(c => { if (c) remaining.push(c); });
-
-    if (remaining.length > 0) {
-      box.color = remaining[Math.floor(Math.random() * remaining.length)];
-    } else {
-      box.color = ALL_COLORS[Math.floor(Math.random() * ALL_COLORS.length)];
-    }
-
-    renderBoxes();
-    checkBufferHops();
-  }
-
-  function watchRewardedAd(boxIdx) {
-    if (boxes[boxIdx].unlocked) return;
-    playSound('unscrew');
-
-    const modal = document.getElementById('ad-timer-modal');
-    const timerText = document.getElementById('ad-timer-text');
-    modal.style.display = 'flex';
-
-    let sec = 5;
-    timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
-
-    const timer = setInterval(() => {
-      sec--;
-      if (sec > 0) {
-        timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
-      } else {
-        clearInterval(timer);
-        modal.style.display = 'none';
-
-        // Unlock 4th box
-        const active = boxes.filter(b => b.type === 'box').map(b => b.color);
-        const nextColor = ALL_COLORS.find(c => !active.includes(c)) || 'brown';
-        boxes[boxIdx] = { type: 'box', color: nextColor, count: 0, unlocked: true };
-
-        playSound('box-full');
-        showToast('चौथा बॉक्स सफलतापूर्वक अनलॉक हुआ! 🎉');
-        renderBoxes();
-        checkBufferHops();
-      }
-    }, 1000);
-  }
-
-  function updateProgress() {
-    const pct = totalScrews > 0 ? Math.min(100, Math.floor((removedCount / totalScrews) * 100)) : 100;
-    document.getElementById('progress-fill').style.width = pct + '%';
-  }
-
-  function checkWinCondition() {
-    if (removedCount >= totalScrews && totalScrews > 0) {
-      isGameOver = true;
-      coins += 25;
-      saveGame();
-      playSound('box-full');
-      setTimeout(() => {
-        document.getElementById('win-modal').style.display = 'flex';
-      }, 550);
-    }
-  }
-
-  function checkFailCondition() {
-    if (buffer.every(c => c !== null)) {
-      isGameOver = true;
-      playSound('blocked');
-      document.getElementById('fail-modal').style.display = 'flex';
-    }
-  }
-
-  window.nextLevel = function() {
-    document.getElementById('win-modal').style.display = 'none';
-    level++;
-    saveGame();
-    buildLevel(level);
-  };
-
-  window.retryLevel = function() {
-    document.getElementById('fail-modal').style.display = 'none';
-    document.getElementById('pause-modal').style.display = 'none';
-    buildLevel(level);
-  };
-
-  window.togglePause = function() {
-    isPaused = !isPaused;
-    document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
-  };
-
-  window.useBooster = function(type) {
-    if (isPaused || isGameOver) return;
-    if (boosters[type] <= 0) {
-      showToast('यह बूस्टर समाप्त हो गया है!');
-      return;
-    }
-
-    if (type === 'drill') {
-      // Direct remove first available unblocked screw
-      for (let i = plates.length - 1; i >= 0; i--) {
-        const p = plates[i];
-        for (let s of p.slots) {
-          if (s.color) {
-            const sc = document.getElementById(s.screwId);
-            if (sc && !isScrewPhysicallyBlocked(sc, p.id)) {
-              boosters.drill--;
-              document.getElementById('drill-count').textContent = boosters.drill;
-              onScrewTap(p.id, s.screwId, s.color, sc);
-              return;
-            }
-          }
-        }
-      }
-      showToast('कोई अनलॉक स्क्रू नहीं मिला!');
-    } else if (type === 'hammer') {
-      if (plates.length > 0) {
-        const topPlate = plates[plates.length - 1];
-        boosters.hammer--;
-        document.getElementById('hammer-count').textContent = boosters.hammer;
-        removedCount += topPlate.slots.filter(s => s.color !== null).length;
-        plates.pop();
-        playSound('box-full');
-        renderPlayfield();
-        updateProgress();
-        checkWinCondition();
-        showToast('हथौड़े से शीर्ष प्लेट तोड़ दी गई!');
-      }
-    } else if (type === 'cleaner') {
-      if (buffer.every(c => c === null)) {
-        showToast('बफ़र पहले से खाली है!');
-        return;
-      }
-      boosters.cleaner--;
-      document.getElementById('cleaner-count').textContent = boosters.cleaner;
-      buffer = [null, null, null, null, null];
-      playSound('unscrew');
-      renderBuffer();
-      showToast('बफ़र पूरी तरह साफ़ कर दिया गया!');
-    }
-  };
-
-  // Start Level
-  buildLevel(level);
-})();
-</script>
-</body>
-</html>
+        osc.type
