@@ -1,165 +1,142 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1a2536">
-<title>Screw Jam 3D - Ultimate Deluxe</title>
+<meta name="theme-color" content="#0a0d14">
+<title>Screw Jam 3D - Cinematic Neon</title>
 <style>
-  :root {
-    --bg-grad: radial-gradient(circle at 50% 18%, #3e5270 0%, #151e2e 90%);
-  }
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     user-select: none;
     -webkit-user-select: none;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   body {
     min-height: 100dvh;
-    background: var(--bg-grad);
+    background: radial-gradient(circle at 50% 30%, #172033 0%, #080b12 75%, #020408 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
   }
-  #app-frame {
+  #game-viewport {
     width: min(100%, 450px);
     height: 100dvh;
     max-height: 920px;
-    background: radial-gradient(ellipse at 50% 30%, #fffbf2 0%, #f3e4d0 55%, #dfc3a3 100%);
+    background: radial-gradient(ellipse at 50% 25%, #161e2e 0%, #0c1017 65%, #05070a 100%);
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 0 60px rgba(0,0,0,0.65);
+    box-shadow: 0 0 60px rgba(0, 229, 255, 0.15);
     overflow: hidden;
   }
 
-  /* Confetti Overlay */
-  #confetti-canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 600;
-  }
-
-  /* Top Bar */
-  .top-header {
-    height: 64px;
+  /* HUD Header */
+  .top-hud {
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(246,236,223,0.95));
-    box-shadow: 0 4px 15px rgba(85,55,25,0.14);
+    padding: 8px 16px;
+    background: linear-gradient(180deg, rgba(20, 28, 44, 0.95), rgba(10, 14, 22, 0.95));
+    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
     z-index: 100;
   }
   .hud-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 15px;
-    background: linear-gradient(145deg, #ffffff, #ded0be);
-    border: 2px solid #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.16);
-    font-size: 19px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 3px 6px rgba(0,0,0,0.6);
+    font-size: 17px;
     font-weight: 900;
-    color: #3b485e;
+    color: #00e5ff;
     cursor: pointer;
     display: grid;
     place-items: center;
   }
   .hud-btn:active { transform: scale(0.92); }
-
-  .level-hub { text-align: center; }
-  .level-title {
-    font-size: 21px;
+  .hud-title { text-align: center; }
+  .title-main {
+    font-size: 19px;
     font-weight: 1000;
-    color: #2b3952;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
+    background: linear-gradient(180deg, #ffffff 20%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  .level-sub {
-    font-size: 10px;
+  .title-sub {
+    font-size: 9px;
     font-weight: 900;
-    color: #8c7152;
     letter-spacing: 2px;
+    color: #00e5ff;
   }
-
-  .coin-badge {
-    background: linear-gradient(135deg, #ffe082, #f59e0b);
-    border: 2px solid #fff;
-    padding: 7px 13px;
-    border-radius: 16px;
+  .coin-pill {
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border: 1px solid #eab308;
+    padding: 5px 12px;
+    border-radius: 14px;
     font-weight: 900;
-    color: #633806;
+    color: #facc15;
     font-size: 13px;
-    box-shadow: 0 3px 0 #b45309, 0 4px 8px rgba(0,0,0,0.18);
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
     display: flex;
     align-items: center;
     gap: 5px;
   }
 
-  /* Progress Gauge */
-  .progress-rail {
-    height: 7px;
-    background: #d8c2a3;
+  /* Progress Line */
+  .rail-bar {
+    height: 4px;
+    background: #111827;
     width: 100%;
     z-index: 90;
   }
-  #progress-fill {
+  #fill-line {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #10b981, #34d399, #facc15);
-    transition: width 0.35s cubic-bezier(0.2, 0.8, 0.4, 1);
+    background: linear-gradient(90deg, #00e5ff, #00ff66, #ffea00);
+    box-shadow: 0 0 10px #00e5ff;
+    transition: width 0.35s ease;
   }
 
-  /* Target Boxes */
-  .boxes-wrap {
+  /* 3D Toolboxes */
+  .boxes-dock {
     display: flex;
     justify-content: center;
-    gap: 9px;
-    padding: 10px 12px 6px;
+    gap: 10px;
+    padding: 12px 14px 6px;
     z-index: 90;
   }
-  .box-card {
+  .tool-box {
     width: clamp(74px, 21vw, 88px);
-    height: clamp(74px, 21vw, 88px);
-    border-radius: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border: 3.5px solid rgba(255,255,255,0.92);
-    box-shadow: inset 0 4px 6px rgba(255,255,255,0.8),
-                inset 0 -6px 8px rgba(0,0,0,0.28),
-                0 9px 18px rgba(65,42,20,0.26);
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .box-card:active { transform: translateY(3px); }
-  .box-orange { background: linear-gradient(145deg, #ffa347, #e65c00); }
-  .box-yellow { background: linear-gradient(145deg, #ffdf4c, #d97706); }
-  .box-blue   { background: linear-gradient(145deg, #60a5fa, #1d4ed8); }
-  .box-brown  { background: linear-gradient(145deg, #b87b4d, #6d3a14); }
-
-  .box-inner-tray {
-    width: 82%;
-    height: 82%;
+    height: clamp(66px, 18vw, 76px);
     border-radius: 16px;
-    background: linear-gradient(145deg, #f7efe1, #ded2bf);
-    box-shadow: inset 0 3px 6px rgba(0,0,0,0.35), 0 1px 1px #fff;
+    background: linear-gradient(145deg, #1a2333, #0a0e17);
+    border: 2px solid rgba(255,255,255,0.12);
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding: 2px 4px;
+    padding: 0 4px;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.15),
+                0 10px 20px rgba(0,0,0,0.6);
   }
-  .box-hole-target {
+  .tool-box.box-blue   { border-color: #00e5ff; box-shadow: 0 0 16px rgba(0, 229, 255, 0.35); }
+  .tool-box.box-pink   { border-color: #ff0055; box-shadow: 0 0 16px rgba(255, 0, 85, 0.35); }
+  .tool-box.box-yellow { border-color: #ffea00; box-shadow: 0 0 16px rgba(255, 234, 0, 0.35); }
+  .tool-box.box-green  { border-color: #00ff66; box-shadow: 0 0 16px rgba(0, 255, 102, 0.35); }
+
+  .box-socket {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #475569;
+    background: radial-gradient(circle at center, #020305, #121824);
+    border: 1px solid rgba(255,255,255,0.1);
     box-shadow: inset 2px 2px 5px #000;
     display: flex;
     justify-content: center;
@@ -167,121 +144,116 @@
     position: relative;
   }
 
-  .box-card.ad-lock {
-    background: linear-gradient(145deg, #fedc4f, #eab308);
+  .tool-box.ad-slot {
+    border: 2px dashed #ffea00;
     cursor: pointer;
-    border-color: #fef08a;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
   }
-  .box-card.ad-lock .plus-sign {
-    font-size: 36px;
-    font-weight: 1000;
-    color: #633806;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .box-card.ad-lock .ad-pill {
-    position: absolute;
-    bottom: 5px;
-    background: linear-gradient(180deg, #16a34a, #15803d);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 900;
-    padding: 2px 6px;
-    border-radius: 6px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-  }
+  .tool-box.ad-slot span { font-size: 26px; color: #ffea00; line-height: 1; }
+  .tool-box.ad-slot small { font-size: 8px; font-weight: 900; background: #eab308; color: #000; padding: 1px 5px; border-radius: 4px; }
 
-  /* Buffer Holes */
-  .buffer-label {
-    text-align: center;
-    font-size: 10px;
-    font-weight: 900;
-    color: #927556;
-    letter-spacing: 2px;
-    margin-top: 4px;
-  }
-  .buffer-bar {
+  /* Buffer Rack */
+  .buffer-deck {
     display: flex;
     justify-content: center;
-    gap: 11px;
-    padding: 4px 10px 8px;
+    gap: 12px;
+    padding: 6px 14px 10px;
     z-index: 90;
   }
-  .buffer-hole {
-    width: 30px;
-    height: 30px;
+  .buffer-cup {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #58677d, #1e2634);
-    box-shadow: inset 3px 3px 6px #090e17, 0 1px 2px rgba(255,255,255,0.8);
+    background: radial-gradient(circle at 35% 35%, #1e293b, #05070a);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    box-shadow: inset 3px 3px 6px #000, 0 0 8px rgba(0, 229, 255, 0.15);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
   }
 
-  /* 3D Playfield */
-  .playfield {
+  /* 3D Dark Studio Arena */
+  .arena {
     flex: 1;
     position: relative;
     margin: 4px 12px 10px;
-    border-radius: 28px;
-    background: radial-gradient(ellipse at 50% 35%, #fff6e8 0%, #ecd7be 70%, #d8bda0 100%);
-    box-shadow: inset 0 4px 18px rgba(100,60,20,0.18), 0 2px 4px #fff;
+    border-radius: 26px;
+    background: radial-gradient(ellipse at 50% 40%, #151d2c 0%, #0d121c 65%, #06090e 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 0 35px rgba(0,0,0,0.8);
     overflow: hidden;
   }
-  .playfield::before {
+  .arena::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(#9a7b531c 1.5px, transparent 1.5px);
-    background-size: 20px 20px;
+    background-image: radial-gradient(rgba(0, 229, 255, 0.12) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
     pointer-events: none;
   }
 
-  /* 3D Plates */
-  .plate {
+  /* Glowing Acrylic Neon Plates */
+  .neon-plate {
     position: absolute;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     padding: 0 10px;
-    border: 4px solid #ffffff;
-    box-shadow: inset 0 3px 6px rgba(255,255,255,0.85),
-                inset 0 -5px 6px rgba(0,0,0,0.25),
-                0 12px 22px rgba(45,25,10,0.28),
-                0 5px 0 rgba(0,0,0,0.12);
-    transform-origin: center center;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.6);
     transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s;
     will-change: transform;
   }
-  .plate::after {
+  .neon-plate::after {
     content: '';
     position: absolute;
-    width: 75%;
+    width: 80%;
     height: 3px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.7), rgba(255,255,255,0.05));
-    border-radius: 3px;
+    border-radius: 2px;
     pointer-events: none;
+    opacity: 0.8;
   }
 
-  .shape-leaf   { width: 148px; height: 56px; border-radius: 70px 0 70px 0; }
-  .shape-arch   { width: 145px; height: 54px; border-radius: 40px 40px 15px 15px; }
-  .shape-bar    { width: 140px; height: 50px; border-radius: 25px; }
-  .shape-wedge  { width: 135px; height: 55px; border-radius: 35px 8px 35px 8px; }
+  .plate-blue {
+    background: rgba(0, 180, 255, 0.35);
+    border: 3px solid #00e5ff;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 12px rgba(0, 229, 255, 0.3);
+  }
+  .plate-blue::after { background: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
 
-  .plate-green  { background: linear-gradient(135deg, #5eead4, #0d9488); }
-  .plate-blue   { background: linear-gradient(135deg, #7dd3fc, #0284c7); }
-  .plate-yellow { background: linear-gradient(135deg, #fde047, #ca8a04); }
-  .plate-purple { background: linear-gradient(135deg, #d8b4fe, #7e22ce); }
-  .plate-orange { background: linear-gradient(135deg, #fdba74, #ea580c); }
+  .plate-pink {
+    background: rgba(255, 0, 85, 0.35);
+    border: 3px solid #ff0055;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 12px rgba(255, 0, 85, 0.3);
+  }
+  .plate-pink::after { background: #ff0055; box-shadow: 0 0 8px #ff0055; }
 
-  .leaf-hole-socket {
+  .plate-yellow {
+    background: rgba(255, 234, 0, 0.35);
+    border: 3px solid #ffea00;
+    box-shadow: 0 0 20px rgba(255, 234, 0, 0.4), inset 0 0 12px rgba(255, 234, 0, 0.3);
+  }
+  .plate-yellow::after { background: #ffea00; box-shadow: 0 0 8px #ffea00; }
+
+  .plate-green {
+    background: rgba(0, 255, 102, 0.35);
+    border: 3px solid #00ff66;
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 0 12px rgba(0, 255, 102, 0.3);
+  }
+  .plate-green::after { background: #00ff66; box-shadow: 0 0 8px #00ff66; }
+
+  /* Plate Hole Socket */
+  .acrylic-hole {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: radial-gradient(circle at center, #110d0a 45%, #423229 80%, #634e42 100%);
-    box-shadow: inset 2px 2px 4px #000, 0 1px 1px rgba(255,255,255,0.7);
+    background: radial-gradient(circle at center, #05070a 45%, #131b26 80%, #202d40 100%);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    box-shadow: inset 2px 2px 5px #000, 0 0 8px rgba(0, 229, 255, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -289,139 +261,111 @@
     flex-shrink: 0;
   }
 
-  /* 3D Realistic Screws */
-  .screw {
+  /* 3D Chrome Screws */
+  .metallic-screw {
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #cbd5e1 35%, #475569 70%, #1e293b 100%);
+    border: 2px solid #94a3b8;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.9),
+                inset 0 -3px 4px rgba(0,0,0,0.8),
+                0 6px 12px rgba(0,0,0,0.6);
+    cursor: pointer;
     position: relative;
     z-index: 5;
-    cursor: pointer;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.8),
-                inset 0 -3px 4px rgba(0,0,0,0.45),
-                0 4px 8px rgba(0,0,0,0.35);
     display: flex;
     justify-content: center;
     align-items: center;
     transition: filter 0.2s, transform 0.1s;
   }
-  .screw::before, .screw::after {
+  .metallic-screw::before, .metallic-screw::after {
     content: '';
     position: absolute;
-    background: #2b1f1a;
+    background: #0f172a;
     border-radius: 2px;
-    box-shadow: 0 1px 1px rgba(255,255,255,0.4);
+    box-shadow: 0 1px 1px rgba(255,255,255,0.6);
   }
-  .screw::before { width: 15px; height: 4px; }
-  .screw::after  { width: 4px; height: 15px; }
+  .metallic-screw::before { width: 15px; height: 3.5px; }
+  .metallic-screw::after  { width: 3.5px; height: 15px; }
 
-  .screw-orange {
-    background: radial-gradient(circle at 35% 30%, #ffd099 5%, #ff851a 55%, #ad3e00 100%);
-    border: 2px solid #943500;
+  .screw-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.85;
   }
-  .screw-yellow {
-    background: radial-gradient(circle at 35% 30%, #fffcb0 5%, #eab308 55%, #a16207 100%);
-    border: 2px solid #854d0e;
-  }
-  .screw-blue {
-    background: radial-gradient(circle at 35% 30%, #bae6fd 5%, #0284c7 55%, #03456e 100%);
-    border: 2px solid #075985;
-  }
-  .screw-brown {
-    background: radial-gradient(circle at 35% 30%, #deb897 5%, #8d4f23 55%, #46220a 100%);
-    border: 2px solid #431c07;
-  }
+  .ring-blue   { border: 2px solid #00e5ff; box-shadow: 0 0 8px #00e5ff; }
+  .ring-pink   { border: 2px solid #ff0055; box-shadow: 0 0 8px #ff0055; }
+  .ring-yellow { border: 2px solid #ffea00; box-shadow: 0 0 8px #ffea00; }
+  .ring-green  { border: 2px solid #00ff66; box-shadow: 0 0 8px #00ff66; }
 
-  .screw.covered-screw {
-    filter: brightness(0.62) saturate(0.75);
+  .metallic-screw.locked {
+    filter: brightness(0.4) saturate(0.5);
     cursor: not-allowed;
   }
-  .screw.shake {
-    animation: shakeAnim 0.3s ease;
+  .metallic-screw.shake {
+    animation: buzzAnim 0.3s ease;
   }
-  @keyframes shakeAnim {
+  @keyframes buzzAnim {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px) rotate(-15deg); }
     75% { transform: translateX(5px) rotate(15deg); }
   }
 
-  .screw-mini {
-    width: 18px;
-    height: 18px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
-  .screw-mini::before { width: 9px; height: 2.5px; }
-  .screw-mini::after  { width: 2.5px; height: 9px; }
+  .screw-mini { width: 17px; height: 17px; }
+  .screw-mini::before { width: 8px; height: 2px; }
+  .screw-mini::after  { width: 2px; height: 8px; }
 
-  /* 3D Flying Screw Ghost */
-  .flying-ghost {
+  /* 3D Flying Screw */
+  .flying-screw {
     position: fixed;
     z-index: 1000;
     pointer-events: none;
-    transition: all 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-    transform: translate(-50%, -50%) scale(1.15) rotate(360deg);
-  }
-
-  .floating-score {
-    position: fixed;
-    z-index: 1050;
-    font-weight: 1000;
-    font-size: 18px;
-    color: #10b981;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.4), 0 0 2px #fff;
-    pointer-events: none;
-    animation: floatUp 0.8s forwards ease-out;
-  }
-  @keyframes floatUp {
-    0% { transform: translate(-50%, 0) scale(0.8); opacity: 1; }
-    100% { transform: translate(-50%, -45px) scale(1.3); opacity: 0; }
+    transition: all 0.42s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transform: translate(-50%, -50%) scale(1.25) rotate(720deg);
   }
 
   /* Bottom Boosters */
-  .boosters-wrap {
+  .boosters-dock {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 10px 16px 20px;
-    background: linear-gradient(180deg, #ecd9be, #debe97);
-    border-top: 2px solid #fff6ea;
+    padding: 8px 16px 65px;
+    background: linear-gradient(180deg, rgba(16, 24, 38, 0.95), #06090e);
+    border-top: 1px solid rgba(0, 229, 255, 0.2);
     z-index: 90;
   }
-  .boost-btn {
+  .boost-card {
     width: 30%;
-    height: 56px;
-    background: linear-gradient(180deg, #ffea85 0%, #f59e0b 100%);
-    border: 2px solid #d97706;
-    border-radius: 18px;
+    height: 54px;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border: 1.5px solid rgba(0, 229, 255, 0.4);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    position: relative;
-    box-shadow: inset 0 2px 2px #fff, 0 4px 0 #92400e, 0 6px 10px rgba(0,0,0,0.18);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     cursor: pointer;
   }
-  .boost-btn:active {
-    transform: translateY(3px);
-    box-shadow: inset 0 2px 2px #fff, 0 1px 0 #92400e;
-  }
-  .boost-icon { font-size: 24px; }
-  .boost-count {
-    font-size: 12px;
+  .boost-card:active { transform: translateY(2px); }
+  .boost-badge {
+    font-size: 11px;
     font-weight: 1000;
-    background: #fff;
-    color: #1e293b;
-    padding: 2px 7px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    background: #00e5ff;
+    color: #000;
+    padding: 1px 6px;
+    border-radius: 6px;
   }
 
   /* Dialogs */
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.78);
-    backdrop-filter: blur(6px);
+    background: rgba(3, 7, 18, 0.85);
+    backdrop-filter: blur(8px);
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -429,80 +373,63 @@
     z-index: 500;
     padding: 20px;
   }
-  .dialog-card {
+  .glow-dialog {
     width: min(340px, 90%);
-    background: linear-gradient(145deg, #fffcf6, #f3e5d0);
-    border: 3.5px solid #ffffff;
-    border-radius: 28px;
-    padding: 26px 22px;
+    background: linear-gradient(145deg, #131c2e, #090e17);
+    border: 2px solid #00e5ff;
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.35);
+    border-radius: 24px;
+    padding: 24px 20px;
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
-  .dialog-card h2 {
-    font-size: 27px;
+  .glow-dialog h2 {
+    font-size: 26px;
     font-weight: 1000;
-    color: #1e293b;
+    color: #fff;
     margin-bottom: 8px;
   }
-  .dialog-card p {
+  .glow-dialog p {
     font-size: 14px;
     font-weight: 700;
-    color: #71583d;
+    color: #94a3b8;
     line-height: 1.5;
   }
-  .dialog-btn {
+  .glow-btn {
     margin-top: 18px;
     width: 100%;
-    padding: 13px 0;
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #fff;
+    padding: 12px 0;
+    background: linear-gradient(135deg, #00e5ff, #0284c7);
+    color: #000;
     border: none;
-    font-size: 17px;
-    font-weight: 900;
-    border-radius: 16px;
-    box-shadow: 0 4px 0 #047857;
+    font-size: 16px;
+    font-weight: 1000;
+    border-radius: 14px;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
     cursor: pointer;
   }
-  .dialog-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #047857;
+  .glow-btn.sec {
+    background: #1e293b;
+    color: #cbd5e1;
+    box-shadow: none;
+    margin-top: 8px;
   }
-  .dialog-btn.sec {
-    background: linear-gradient(135deg, #64748b, #475569);
-    box-shadow: 0 4px 0 #334155;
-    margin-top: 10px;
-  }
-
-  #ad-timer-modal .ad-box-anim {
-    width: 80px;
-    height: 80px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    margin: 15px auto;
-    display: grid;
-    place-items: center;
-    font-size: 40px;
-    box-shadow: 0 8px 20px rgba(245,158,11,0.4);
-    animation: pulse 1s infinite alternate;
-  }
-  @keyframes pulse { from { transform: scale(0.95); } to { transform: scale(1.08); } }
 
   .toast {
     position: absolute;
     top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(26, 36, 54, 0.94);
-    color: #fff;
-    padding: 11px 18px;
-    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid #00e5ff;
+    color: #00e5ff;
+    padding: 10px 18px;
+    border-radius: 12px;
     font-size: 13px;
     font-weight: 800;
     z-index: 600;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
     white-space: nowrap;
   }
   .toast.show { opacity: 1; }
@@ -510,86 +437,70 @@
 </head>
 <body>
 
-<div id="app-frame">
-  <canvas id="confetti-canvas"></canvas>
-
-  <!-- Top Bar -->
-  <header class="top-header">
+<div id="game-viewport">
+  <header class="top-hud">
     <button class="hud-btn" onclick="togglePause()">❚❚</button>
-    <div class="level-hub">
-      <div class="level-title" id="lvl-display">LEVEL 1</div>
-      <div class="level-sub">3D REAL PHYSICS</div>
+    <div class="hud-title">
+      <div class="title-main" id="lvl-display">LEVEL 1</div>
+      <div class="title-sub">SCREW JAM 3D</div>
     </div>
-    <div class="coin-badge">🪙 <span id="coin-display">100</span></div>
+    <div class="coin-pill">🪙 <span id="coin-display">100</span></div>
   </header>
 
-  <!-- Progress Bar -->
-  <div class="progress-rail">
-    <div id="progress-fill"></div>
+  <div class="rail-bar">
+    <div id="fill-line"></div>
   </div>
 
-  <!-- Boxes Container -->
-  <section class="boxes-wrap" id="boxes-container"></section>
+  <section class="boxes-dock" id="boxes-container"></section>
+  <section class="buffer-deck" id="buffer-container"></section>
+  <main class="arena" id="arena"></main>
 
-  <!-- Buffer Holes -->
-  <div class="buffer-label">BUFFER SLOTS</div>
-  <section class="buffer-bar" id="buffer-container"></section>
-
-  <!-- 3D Playfield Canvas -->
-  <main class="playfield" id="playfield"></main>
-
-  <!-- Boosters Bar -->
-  <footer class="boosters-wrap">
-    <button class="boost-btn" onclick="useBooster('drill')">
-      <span class="boost-icon">🪛</span>
-      <span class="boost-count" id="drill-count">2</span>
+  <footer class="boosters-dock">
+    <button class="boost-card" onclick="useBooster('drill')">
+      <span style="font-size:22px;">🪛</span>
+      <span class="boost-badge" id="drill-count">2</span>
     </button>
-    <button class="boost-btn" onclick="useBooster('hammer')">
-      <span class="boost-icon">🔨</span>
-      <span class="boost-count" id="hammer-count">1</span>
+    <button class="boost-card" onclick="useBooster('hammer')">
+      <span style="font-size:22px;">🔨</span>
+      <span class="boost-badge" id="hammer-count">1</span>
     </button>
-    <button class="boost-btn" onclick="useBooster('cleaner')">
-      <span class="boost-icon">🧹</span>
-      <span class="boost-count" id="cleaner-count">1</span>
+    <button class="boost-card" onclick="useBooster('cleaner')">
+      <span style="font-size:22px;">🧹</span>
+      <span class="boost-badge" id="cleaner-count">1</span>
     </button>
   </footer>
 
-  <!-- Toast Message -->
   <div class="toast" id="toast"></div>
 
-  <!-- Win Modal -->
   <div class="overlay" id="win-modal">
-    <div class="dialog-card">
+    <div class="glow-dialog">
       <h2>शानदार जीत! 🏆</h2>
-      <p id="win-desc">लेवल पूरा हुआ! आपको 25 बोनस सिक्के मिले।</p>
-      <button class="dialog-btn" onclick="nextLevel()">अगला लेवल ➔</button>
+      <p>लेवल पूरा हुआ! आपको 25 बोनस सिक्के मिले।</p>
+      <button class="glow-btn" onclick="nextLevel()">अगला लेवल ➔</button>
     </div>
   </div>
 
-  <!-- Fail Modal -->
   <div class="overlay" id="fail-modal">
-    <div class="dialog-card">
-      <h2 style="color:#dc2626;">गेम ओवर! ⚠️</h2>
-      <p>बफ़र के सभी 5 स्लॉट भर गए हैं।</p>
-      <button class="dialog-btn" style="background:#ea580c; box-shadow:0 4px 0 #9a3412;" onclick="retryLevel()">पुनः प्रयास करें</button>
+    <div class="glow-dialog">
+      <h2 style="color:#ff0055;">गेम ओवर! ⚠️</h2>
+      <p>बफ़र के सभी स्लॉट भर गए हैं।</p>
+      <button class="glow-btn" style="background:#ff0055; color:#fff;" onclick="retryLevel()">पुनः प्रयास करें</button>
     </div>
   </div>
 
-  <!-- Pause Modal -->
   <div class="overlay" id="pause-modal">
-    <div class="dialog-card">
+    <div class="glow-dialog">
       <h2>गेम रुका हुआ है ⏸️</h2>
       <p>आपकी प्रगति सुरक्षित है।</p>
-      <button class="dialog-btn" onclick="togglePause()">जारी रखें</button>
-      <button class="dialog-btn sec" onclick="retryLevel()">लेवल दोबारा शुरू करें</button>
+      <button class="glow-btn" onclick="togglePause()">जारी रखें</button>
+      <button class="glow-btn sec" onclick="retryLevel()">लेवल दोबारा शुरू करें</button>
     </div>
   </div>
 
-  <!-- Rewarded Ad Modal -->
   <div class="overlay" id="ad-timer-modal">
-    <div class="dialog-card">
+    <div class="glow-dialog">
       <h2>प्रचार देखा जा रहा है... 🎬</h2>
-      <div class="ad-box-anim">🎁</div>
+      <div style="font-size:40px; margin:15px auto;">🎁</div>
       <p id="ad-timer-text">अतिरिक्त बॉक्स अनलॉक हो रहा है: 5s</p>
     </div>
   </div>
@@ -599,62 +510,6 @@
 (() => {
   'use strict';
 
-  // Confetti Engine
-  const canvas = document.getElementById('confetti-canvas');
-  let ctx = null;
-  let particles = [];
-  if (canvas) {
-    ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  function fireConfetti() {
-    if (!ctx) return;
-    particles = [];
-    const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
-    for (let i = 0; i < 90; i++) {
-      particles.push({
-        x: canvas.width / 2,
-        y: canvas.height * 0.45,
-        vx: (Math.random() - 0.5) * 12,
-        vy: -Math.random() * 14 - 3,
-        size: Math.random() * 7 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * 360,
-        vr: (Math.random() - 0.5) * 10,
-        alpha: 1
-      });
-    }
-  }
-
-  function renderConfetti() {
-    if (ctx && particles.length > 0) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.38;
-        p.rotation += p.vr;
-        p.alpha -= 0.012;
-
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.globalAlpha = Math.max(0, p.alpha);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-        ctx.restore();
-
-        if (p.alpha <= 0) particles.splice(i, 1);
-      }
-    }
-    requestAnimationFrame(renderConfetti);
-  }
-  requestAnimationFrame(renderConfetti);
-
-  // Audio Engine
   let audioCtx;
   function playSound(type) {
     try {
@@ -667,76 +522,54 @@
       const now = audioCtx.currentTime;
 
       if (type === 'unscrew') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(320, now);
-        osc.frequency.linearRampToValueAtTime(780, now + 0.14);
-        gain.gain.setValueAtTime(0.22, now);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.linearRampToValueAtTime(950, now + 0.14);
+        gain.gain.setValueAtTime(0.18, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
         osc.start(now);
         osc.stop(now + 0.15);
       } else if (type === 'land') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(540, now);
-        osc.frequency.setValueAtTime(720, now + 0.06);
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.setValueAtTime(800, now + 0.05);
         gain.gain.setValueAtTime(0.25, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
         osc.start(now);
-        osc.stop(now + 0.12);
+        osc.stop(now + 0.1);
       } else if (type === 'box-full') {
-        osc.type = 'sine';
+        osc.type = 'triangle';
         osc.frequency.setValueAtTime(523, now);
         osc.frequency.setValueAtTime(659, now + 0.08);
         osc.frequency.setValueAtTime(783, now + 0.16);
-        gain.gain.setValueAtTime(0.32, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
         osc.start(now);
-        osc.stop(now + 0.3);
+        osc.stop(now + 0.28);
       } else if (type === 'blocked') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, now);
-        osc.frequency.setValueAtTime(100, now + 0.09);
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.setValueAtTime(90, now + 0.08);
         gain.gain.setValueAtTime(0.25, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
         osc.start(now);
-        osc.stop(now + 0.12);
-      } else if (type === 'creak') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(240, now);
-        osc.frequency.linearRampToValueAtTime(130, now + 0.22);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
-        osc.start(now);
-        osc.stop(now + 0.22);
+        osc.stop(now + 0.1);
       }
     } catch(e) {}
   }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
-    if (!t) return;
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.classList.remove('show'), 1500);
   }
 
-  function showFloatingScore(x, y, txt) {
-    const el = document.createElement('div');
-    el.className = 'floating-score';
-    el.textContent = txt;
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 800);
-  }
+  const NEON_COLORS = ['blue', 'pink', 'yellow', 'green'];
 
-  // Master State
-  const ALL_COLORS = ['orange', 'yellow', 'blue', 'brown'];
-  const PLATE_SHAPES = ['shape-leaf', 'shape-arch', 'shape-bar', 'shape-wedge'];
-  const PLATE_COLORS = ['plate-green', 'plate-blue', 'plate-yellow', 'plate-purple', 'plate-orange'];
-
-  let level = Math.max(1, parseInt(localStorage.getItem('sp3_level') || '1'));
-  let coins = Math.max(0, parseInt(localStorage.getItem('sp3_coins') || '100'));
+  let level = Math.max(1, parseInt(localStorage.getItem('sj3_level') || '1'));
+  let coins = Math.max(0, parseInt(localStorage.getItem('sj3_coins') || '100'));
   let boxes = [];
   let buffer = [null, null, null, null, null];
   let plates = [];
@@ -747,5 +580,520 @@
   let isGameOver = false;
 
   function saveGame() {
-    localStorage.setItem('sp3_level', level);
-    localStorage.setItem('sp
+    localStorage.setItem('sj3_level', level);
+    localStorage.setItem('sj3_coins', coins);
+  }
+
+  function buildLevel(lvl) {
+    let plateCount, activeColors;
+    if (lvl === 1) {
+      plateCount = 2;
+      activeColors = ['blue', 'yellow'];
+    } else if (lvl === 2) {
+      plateCount = 3;
+      activeColors = ['blue', 'pink', 'yellow'];
+    } else {
+      plateCount = Math.min(10, 4 + Math.floor((lvl - 3) * 0.7));
+      activeColors = NEON_COLORS;
+    }
+
+    boxes = [
+      { type: 'box', color: activeColors[0], count: 0 },
+      { type: 'box', color: activeColors[1] || activeColors[0], count: 0 },
+      { type: 'ad', unlocked: false },
+      { type: 'ad', unlocked: false }
+    ];
+
+    buffer = [null, null, null, null, null];
+    plates = [];
+    let screwCounter = 1;
+
+    for (let i = 0; i < plateCount; i++) {
+      let topPos = 45 + (i * 28) + (Math.sin(i * 1.5) * 16);
+      let leftPos = 22 + ((i % 3) * 65) + (Math.cos(i) * 20);
+      let baseRot = -25 + ((i * 35) % 65);
+      let pColor = activeColors[i % activeColors.length];
+
+      let numSlots = (lvl === 1) ? 2 : (i % 2 === 0 ? 2 : 3);
+      let slots = [];
+
+      for (let s = 0; s < numSlots; s++) {
+        let scColor = activeColors[(i + s) % activeColors.length];
+        slots.push({
+          slotId: s,
+          color: scColor,
+          screwId: 's_' + (screwCounter++)
+        });
+      }
+
+      plates.push({
+        id: 'p_' + (i + 1),
+        layer: i,
+        top: Math.round(topPos),
+        left: Math.round(leftPos),
+        currentRot: baseRot,
+        pivotOrigin: 'center center',
+        color: pColor,
+        slots: slots,
+        isHanging: false,
+        hangBaseAngle: 0,
+        swingPhase: Math.random() * Math.PI * 2,
+        swingSpeed: 1.8 + Math.random() * 0.6,
+        swingAmplitude: 12 + Math.random() * 6
+      });
+    }
+
+    totalScrews = 0;
+    plates.forEach(p => p.slots.forEach(s => { if (s.color) totalScrews++; }));
+    removedCount = 0;
+    isGameOver = false;
+    isPaused = false;
+
+    document.getElementById('lvl-display').textContent = `LEVEL ${lvl}`;
+    document.getElementById('coin-display').textContent = coins;
+    updateProgress();
+    renderBoxes();
+    renderBuffer();
+    renderArena();
+  }
+
+  function isScrewPhysicallyBlocked(screwElem, plateId) {
+    if (!screwElem) return false;
+    const r = screwElem.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+
+    const stack = document.elementsFromPoint(cx, cy);
+    const myIdx = plates.findIndex(p => p.id === plateId);
+
+    for (let el of stack) {
+      const parent = el.closest('.neon-plate');
+      if (parent && parent.id !== plateId) {
+        const otherIdx = plates.findIndex(p => p.id === parent.id);
+        if (otherIdx > myIdx) return true;
+      }
+    }
+    return false;
+  }
+
+  function renderBoxes() {
+    const root = document.getElementById('boxes-container');
+    root.innerHTML = '';
+
+    boxes.forEach((b, idx) => {
+      const card = document.createElement('div');
+      card.className = 'tool-box';
+      card.id = 'box-card-' + idx;
+
+      if (b.type === 'box') {
+        card.classList.add('box-' + b.color);
+        for (let i = 0; i < 3; i++) {
+          const socket = document.createElement('div');
+          socket.className = 'box-socket';
+          socket.id = `box-hole-${idx}-${i}`;
+          if (i < b.count) {
+            const sc = document.createElement('div');
+            sc.className = 'metallic-screw screw-mini';
+            const ring = document.createElement('div');
+            ring.className = `screw-ring ring-${b.color}`;
+            sc.appendChild(ring);
+            socket.appendChild(sc);
+          }
+          card.appendChild(socket);
+        }
+      } else {
+        card.classList.add('ad-slot');
+        card.innerHTML = `<span>+</span><small>EXTRA</small>`;
+        card.onclick = () => watchRewardedAd(idx);
+      }
+      root.appendChild(card);
+    });
+  }
+
+  function renderBuffer() {
+    const root = document.getElementById('buffer-container');
+    root.innerHTML = '';
+    buffer.forEach((c, idx) => {
+      const cup = document.createElement('div');
+      cup.className = 'buffer-cup';
+      cup.id = 'buffer-cup-' + idx;
+      if (c) {
+        const sc = document.createElement('div');
+        sc.className = 'metallic-screw screw-mini';
+        const ring = document.createElement('div');
+        ring.className = `screw-ring ring-${c}`;
+        sc.appendChild(ring);
+        cup.appendChild(sc);
+      }
+      root.appendChild(cup);
+    });
+  }
+
+  function renderArena() {
+    const root = document.getElementById('arena');
+    root.innerHTML = '';
+
+    plates.forEach((p, pIdx) => {
+      const pEl = document.createElement('div');
+      pEl.className = `neon-plate plate-${p.color}`;
+      pEl.id = p.id;
+      pEl.style.width = (p.slots.length === 2 ? 140 : 155) + 'px';
+      pEl.style.height = '56px';
+      pEl.style.top = p.top + 'px';
+      pEl.style.left = p.left + 'px';
+      pEl.style.transformOrigin = p.pivotOrigin;
+      pEl.style.transform = `rotate(${p.currentRot}deg)`;
+      pEl.style.zIndex = pIdx + 1;
+
+      p.slots.forEach(s => {
+        const socket = document.createElement('div');
+        socket.className = 'acrylic-hole';
+
+        if (s.color) {
+          const sc = document.createElement('div');
+          sc.className = 'metallic-screw';
+          sc.id = s.screwId;
+
+          const ring = document.createElement('div');
+          ring.className = `screw-ring ring-${s.color}`;
+          sc.appendChild(ring);
+
+          sc.onclick = (e) => {
+            e.stopPropagation();
+            onScrewTap(p.id, s.screwId, s.color, sc);
+          };
+          socket.appendChild(sc);
+        }
+        pEl.appendChild(socket);
+      });
+
+      root.appendChild(pEl);
+    });
+  }
+
+  let lastTime = performance.now();
+  function physicsEngine(now) {
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    plates.forEach(p => {
+      if (p.isHanging) {
+        p.swingPhase += p.swingSpeed * dt;
+        const sway = Math.sin(p.swingPhase) * p.swingAmplitude;
+        p.currentRot = p.hangBaseAngle + sway;
+
+        const el = document.getElementById(p.id);
+        if (el) {
+          el.style.transformOrigin = p.pivotOrigin;
+          el.style.transform = `rotate(${p.currentRot}deg)`;
+        }
+      }
+    });
+
+    plates.forEach(p => {
+      p.slots.forEach(s => {
+        if (s.color) {
+          const sc = document.getElementById(s.screwId);
+          if (sc) {
+            if (isScrewPhysicallyBlocked(sc, p.id)) {
+              sc.classList.add('locked');
+            } else {
+              sc.classList.remove('locked');
+            }
+          }
+        }
+      });
+    });
+
+    requestAnimationFrame(physicsEngine);
+  }
+  requestAnimationFrame(physicsEngine);
+
+  function animateScrewFlight(startElem, targetElem, color, onComplete) {
+    const sRect = startElem.getBoundingClientRect();
+    const tRect = targetElem.getBoundingClientRect();
+
+    const ghost = document.createElement('div');
+    ghost.className = 'metallic-screw flying-screw';
+    const ring = document.createElement('div');
+    ring.className = `screw-ring ring-${color}`;
+    ghost.appendChild(ring);
+
+    ghost.style.left = (sRect.left + sRect.width / 2) + 'px';
+    ghost.style.top = (sRect.top + sRect.height / 2) + 'px';
+    document.body.appendChild(ghost);
+
+    playSound('unscrew');
+
+    requestAnimationFrame(() => {
+      ghost.style.left = (tRect.left + tRect.width / 2) + 'px';
+      ghost.style.top = (tRect.top + tRect.height / 2) + 'px';
+      ghost.style.transform = 'translate(-50%, -50%) scale(0.65) rotate(720deg)';
+    });
+
+    setTimeout(() => {
+      ghost.remove();
+      playSound('land');
+      if (onComplete) onComplete();
+    }, 420);
+  }
+
+  function onScrewTap(plateId, screwId, color, screwElem) {
+    if (isPaused || isGameOver) return;
+
+    if (isScrewPhysicallyBlocked(screwElem, plateId)) {
+      playSound('blocked');
+      screwElem.classList.remove('shake');
+      void screwElem.offsetWidth;
+      screwElem.classList.add('shake');
+      showToast('ऊपर की प्लेट हटने तक यह लॉक है!');
+      return;
+    }
+
+    let targetBoxIdx = boxes.findIndex(b => b.type === 'box' && b.color === color && b.count < 3);
+    let destElem = null;
+    let targetMode = '';
+
+    if (targetBoxIdx !== -1) {
+      targetMode = 'box';
+      const slotNum = boxes[targetBoxIdx].count;
+      destElem = document.getElementById(`box-hole-${targetBoxIdx}-${slotNum}`);
+    } else {
+      let emptyBuf = buffer.indexOf(null);
+      if (emptyBuf !== -1) {
+        targetMode = 'buffer';
+        destElem = document.getElementById(`buffer-cup-${emptyBuf}`);
+      } else {
+        playSound('blocked');
+        showToast('बफ़र स्लॉट भर गए हैं!');
+        checkFailCondition();
+        return;
+      }
+    }
+
+    const plate = plates.find(p => p.id === plateId);
+    if (!plate) return;
+    const slot = plate.slots.find(s => s.screwId === screwId);
+    if (!slot) return;
+    slot.color = null;
+    screwElem.remove();
+
+    animateScrewFlight(screwElem, destElem, color, () => {
+      removedCount++;
+      if (targetMode === 'box') {
+        boxes[targetBoxIdx].count++;
+        if (boxes[targetBoxIdx].count === 3) {
+          playSound('box-full');
+          setTimeout(() => recycleBox(boxes[targetBoxIdx]), 350);
+        }
+      } else {
+        const emptyBuf = buffer.indexOf(null);
+        if (emptyBuf !== -1) buffer[emptyBuf] = color;
+      }
+
+      checkBufferHops();
+      renderBoxes();
+      renderBuffer();
+      updateProgress();
+      checkWinCondition();
+    });
+
+    handlePlateBalance(plate);
+  }
+
+  function handlePlateBalance(plate) {
+    const leftSlots = plate.slots.filter(s => s.color !== null);
+
+    if (leftSlots.length === 0) {
+      plate.isHanging = false;
+      const el = document.getElementById(plate.id);
+      if (el) {
+        el.style.transform += ' scale(1.15) translateY(-50px)';
+        el.style.opacity = '0';
+        setTimeout(() => {
+          plates = plates.filter(p => p.id !== plate.id);
+          renderArena();
+        }, 450);
+      }
+      return;
+    }
+
+    if (leftSlots.length === 1) {
+      const pivot = leftSlots[0];
+      const tot = plate.slots.length;
+      let pct = (tot === 2)
+        ? (pivot.slotId === 0 ? '25%' : '75%')
+        : (pivot.slotId === 0 ? '18%' : (pivot.slotId === 1 ? '50%' : '82%'));
+
+      plate.pivotOrigin = `${pct} 50%`;
+      plate.isHanging = true;
+
+      if (tot === 2) {
+        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : -82;
+      } else {
+        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : (pivot.slotId === 2 ? -82 : 80);
+      }
+      plate.currentRot = plate.hangBaseAngle;
+    }
+  }
+
+  function checkBufferHops() {
+    buffer.forEach((c, i) => {
+      if (!c) return;
+      let match = boxes.find(b => b.type === 'box' && b.color === c && b.count < 3);
+      if (match) {
+        match.count++;
+        buffer[i] = null;
+        if (match.count === 3) {
+          playSound('box-full');
+          setTimeout(() => recycleBox(match), 350);
+        }
+      }
+    });
+  }
+
+  function recycleBox(box) {
+    box.count = 0;
+    const remaining = [];
+    plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
+    buffer.forEach(c => { if (c) remaining.push(c); });
+
+    if (remaining.length > 0) {
+      box.color = remaining[Math.floor(Math.random() * remaining.length)];
+    } else {
+      box.color = NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)];
+    }
+
+    renderBoxes();
+    checkBufferHops();
+  }
+
+  function watchRewardedAd(boxIdx) {
+    if (boxes[boxIdx].unlocked) return;
+    playSound('unscrew');
+
+    const modal = document.getElementById('ad-timer-modal');
+    const timerText = document.getElementById('ad-timer-text');
+    modal.style.display = 'flex';
+
+    let sec = 5;
+    timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
+
+    const timer = setInterval(() => {
+      sec--;
+      if (sec > 0) {
+        timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
+      } else {
+        clearInterval(timer);
+        modal.style.display = 'none';
+
+        const active = boxes.filter(b => b.type === 'box').map(b => b.color);
+        const nextColor = NEON_COLORS.find(c => !active.includes(c)) || 'green';
+        boxes[boxIdx] = { type: 'box', color: nextColor, count: 0, unlocked: true };
+
+        playSound('box-full');
+        showToast('चौथा बॉक्स सफलतापूर्वक अनलॉक हुआ! 🎉');
+        renderBoxes();
+        checkBufferHops();
+      }
+    }, 1000);
+  }
+
+  function updateProgress() {
+    const pct = totalScrews > 0 ? Math.min(100, Math.floor((removedCount / totalScrews) * 100)) : 100;
+    document.getElementById('fill-line').style.width = pct + '%';
+  }
+
+  function checkWinCondition() {
+    if (removedCount >= totalScrews && totalScrews > 0) {
+      isGameOver = true;
+      coins += 25;
+      saveGame();
+      playSound('box-full');
+      setTimeout(() => {
+        document.getElementById('win-modal').style.display = 'flex';
+      }, 550);
+    }
+  }
+
+  function checkFailCondition() {
+    if (buffer.every(c => c !== null)) {
+      isGameOver = true;
+      playSound('blocked');
+      document.getElementById('fail-modal').style.display = 'flex';
+    }
+  }
+
+  window.nextLevel = function() {
+    document.getElementById('win-modal').style.display = 'none';
+    level++;
+    saveGame();
+    buildLevel(level);
+  };
+
+  window.retryLevel = function() {
+    document.getElementById('fail-modal').style.display = 'none';
+    document.getElementById('pause-modal').style.display = 'none';
+    buildLevel(level);
+  };
+
+  window.togglePause = function() {
+    isPaused = !isPaused;
+    document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
+  };
+
+  window.useBooster = function(type) {
+    if (isPaused || isGameOver) return;
+    if (boosters[type] <= 0) {
+      showToast('यह बूस्टर समाप्त हो गया है!');
+      return;
+    }
+
+    if (type === 'drill') {
+      for (let i = plates.length - 1; i >= 0; i--) {
+        const p = plates[i];
+        for (let s of p.slots) {
+          if (s.color) {
+            const sc = document.getElementById(s.screwId);
+            if (sc && !isScrewPhysicallyBlocked(sc, p.id)) {
+              boosters.drill--;
+              document.getElementById('drill-count').textContent = boosters.drill;
+              onScrewTap(p.id, s.screwId, s.color, sc);
+              return;
+            }
+          }
+        }
+      }
+      showToast('कोई अनलॉक स्क्रू नहीं मिला!');
+    } else if (type === 'hammer') {
+      if (plates.length > 0) {
+        const topPlate = plates[plates.length - 1];
+        boosters.hammer--;
+        document.getElementById('hammer-count').textContent = boosters.hammer;
+        removedCount += topPlate.slots.filter(s => s.color !== null).length;
+        plates.pop();
+        playSound('box-full');
+        renderArena();
+        updateProgress();
+        checkWinCondition();
+        showToast('हथौड़े से शीर्ष प्लेट हटा दी गई!');
+      }
+    } else if (type === 'cleaner') {
+      if (buffer.every(c => c === null)) {
+        showToast('बफ़र पहले से खाली है!');
+        return;
+      }
+      boosters.cleaner--;
+      document.getElementById('cleaner-count').textContent = boosters.cleaner;
+      buffer = [null, null, null, null, null];
+      playSound('unscrew');
+      renderBuffer();
+      showToast('बफ़र पूरी तरह साफ़ कर दिया गया!');
+    }
+  };
+
+  buildLevel(level);
+})();
+</script>
+</body>
+</html>
