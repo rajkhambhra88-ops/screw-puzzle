@@ -3,374 +3,626 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#050520">
-<title>3D Cube Runner</title>
+<meta name="theme-color" content="#EFE3C6">
+<title>3D Screw Runner</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;overflow:hidden;background:#050520;font-family:'Segoe UI',Arial,sans-serif;user-select:none;touch-action:none;}
+html,body{width:100%;height:100%;overflow:hidden;background:#EFE3C6;font-family:'Segoe UI',Arial,sans-serif;user-select:none;touch-action:none;}
 
-#game{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% 0%, #1a1a5e 0%, transparent 60%),radial-gradient(ellipse at 50% 100%, #2a1a5e 0%, #050520 70%);}
+/* Game Container */
+#game{position:fixed;inset:0;overflow:hidden;display:flex;flex-direction:column;}
 
-/* सितारे */
-.stars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 10% 15%, #fff, transparent),radial-gradient(1px 1px at 25% 35%, #cdf, transparent),radial-gradient(1.5px 1.5px at 45% 10%, #fff, transparent),radial-gradient(1px 1px at 70% 25%, #fcd, transparent),radial-gradient(1.5px 1.5px at 85% 15%, #fff, transparent),radial-gradient(1px 1px at 15% 55%, #cff, transparent),radial-gradient(1px 1px at 90% 45%, #fff, transparent),radial-gradient(1.5px 1.5px at 35% 70%, #fff, transparent),radial-gradient(1px 1px at 65% 80%, #cdf, transparent),radial-gradient(1.5px 1.5px at 82% 65%, #fff, transparent);background-size:100% 100%;animation:twinkle 3s ease-in-out infinite alternate;pointer-events:none;}
-@keyframes twinkle{from{opacity:.5}to{opacity:1}}
+/* ===== 3D ROAD SETUP ===== */
+#track-container{
+  position:relative;flex:1;overflow:hidden;
+  perspective:800px;
+  perspective-origin:50% 20%;
+}
 
-/* रोड प्लेट */
-#road{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(320px, 80vw);height:75vh;background:linear-gradient(180deg, rgba(20,20,60,.6) 0%, rgba(25,25,70,.85) 20%, #1a1a45 50%, #22225a 100%);border-left:3px solid #00d8ee;border-right:3px solid #00d8ee;box-shadow:inset 0 0 30px rgba(0,200,255,.15), 0 0 40px rgba(0,200,255,.35);z-index:5;overflow:hidden;}
-#road::before{content:'';position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#050520 0%,rgba(5,5,32,.7) 40%,transparent 100%);z-index:10;pointer-events:none;}
+/* The moving road */
+#road{
+  position:absolute;left:50%;bottom:0;
+  width:340px;height:200%;
+  transform:translateX(-50%) rotateX(55deg);
+  transform-origin:bottom center;
+  transform-style:preserve-3d;
+  background:#D4C4A3;
+  border-left:10px solid #C2B08D;
+  border-right:10px solid #C2B08D;
+  box-shadow:0 0 50px rgba(0,0,0,0.2) inset;
+}
 
-/* लेन लाइनें */
-.lane{position:absolute;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg, #ffe500 0px, #ffe500 18px, transparent 18px, transparent 36px);box-shadow:0 0 4px rgba(255,229,0,.8);animation:moveLine .8s linear infinite;z-index:3;}
-.lane-1{left:33.33%;}
-.lane-2{left:66.66%;}
-@keyframes moveLine{from{background-position-y:0}to{background-position-y:36px}}
+/* Road Lines */
+.lane-line{
+  position:absolute;top:0;bottom:0;width:8px;
+  background:repeating-linear-gradient(180deg,#FFF 0px,#FFF 40px,transparent 40px,transparent 80px);
+  box-shadow:0 0 10px rgba(255,255,255,0.8);
+  animation:moveRoad 1s linear infinite;
+}
+.lane-1{left:33.33%;transform:translateX(-50%);}
+.lane-2{left:66.66%;transform:translateX(-50%);}
+@keyframes moveRoad{from{background-position-y:0}to{background-position-y:80px}}
 
-/* प्लेयर */
-#player{position:absolute;left:50%;bottom:15vh;width:50px;height:50px;transform:translateX(-50%);z-index:20;transform-style:preserve-3d;animation:playerFloat 1.4s ease-in-out infinite;}
-@keyframes playerFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
-.player-cube{position:absolute;width:50px;height:50px;transform-style:preserve-3d;animation:cubeRotate 3.5s linear infinite;}
-@keyframes cubeRotate{from{transform:rotateX(-25deg) rotateY(0)}to{transform:rotateX(-25deg) rotateY(360deg)}}
+/* ===== PLAYER (Screw Plate) ===== */
+#player{
+  position:absolute;left:50%;bottom:15%;
+  width:80px;height:80px;
+  transform:translateX(-50%);
+  transform-style:preserve-3d;
+  z-index:10;
+  transition:left 0.15s ease-out;
+}
+.plate-bg{
+  position:absolute;inset:0;
+  background:#FFF;
+  border-radius:20px;
+  border:4px solid #4A78FF; /* Default Blue */
+  box-shadow:0 10px 0 #2A4AA0, 0 15px 20px rgba(0,0,0,0.3);
+  display:flex;justify-content:center;align-items:center;gap:6px;
+}
+.plate-bg .hole{
+  width:18px;height:18px;border-radius:50%;
+  background:#A0A0A0;box-shadow:inset 0 3px 5px rgba(0,0,0,0.5);
+}
 
-.pf{position:absolute;width:50px;height:50px;border:2px solid rgba(180,255,255,.9);border-radius:6px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(255,255,255,.4);}
-.pf.front {transform:translateZ(25px); background:linear-gradient(135deg,#00e8ff,#0080ff);}
-.pf.back  {transform:rotateY(180deg) translateZ(25px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
-.pf.right {transform:rotateY(90deg) translateZ(25px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
-.pf.left  {transform:rotateY(-90deg) translateZ(25px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
-.pf.top   {transform:rotateX(90deg) translateZ(25px); background:linear-gradient(135deg,#aaffff,#00b0ff);}
-.pf.bottom{transform:rotateX(-90deg) translateZ(25px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
+/* Shield Effect */
+#player.shielded .plate-bg{
+  border-color:#00FF00 !important;
+  box-shadow:0 10px 0 #008800, 0 0 30px #00FF00 !important;
+}
 
-#player::after{content:'';position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);width:65px;height:12px;background:radial-gradient(ellipse,rgba(0,240,255,.9),rgba(0,240,255,0) 70%);border-radius:50%;z-index:-1;filter:blur(2px);}
-#player.shielded .pf{border-color:#00ff88;box-shadow:inset 0 0 20px rgba(0,255,136,.6),0 0 15px #00ff88;}
+/* ===== OBSTACLES (Leaf Plates) ===== */
+.obstacle{
+  position:absolute;
+  width:90px;height:120px;
+  transform-style:preserve-3d;
+  background:#6B9B5E; /* Green Leaf */
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  border:3px solid #FFF;
+  box-shadow:0 10px 15px rgba(0,0,0,0.2);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;
+}
+/* Colors for obstacles */
+.obstacle.blue{background:#6BA8F0;}
+.obstacle.purple{background:#B26FE8;}
+.obstacle.green{background:#6B9B5E;}
 
-/* ऑब्सटैकल */
-.obstacle{position:absolute;width:44px;height:44px;top:-60px;z-index:15;transform-style:preserve-3d;animation:obsSpin 1.8s linear infinite;}
-@keyframes obsSpin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
-.obstacle .pf{width:44px;height:44px;border:2px solid rgba(255,220,100,.9);box-shadow:inset 0 0 15px rgba(255,255,255,.35);}
-.obstacle .pf.front {transform:translateZ(22px); background:linear-gradient(135deg,#ff2f6b,#c4003a);}
-.obstacle .pf.back  {transform:rotateY(180deg) translateZ(22px); background:linear-gradient(135deg,#e0004a,#90002a);}
-.obstacle .pf.right {transform:rotateY(90deg) translateZ(22px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
-.obstacle .pf.left  {transform:rotateY(-90deg) translateZ(22px); background:linear-gradient(135deg,#ff3060,#bb0044);}
-.obstacle .pf.top   {transform:rotateX(90deg) translateZ(22px); background:linear-gradient(135deg,#ff6f99,#dd0066);}
-.obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(22px); background:linear-gradient(135deg,#cc0044,#880033);}
+/* Screws on obstacles */
+.obstacle .screw{
+  width:20px;height:20px;border-radius:50%;
+  background:#A0A0A0;box-shadow:inset 0 3px 5px rgba(0,0,0,0.5);
+  display:flex;justify-content:center;align-items:center;
+  position:relative;
+}
+.obstacle .screw::after{
+  content:'+';color:#666;font-weight:bold;font-size:14px;line-height:1;
+}
 
-/* कॉइन */
-.coin{position:absolute;width:28px;height:28px;border-radius:50%;top:-50px;z-index:14;background:radial-gradient(circle at 35% 30%,#fff8b0 0%,#ffd000 40%,#b07800 100%);border:2px solid #fff5a0;box-shadow:0 0 12px #ffd000,inset 0 0 6px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#8a5b00;text-shadow:0 1px 0 #fff3a0;animation:coinSpin .9s linear infinite;}
-@keyframes coinSpin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+/* ===== COLLECTIBLES ===== */
+.coin{
+  position:absolute;width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#FFD700,#FFA500);
+  border:3px solid #FFF;
+  box-shadow:0 0 15px #FFD700, 0 5px 10px rgba(0,0,0,0.3);
+  display:flex;justify-content:center;align-items:center;
+  font-size:18px;font-weight:bold;color:#8B4500;
+  z-index:8;animation:spin 2s linear infinite;
+}
+@keyframes spin{100%{transform:rotateY(360deg)}}
 
-/* HUD */
-#hud{position:absolute;top:0;left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;z-index:100;pointer-events:none;}
-.score-box{background:rgba(5,5,30,.85);border:2px solid #00d8ee;border-radius:12px;padding:6px 12px;color:#00e8ff;font-size:15px;font-weight:bold;box-shadow:0 0 12px rgba(0,216,238,.5);text-align:center;min-width:58px;backdrop-filter:blur(4px);}
-.score-box .label{font-size:9px;color:#88ccff;display:block;letter-spacing:1px;font-weight:600;}
-#coinBox{border-color:#ffd000;color:#ffd000;box-shadow:0 0 12px rgba(255,208,0,.5);}
-#coinBox .label{color:#ffe088;}
+.powerup{
+  position:absolute;width:44px;height:44px;border-radius:50%;
+  display:flex;justify-content:center;align-items:center;
+  font-size:24px;z-index:8;box-shadow:0 0 20px currentColor;
+  animation:bounce 1s infinite alternate;
+}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.2)}}
+.powerup.magnet{background:#FF00FF;color:#FFF;}
+.powerup.shield{background:#00FF00;color:#FFF;}
 
-#soundToggle{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;background:rgba(5,5,30,.85);border:2px solid #00d8ee;color:#00e8ff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;box-shadow:0 0 10px rgba(0,216,238,.4);}
-#soundToggle.muted{border-color:#555;color:#666;box-shadow:none;}
+/* ===== UI OVERLAY (HUD) ===== */
+#hud{
+  position:absolute;top:0;left:0;right:0;padding:15px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  z-index:100;pointer-events:none;
+}
+.ui-box{
+  background:rgba(255,255,255,0.9);
+  border:3px solid #555;border-radius:15px;
+  padding:8px 15px;font-size:18px;font-weight:bold;color:#333;
+  box-shadow:0 5px 0 #555;text-align:center;
+}
+.ui-box .label{font-size:10px;color:#777;display:block;letter-spacing:1px;}
 
-/* कंट्रोल */
-#controls{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;z-index:100;pointer-events:none;}
-.ctrl-btn{width:68px;height:68px;border-radius:50%;background:rgba(0,216,238,.18);border:3px solid #00d8ee;color:#00e8ff;font-size:28px;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;box-shadow:0 0 20px rgba(0,216,238,.45);transition:transform .1s,background .1s;backdrop-filter:blur(4px);}
-.ctrl-btn:active{background:rgba(0,216,238,.45);transform:scale(.9);}
+/* Progress Bar */
+#progress-container{
+  width:80%;height:12px;background:#FFF;
+  border:2px solid #555;border-radius:10px;
+  position:absolute;top:75px;left:10%;
+  overflow:hidden;
+}
+#progress-bar{width:0%;height:100%;background:#00FF00;transition:width 0.3s;}
 
-/* स्क्रीन्स */
-.screen{position:absolute;inset:0;background:rgba(3,3,20,.94);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200;padding:20px;text-align:center;overflow-y:auto;backdrop-filter:blur(6px);}
-.screen.hidden{opacity:0;pointer-events:none;display:none;}
-.screen h1{font-size:34px;color:#00e8ff;text-shadow:0 0 12px #00d8ee;margin-bottom:8px;letter-spacing:2px;}
-.screen h2{font-size:16px;color:#ffd000;margin-bottom:16px;letter-spacing:2px;}
-.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:14px;max-width:340px;}
-.btn{padding:13px 38px;font-size:17px;font-weight:bold;color:#001133;background:linear-gradient(135deg,#00e8ff,#00a0ff);border:none;border-radius:12px;cursor:pointer;box-shadow:0 0 22px rgba(0,216,238,.55);letter-spacing:1.5px;margin-top:8px;}
-.btn:active{transform:scale(.95);}
-.btn.secondary{background:linear-gradient(135deg,#ff2f6b,#c4003a);color:#fff;font-size:14px;padding:10px 28px;}
-.final-score{font-size:52px;color:#ffd000;text-shadow:0 0 22px #ffd000;margin:6px 0;font-weight:bold;}
+/* Level Text */
+#levelText{
+  position:absolute;top:95px;width:100%;text-align:center;
+  font-weight:bold;color:#555;font-size:14px;letter-spacing:2px;z-index:100;
+}
 
-#adBanner{position:absolute;bottom:0;left:0;right:0;height:52px;background:rgba(0,0,0,.75);display:none;justify-content:center;align-items:center;color:#555;font-size:11px;z-index:150;}
-#adBanner.active{display:flex;}
+/* ===== SCREENS ===== */
+.screen{
+  position:absolute;inset:0;background:rgba(239,227,198,0.95);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  z-index:200;padding:20px;text-align:center;
+}
+.screen.hidden{display:none;}
+.screen h1{font-size:32px;color:#333;margin-bottom:10px;text-shadow:0 3px 0 #FFF;}
+.screen p{color:#555;font-size:16px;margin-bottom:20px;line-height:1.6;}
 
-#adInterstitial{position:absolute;inset:0;background:rgba(0,0,0,.96);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:300;color:#fff;}
-#adInterstitial.active{display:flex;}
-.ad-box{width:min(290px,85vw);height:min(380px,60vh);background:linear-gradient(135deg,#12122e,#222250);border:2px dashed #333;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#555;margin-bottom:16px;}
-.skip-btn{padding:9px 22px;background:transparent;border:2px solid #00d8ee;color:#00e8ff;border-radius:8px;cursor:pointer;font-size:13px;}
+/* Buttons */
+.btn{
+  padding:15px 40px;font-size:20px;font-weight:bold;color:#FFF;
+  background:#4A78FF;border:none;border-radius:15px;
+  box-shadow:0 6px 0 #2A4AA0;cursor:pointer;
+  transition:all 0.1s;margin-top:10px;width:80%;max-width:250px;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #2A4AA0;}
+.btn.red{background:#FF4A4A;box-shadow:0 6px 0 #A02A2A;}
+.btn.green{background:#4CAF50;box-shadow:0 6px 0 #2E7D32;}
 
-#flash{position:absolute;inset:0;background:#ff2f6b;opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;}
-#flash.active{opacity:.45;}
+/* Ads Placeholder */
+.ad-box{
+  width:100%;max-width:300px;height:250px;
+  background:#FFF;border:3px dashed #999;border-radius:15px;
+  display:flex;justify-content:center;align-items:center;
+  color:#999;font-size:18px;font-weight:bold;margin-top:20px;
+  position:relative;
+}
+.ad-tag{
+  position:absolute;top:5px;right:5px;background:#FFD700;
+  color:#000;font-size:10px;padding:2px 6px;border-radius:5px;
+}
+.skip-btn{
+  padding:8px 20px;background:#555;color:#FFF;border:none;
+  border-radius:10px;font-size:14px;margin-top:15px;cursor:pointer;
+}
+
+/* ===== POWERUP BAR (Bottom) ===== */
+#powerup-bar{
+  position:absolute;bottom:20px;left:0;width:100%;
+  display:flex;justify-content:center;gap:15px;z-index:100;
+}
+.pu-icon{
+  width:60px;height:60px;background:#FFF;border:3px solid #555;border-radius:15px;
+  display:flex;justify-content:center;align-items:center;font-size:28px;
+  box-shadow:0 5px 0 #555;position:relative;
+}
+.pu-icon .ad-badge{
+  position:absolute;bottom:-5px;right:-5px;
+  background:#4CAF50;color:#FFF;font-size:9px;font-weight:bold;
+  padding:2px 5px;border-radius:5px;border:1px solid #FFF;
+}
 </style>
 </head>
 <body>
 
 <div id="game">
-  <div class="stars"></div>
-  
-  <div id="road">
-    <div class="lane lane-1"></div>
-    <div class="lane lane-2"></div>
+  <!-- HUD -->
+  <div id="hud">
+    <div class="ui-box"><span class="label">SCORE</span><span id="score">0</span></div>
+    <div class="ui-box" id="coinBox" style="border-color:#FFA500;box-shadow:0 5px 0 #FFA500;">
+      <span class="label">SCREWS</span>🔩 <span id="coins">0</span>
+    </div>
+    <div class="ui-box"><span class="label">BEST</span><span id="best">0</span></div>
   </div>
+  
+  <div id="progress-container"><div id="progress-bar"></div></div>
+  <div id="levelText">LEVEL 1</div>
 
-  <div id="player">
-    <div class="player-cube">
-      <div class="pf front"></div><div class="pf back"></div>
-      <div class="pf right"></div><div class="pf left"></div>
-      <div class="pf top"></div><div class="pf bottom"></div>
+  <!-- 3D Track -->
+  <div id="track-container">
+    <div id="road">
+      <div class="lane-line lane-1"></div>
+      <div class="lane-line lane-2"></div>
+    </div>
+    
+    <!-- Player Plate -->
+    <div id="player">
+      <div class="plate-bg">
+        <div class="hole"></div><div class="hole"></div><div class="hole"></div>
+      </div>
     </div>
   </div>
 
-  <div id="flash"></div>
-
-  <div id="hud">
-    <div class="score-box"><span class="label">SCORE</span><span id="score">0</span></div>
-    <div class="score-box" id="coinBox"><span class="label">COINS</span><span id="coins">0</span></div>
-    <div class="score-box" id="bestBox"><span class="label">BEST</span><span id="best">0</span></div>
+  <!-- Powerup Bar -->
+  <div id="powerup-bar">
+    <div class="pu-icon" id="puMagnet">🧲<div class="ad-badge">FREE</div></div>
+    <div class="pu-icon" id="puShield">🛡️<div class="ad-badge">FREE</div></div>
   </div>
 
-  <div id="soundToggle">🔊</div>
-
-  <div id="controls">
-    <div class="ctrl-btn" id="btnLeft">◀</div>
-    <div class="ctrl-btn" id="btnRight">▶</div>
-  </div>
-
+  <!-- Start Screen -->
   <div class="screen" id="startScreen">
-    <h1>3D CUBE RUNNER</h1>
-    <p>🪙 कोइन इकट्ठा करें<br>💀 बाधाओं से बचें</p>
-    <button class="btn" id="btnStart">START GAME</button>
+    <h1>3D SCREW RUNNER</h1>
+    <p>प्लेट को इकट्ठा करें 🔩<br>बाधाओं (पत्तों) से बचें 🍃</p>
+    <button class="btn green" id="btnStart">START GAME</button>
   </div>
 
+  <!-- Game Over Screen -->
   <div class="screen hidden" id="gameOverScreen">
-    <h1 style="color:#ff2f6b;text-shadow:0 0 14px #ff2f6b;">GAME OVER</h1>
-    <div class="final-score" id="finalScore">0</div>
-    <div style="color:#ffcc00;font-size:16px;">🪙 <span id="finalCoins">0</span></div>
-    <button class="btn" id="btnRestart" style="margin-top:20px;">PLAY AGAIN</button>
-    <button class="btn secondary" id="btnHome">HOME</button>
+    <h1 style="color:#FF4A4A;">GAME OVER</h1>
+    <p style="font-size:24px;font-weight:bold;color:#333;">Score: <span id="finalScore">0</span></p>
+    <button class="btn green" id="btnRestart" style="margin-top:20px;">PLAY AGAIN</button>
+    <button class="btn" id="btnHome">HOME</button>
+    <button class="btn red" id="btnRevive">REVIVE (WATCH AD)</button>
   </div>
 
-  <div id="adBanner">📢 AD BANNER</div>
-  <div id="adInterstitial">
-    <div class="ad-box"><h2>AD HERE</h2></div>
-    <button class="skip-btn" id="skipAd">SKIP ▶</button>
+  <!-- Ad Interstitial Screen -->
+  <div class="screen hidden" id="adScreen">
+    <h1>Advertisement</h1>
+    <div class="ad-box">
+      <div class="ad-tag">AD</div>
+      AdMob / Unity Ads Placeholder
+    </div>
+    <button class="skip-btn" id="btnSkipAd">Skip Ad ▶</button>
   </div>
+
 </div>
 
 <script>
 (function(){
 'use strict';
 
-const $=id=>document.getElementById(id);
-const player=$('player'),road=$('road');
-const scoreEl=$('score'),coinsEl=$('coins'),bestEl=$('best');
-const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen');
-const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins');
-const flash=$('flash'),adInterstitial=$('adInterstitial'),adBanner=$('adBanner');
+// DOM Elements
+const $ = id => document.getElementById(id);
+const player = $('player');
+const track = $('track-container');
+const road = $('road');
+const startScreen = $('startScreen');
+const gameOverScreen = $('gameOverScreen');
+const adScreen = $('adScreen');
+const scoreEl = $('score'), coinsEl = $('coins'), bestEl = $('best');
+const levelText = $('levelText'), progressBar = $('progress-bar');
+const flash = document.createElement('div'); // For damage flash
 
-// ==== STATE ====
-const LANES=[-90,0,90]; // 3 lanes
-let currentLane=1, score=0, coins=0, isRunning=false;
-let gameSpeed=3, obstacleTimer, scoreTimer;
-let obstacles=[], coinDrops=[], playerX=0, targetX=0;
-let best=parseInt(localStorage.getItem('crBest')||'0',10);
-bestEl.textContent=best;
+flash.style.cssText = 'position:absolute;inset:0;background:#FF0000;opacity:0;pointer-events:none;z-index:90;transition:opacity 0.2s;';
+document.getElementById('game').appendChild(flash);
 
-// ==== SOUND ====
-const Sound=(()=>{
-  let ctx=null;
-  let muted=localStorage.getItem('crMuted')==='true';
-  function init(){if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(ctx&&ctx.state==='suspended')ctx.resume();}
-  function beep(f,d,t='sine',v=0.1){if(muted||!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain();o.type=t;o.frequency.setValueAtTime(f,ctx.currentTime);g.gain.setValueAtTime(v,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+d);}
-  return {
-    init,
-    move:()=>beep(400,0.08),
-    coin:()=>beep(1200,0.1,'sine',0.15),
-    gameOver:()=>{beep(200,0.4,'sawtooth',0.2);setTimeout(()=>beep(100,0.6,'sawtooth',0.15),100);},
-    toggle:()=>{muted=!muted;localStorage.setItem('crMuted',muted);$('soundToggle').textContent=muted?'🔇':'🔊';return muted;}
-  };
-})();
-$('soundToggle').textContent=localStorage.getItem('crMuted')==='true'?'🔇':'🔊';
-$('soundToggle').addEventListener('click',()=>{Sound.init();Sound.toggle();});
+// Game State
+const LANES = [16.6, 50, 83.3]; // Percentages for 3 lanes
+let currentLane = 1;
+let score = 0, coins = 0;
+let best = parseInt(localStorage.getItem('screwRunnerBest') || '0', 10);
+let isRunning = false;
+let isReviving = false;
+let gameSpeed = 1; // Base speed
+let level = 1;
+let spawnRate = 1200; // ms
+let lastSpawn = 0;
+let spawnTimer, scoreTimer;
+let obstacles = [];
+let powerups = [];
+let activePowerups = { magnet: 0, shield: 0 };
 
-// ==== MOVE ====
-function movePlayer(dir){
-  if(!isRunning)return;
-  const nl=currentLane+dir;
-  if(nl<0||nl>2)return;
-  currentLane=nl; targetX=LANES[currentLane];
-  Sound.move();
+bestEl.textContent = best;
+
+// Audio System
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    
+    if(type === 'coin') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    } else if(type === 'powerup') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    } else if(type === 'hit') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    }
 }
-$('btnLeft').addEventListener('click',()=>movePlayer(-1));
-$('btnRight').addEventListener('click',()=>movePlayer(1));
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft'||e.key==='a'){e.preventDefault();movePlayer(-1);}
-  if(e.key==='ArrowRight'||e.key==='d'){e.preventDefault();movePlayer(1);}
+
+// Movement Logic
+function movePlayer(dir) {
+    if(!isRunning) return;
+    let nextLane = currentLane + dir;
+    if(nextLane >= 0 && nextLane <= 2) {
+        currentLane = nextLane;
+        player.style.left = LANES[currentLane] + '%';
+    }
+}
+
+// Input Handling
+document.addEventListener('keydown', e => {
+    if(e.key === 'ArrowLeft' || e.key === 'a') movePlayer(-1);
+    if(e.key === 'ArrowRight' || e.key === 'd') movePlayer(1);
 });
-let touchStartX=0;
-road.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
-road.addEventListener('touchend',e=>{
-  const d=e.changedTouches[0].clientX-touchStartX;
-  if(Math.abs(d)>30)movePlayer(d>0?1:-1);
-},{passive:true});
+track.addEventListener('touchstart', e => {
+    const x = e.touches[0].clientX;
+    if(x < window.innerWidth / 2) movePlayer(-1);
+    else movePlayer(1);
+});
 
-// ==== SMOOTH MOVE ====
-function smoothMove(){
-  playerX+=(targetX-playerX)*0.2;
-  player.style.transform=`translateX(calc(-50% + ${playerX}px))`;
-  if(isRunning)requestAnimationFrame(smoothMove);
-}
+// Game Loop Variables
+let lastTime = performance.now();
 
-// ==== SPAWN ====
-function spawnObstacle(){
-  if(!isRunning)return;
-  const lane=Math.floor(Math.random()*3);
-  const obs=document.createElement('div');
-  obs.className='obstacle';
-  obs.innerHTML=`<div class="pf front"></div><div class="pf back"></div><div class="pf right"></div><div class="pf left"></div><div class="pf top"></div><div class="pf bottom"></div>`;
-  // Position based on lane center
-  const roadWidth=road.offsetWidth;
-  const laneX=[roadWidth*0.166,roadWidth*0.5,roadWidth*0.833][lane];
-  obs.style.left=`calc(${laneX}px - 22px)`;
-  obs.dataset.lane=lane;
-  obs.dataset.y=-60;
-  obs.style.top='-60px';
-  road.appendChild(obs);
-  obstacles.push(obs);
+function gameLoop(time) {
+    if(!isRunning) return;
+    
+    const dt = time - lastTime;
+    lastTime = time;
+    
+    // Difficulty Scaling
+    gameSpeed = 1 + (score * 0.002); 
+    level = Math.floor(score / 10) + 1;
+    levelText.textContent = "LEVEL " + level;
+    
+    // Speed up road animation
+    const roadSpeed = 0.5 + (gameSpeed * 0.3);
+    document.querySelectorAll('.lane-line').forEach(el => {
+        el.style.animationDuration = roadSpeed + 's';
+    });
 
-  // 30% chance to spawn a coin
-  if(Math.random()<0.3){
-    setTimeout(()=>spawnCoin(lane),200);
-  }
-}
-
-function spawnCoin(lane){
-  if(!isRunning)return;
-  const c=document.createElement('div');
-  c.className='coin';
-  c.textContent='$';
-  const roadWidth=road.offsetWidth;
-  const laneX=[roadWidth*0.166,roadWidth*0.5,roadWidth*0.833][lane];
-  c.style.left=`calc(${laneX}px - 14px)`;
-  c.dataset.lane=lane;
-  c.dataset.y=-50;
-  c.style.top='-50px';
-  road.appendChild(c);
-  coinDrops.push(c);
-}
-
-// ==== LOOP ====
-let lastTime=0;
-function gameLoop(timestamp){
-  if(!isRunning)return;
-  if(!lastTime)lastTime=timestamp;
-  const dt=Math.min((timestamp-lastTime)/16.67,3);
-  lastTime=timestamp;
-  const roadHeight=road.offsetHeight;
-
-  // Move Obstacles
-  for(let i=obstacles.length-1;i>=0;i--){
-    const o=obstacles[i];
-    let y=parseFloat(o.dataset.y);
-    y+=gameSpeed*4*dt;
-    o.dataset.y=y; o.style.top=y+'px';
-
-    // Collision Check
-    const playerY = roadHeight - (window.innerHeight*0.15) - 50; // approx player top in road coords
-    // Better: check if obstacle is in hit zone (bottom part of road)
-    if(y > roadHeight-150 && y < roadHeight-50){
-      if(parseInt(o.dataset.lane)===currentLane){
-        gameOver(); return;
-      }
+    // Spawn Logic
+    if(time - lastSpawn > spawnRate) {
+        spawnObject();
+        lastSpawn = time;
+        // Make spawning faster as game gets harder
+        spawnRate = Math.max(400, 1200 - (level * 50)); 
     }
-    if(y>roadHeight+100){o.remove();obstacles.splice(i,1);}
-  }
 
-  // Move Coins
-  for(let i=coinDrops.length-1;i>=0;i--){
-    const c=coinDrops[i];
-    let y=parseFloat(c.dataset.y);
-    y+=gameSpeed*4*dt;
-    c.dataset.y=y; c.style.top=y+'px';
+    // Move Objects (Manual DOM Movement for Collision Accuracy)
+    const trackHeight = track.offsetHeight;
+    const playerTop = trackHeight - (trackHeight * 0.15) - 80; // Approx player Y
 
-    // Collect Check
-    if(y > roadHeight-150 && y < roadHeight-50){
-      if(parseInt(c.dataset.lane)===currentLane){
-        coins++; coinsEl.textContent=coins; Sound.coin();
-        c.remove(); coinDrops.splice(i,1); continue;
-      }
+    // Move Obstacles
+    for(let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        let y = parseFloat(obs.style.top) || -150;
+        y += (gameSpeed * 8 * (dt/16)); // speed factor
+        obs.style.top = y + 'px';
+
+        // Collision Check
+        if(y > playerTop - 60 && y < playerTop + 80) {
+            if(parseInt(obs.dataset.lane) === currentLane) {
+                if(activePowerups.shield > 0) {
+                    // Destroy obstacle with shield
+                    obs.remove(); obstacles.splice(i, 1);
+                    activePowerups.shield = 0;
+                    player.classList.remove('shielded');
+                    playSound('hit');
+                } else {
+                    gameOver(); return;
+                }
+            }
+        }
+
+        if(y > trackHeight + 200) {
+            obs.remove(); obstacles.splice(i, 1);
+        }
     }
-    if(y>roadHeight+100){c.remove();coinDrops.splice(i,1);}
-  }
 
-  requestAnimationFrame(gameLoop);
+    // Move Collectibles
+    for(let i = powerups.length - 1; i >= 0; i--) {
+        let p = powerups[i];
+        let y = parseFloat(p.style.top) || -150;
+        
+        // Magnet effect (pull to player)
+        if(activePowerups.magnet > 0 && p.dataset.type === 'coin') {
+            let targetX = (window.innerWidth * LANES[currentLane] / 100);
+            let currentX = parseFloat(p.style.left) || targetX;
+            p.style.left = (currentX + (targetX - currentX) * 0.1) + 'px';
+            y += 3; // Pull down faster
+        } else {
+            y += (gameSpeed * 8 * (dt/16));
+        }
+        
+        p.style.top = y + 'px';
+
+        // Collection Check
+        if(y > playerTop - 40 && y < playerTop + 80) {
+            let pX = parseFloat(p.style.left);
+            let targetX = (window.innerWidth * LANES[currentLane] / 100) - 20;
+            
+            if(Math.abs(pX - targetX) < 50) {
+                // Collected!
+                if(p.dataset.type === 'coin') {
+                    coins++; coinsEl.textContent = coins;
+                    playSound('coin');
+                } else {
+                    activatePowerup(p.dataset.type);
+                }
+                p.remove(); powerups.splice(i, 1);
+                continue;
+            }
+        }
+
+        if(y > trackHeight + 200) {
+            p.remove(); powerups.splice(i, 1);
+        }
+    }
+
+    // Progress Bar
+    progressBar.style.width = ((score % 10) * 10) + '%';
+
+    requestAnimationFrame(gameLoop);
 }
 
-// ==== START ====
-function startGame(){
-  Sound.init();
-  // Reset
-  obstacles.forEach(o=>o.remove()); obstacles=[];
-  coinDrops.forEach(c=>c.remove()); coinDrops=[];
-  score=0; coins=0; gameSpeed=3;
-  currentLane=1; playerX=0; targetX=0;
-  player.style.transform='translateX(-50%)';
-  scoreEl.textContent='0'; coinsEl.textContent='0';
-  startScreen.classList.add('hidden');
-  gameOverScreen.classList.add('hidden');
-  adBanner.classList.add('active');
-  
-  isRunning=true; lastTime=0;
-  requestAnimationFrame(smoothMove);
-  requestAnimationFrame(gameLoop);
+function spawnObject() {
+    const lane = Math.floor(Math.random() * 3);
+    const isPowerup = Math.random() < 0.15; // 15% chance for powerup/coin
+    const isCoin = Math.random() < 0.7; // of powerup chance, 70% coin
+    
+    const el = document.createElement('div');
+    el.dataset.lane = lane;
+    // Center X based on lane percentage
+    const laneX = (window.innerWidth * LANES[lane] / 100) - 45; // -45 to center
+    el.style.left = laneX + 'px';
+    el.style.top = '-150px';
 
-  scoreTimer=setInterval(()=>{ if(isRunning){score++;scoreEl.textContent=score;} },150);
-  
-  function spawnLoop(){
-    if(!isRunning)return;
-    spawnObstacle();
-    const delay=Math.max(350, 1000-gameSpeed*50);
-    obstacleTimer=setTimeout(spawnLoop, delay);
-  }
-  spawnLoop();
-
-  // Speed up over time
-  setTimeout(()=>{ if(isRunning) gameSpeed=4; }, 10000);
-  setTimeout(()=>{ if(isRunning) gameSpeed=5; }, 20000);
+    if(isPowerup) {
+        if(isCoin) {
+            el.className = 'coin';
+            el.textContent = '🔩'; // Screw icon
+            el.dataset.type = 'coin';
+        } else {
+            el.className = 'powerup ' + (Math.random() > 0.5 ? 'magnet' : 'shield');
+            el.textContent = Math.random() > 0.5 ? '🧲' : '🛡️';
+            el.dataset.type = el.classList.contains('magnet') ? 'magnet' : 'shield';
+        }
+        track.appendChild(el);
+        powerups.push(el);
+    } else {
+        // Obstacle (Leaf Plate)
+        el.className = 'obstacle ' + ['blue', 'purple', 'green'][Math.floor(Math.random()*3)];
+        el.innerHTML = `<div class="screw"></div><div class="screw"></div>`;
+        track.appendChild(el);
+        obstacles.push(el);
+    }
 }
 
-// ==== GAME OVER ====
-function gameOver(){
-  isRunning=false;
-  clearInterval(scoreTimer);
-  clearTimeout(obstacleTimer);
-  Sound.gameOver();
-  flash.classList.add('active');
-  setTimeout(()=>flash.classList.remove('active'),200);
-  if(navigator.vibrate)navigator.vibrate([100,50,100]);
-
-  if(score>best){best=score;localStorage.setItem('crBest',best);bestEl.textContent=best;}
-  finalScoreEl.textContent=score;
-  finalCoinsEl.textContent=coins;
-  
-  showAd(()=>{
-    gameOverScreen.classList.remove('hidden');
-    adBanner.classList.remove('active');
-  });
+function activatePowerup(type) {
+    playSound('powerup');
+    if(type === 'magnet') {
+        activePowerups.magnet = 8000; // 8 seconds
+        setTimeout(() => activePowerups.magnet = 0, 8000);
+    } else if(type === 'shield') {
+        activePowerups.shield = 1; // One hit protection
+        player.classList.add('shielded');
+    }
 }
 
-function showAd(cb){
-  adInterstitial.classList.add('active');
-  const btn=$('skipAd');
-  const close=()=>{
-    adInterstitial.classList.remove('active');
-    btn.removeEventListener('click',close);
-    if(cb)cb();
-  };
-  btn.addEventListener('click',close);
-  setTimeout(close, 4000);
+function startGame() {
+    // Reset everything
+    score = 0; coins = 0; gameSpeed = 1; level = 1;
+    currentLane = 1; isRunning = true; isReviving = false;
+    activePowerups = { magnet: 0, shield: 0 };
+    player.classList.remove('shielded');
+    
+    scoreEl.textContent = '0'; coinsEl.textContent = '0';
+    player.style.left = '50%';
+    document.querySelectorAll('.obstacle, .coin, .powerup').forEach(el => el.remove());
+    obstacles = []; powerups = [];
+    
+    startScreen.classList.add('hidden');
+    gameOverScreen.classList.add('hidden');
+    
+    lastTime = performance.now();
+    lastSpawn = performance.now();
+    
+    scoreTimer = setInterval(() => {
+        if(isRunning) { score++; scoreEl.textContent = score; }
+    }, 1000);
+
+    requestAnimationFrame(gameLoop);
 }
 
-// ==== BUTTONS ====
+function gameOver() {
+    isRunning = false;
+    clearInterval(scoreTimer);
+    playSound('hit');
+    
+    // Flash effect
+    flash.style.opacity = '0.5';
+    setTimeout(() => flash.style.opacity = '0', 200);
+    
+    if(score > best) {
+        best = score;
+        localStorage.setItem('screwRunnerBest', best);
+        bestEl.textContent = best;
+    }
+    
+    $('finalScore').textContent = score;
+    
+    // Show Ad before Game Over
+    showInterstitialAd(() => {
+        gameOverScreen.classList.remove('hidden');
+    });
+}
+
+// ==========================================
+// ADS INTEGRATION LOGIC
+// ==========================================
+function showInterstitialAd(callback) {
+    adScreen.classList.remove('hidden');
+    let skipped = false;
+    const skipBtn = $('btnSkipAd');
+    
+    // Simulate ad loading for 2 seconds, then enable skip
+    skipBtn.style.display = 'none';
+    setTimeout(() => { skipBtn.style.display = 'block'; }, 2000);
+
+    const skipAction = () => {
+        if(skipped) return;
+        skipped = true;
+        adScreen.classList.add('hidden');
+        skipBtn.removeEventListener('click', skipAction);
+        if(callback) callback();
+        
+        // Here you would call: admob.interstitial.hide();
+    };
+    skipBtn.addEventListener('click', skipAction);
+}
+
+// Revive via Ad
+$('btnRevive').addEventListener('click', () => {
+    gameOverScreen.classList.add('hidden');
+    adScreen.classList.remove('hidden');
+    
+    // Simulate Rewarded Ad
+    setTimeout(() => {
+        adScreen.classList.add('hidden');
+        // Revive Player
+        isRunning = true;
+        isReviving = true;
+        gameOverScreen.classList.add('hidden');
+        
+        // Clear nearest obstacles
+        obstacles.forEach(o => o.remove());
+        obstacles = [];
+        
+        // Give temporary shield
+        activatePowerup('shield');
+        
+        scoreTimer = setInterval(() => { if(isRunning) { score++; scoreEl.textContent = score; } }, 1000);
+        lastTime = performance.now();
+        requestAnimationFrame(gameLoop);
+    }, 3000); // 3 sec fake ad
+});
+
+// Free Powerup Buttons
+$('puMagnet').addEventListener('click', () => {
+    if(!isRunning) return;
+    // Here you'd show a rewarded ad. We simulate success:
+    activatePowerup('magnet');
+    // In real app: admob.rewarded.load().then(() => admob.rewarded.show());
+});
+
+$('puShield').addEventListener('click', () => {
+    if(!isRunning) return;
+    activatePowerup('shield');
+});
+
+// Buttons
 $('btnStart').addEventListener('click', startGame);
 $('btnRestart').addEventListener('click', startGame);
-$('btnHome').addEventListener('click', ()=>{
-  gameOverScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-  obstacles.forEach(o=>o.remove()); obstacles=[];
-  coinDrops.forEach(c=>c.remove()); coinDrops=[];
+$('btnHome').addEventListener('click', () => {
+    gameOverScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+    document.querySelectorAll('.obstacle, .coin, .powerup').forEach(el => el.remove());
+    obstacles = []; powerups = [];
 });
 
 })();
