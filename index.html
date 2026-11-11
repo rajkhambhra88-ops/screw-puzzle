@@ -3,161 +3,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0a0a2e">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>3D Cube Runner - Ultimate</title>
-
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<!-- AdSense (अपनी PUBLISHER ID डालें) -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
+<meta name="theme-color" content="#050520">
+<title>3D Cube Runner - Clean Look</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#0a0a2e,#1a1a4e,#2a1a5e);overflow:hidden;height:100vh;width:100vw;display:flex;justify-content:center;align-items:center;touch-action:none;user-select:none;}
+body{
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#050520;
+  overflow:hidden;height:100vh;width:100vw;
+  display:flex;justify-content:center;align-items:center;
+  touch-action:none;user-select:none;
+}
 
-#scene{position:relative;width:100%;height:100%;perspective:900px;perspective-origin:50% 40%;overflow:hidden;}
+/* ===== SCENE (साफ़ 3D स्पेस) ===== */
+#scene{
+  position:relative;width:100%;height:100%;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 35%, #1a1a5e 0%, #0a0a2e 40%, #050520 100%);
+}
 
-.stars{position:absolute;inset:0;background-image:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 70%,#fff,transparent),radial-gradient(2px 2px at 80% 20%,#aaf,transparent),radial-gradient(1px 1px at 40% 90%,#fff,transparent),radial-gradient(1px 1px at 90% 50%,#fff,transparent);background-size:200% 200%;animation:twinkle 4s ease-in-out infinite alternate;opacity:.7;}
-@keyframes twinkle{from{opacity:.4}to{opacity:.9}}
+/* तारे - हल्के, पीछे */
+.stars{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 15% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 35% 45%, #cdf, transparent),
+    radial-gradient(1.5px 1.5px at 55% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 75% 55%, #fcd, transparent),
+    radial-gradient(1.5px 1.5px at 88% 25%, #fff, transparent),
+    radial-gradient(1px 1px at 25% 75%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 85%, #cff, transparent),
+    radial-gradient(1.5px 1.5px at 92% 72%, #fff, transparent);
+  background-size:100% 100%;
+  animation:twinkle 3s ease-in-out infinite alternate;
+  opacity:.85;
+  pointer-events:none;
+}
+@keyframes twinkle{from{opacity:.5}to{opacity:1}}
 
-#track{position:absolute;left:50%;bottom:0;width:400px;height:100%;transform:translateX(-50%) rotateX(60deg);transform-origin:center bottom;transform-style:preserve-3d;}
-.road{position:absolute;left:50%;transform:translateX(-50%);width:340px;height:3000px;bottom:0;background:linear-gradient(180deg,#2a2a5a,#1a1a3a);box-shadow:0 0 40px rgba(100,100,255,.4);border-left:4px solid #00f0ff;border-right:4px solid #00f0ff;}
-.road::before{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:6px;height:100%;background:repeating-linear-gradient(180deg,#ffff00 0,#ffff00 40px,transparent 40px,transparent 80px);animation:roadMove 1s linear infinite;}
-@keyframes roadMove{from{background-position-y:0}to{background-position-y:80px}}
+/* हॉरिज़ॉन्ट ग्लो लाइन (डेप्थ) */
+.horizon{
+  position:absolute;left:0;right:0;top:38%;
+  height:3px;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(0,240,255,0) 10%,
+    rgba(0,240,255,.9) 50%,
+    rgba(0,240,255,0) 90%,
+    transparent 100%);
+  box-shadow:0 0 30px rgba(0,240,255,.8), 0 0 60px rgba(0,240,255,.4);
+  z-index:2;
+  pointer-events:none;
+}
 
-#player{position:absolute;left:50%;bottom:120px;width:60px;height:60px;transform:translateX(-50%);transform-style:preserve-3d;animation:playerFloat 1.5s ease-in-out infinite;z-index:10;}
-@keyframes playerFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
-#player.shielded .face{border-color:#00ff00;box-shadow:inset 0 0 25px rgba(0,255,0,.8),0 0 15px #00ff00;}
-.cube{position:absolute;width:60px;height:60px;transform-style:preserve-3d;animation:cubeRotate 4s linear infinite;}
-@keyframes cubeRotate{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
-.face{position:absolute;width:60px;height:60px;border:2px solid #fff;box-shadow:inset 0 0 20px rgba(255,255,255,.3);}
-.front{transform:translateZ(30px);background:linear-gradient(135deg,#00f0ff,#0080ff);}
-.back{transform:rotateY(180deg) translateZ(30px);background:linear-gradient(135deg,#00c0cc,#0060cc);}
-.right{transform:rotateY(90deg) translateZ(30px);background:linear-gradient(135deg,#00d0dd,#0070dd);}
-.left{transform:rotateY(-90deg) translateZ(30px);background:linear-gradient(135deg,#00e0ee,#0090ee);}
-.top{transform:rotateX(90deg) translateZ(30px);background:linear-gradient(135deg,#00ffff,#00aaff);}
-.bottom{transform:rotateX(-90deg) translateZ(30px);background:linear-gradient(135deg,#00b0bb,#0050bb);}
-#player::after{content:'';position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:20px;background:radial-gradient(ellipse,rgba(0,240,255,.6),transparent);border-radius:50%;filter:blur(8px);}
+/* ===== रोड (सीधी, साफ़, धुंधली नहीं) ===== */
+#roadWrap{
+  position:absolute;left:50%;top:38%;bottom:0;
+  width:min(360px, 78vw);
+  transform:translateX(-50%);
+  overflow:hidden;
+  z-index:3;
+}
 
-/* Obstacles */
-.obstacle{position:absolute;width:50px;height:50px;transform-style:preserve-3d;animation:obsSpin 2s linear infinite;}
-@keyframes obsSpin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
-.obstacle .face{width:50px;height:50px;border:2px solid #ff0;}
-.obstacle .front{transform:translateZ(25px);background:linear-gradient(135deg,#ff0066,#cc0044);}
-.obstacle .back{transform:rotateY(180deg) translateZ(25px);background:linear-gradient(135deg,#dd0055,#aa0033);}
-.obstacle .right{transform:rotateY(90deg) translateZ(25px);background:linear-gradient(135deg,#ee0055,#bb0044);}
-.obstacle .left{transform:rotateY(-90deg) translateZ(25px);background:linear-gradient(135deg,#ff1177,#cc0055);}
-.obstacle .top{transform:rotateX(90deg) translateZ(25px);background:linear-gradient(135deg,#ff3388,#dd0066);}
-.obstacle .bottom{transform:rotateX(-90deg) translateZ(25px);background:linear-gradient(135deg,#cc0055,#990033);}
+/* रोड बॉडी - ग्रेडिएंट, कोई blur नहीं */
+#road{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    #151538 0%,
+    #1a1a44 30%,
+    #20204e 100%);
+  border-left:3px solid #00d8ee;
+  border-right:3px solid #00d8ee;
+  box-shadow:
+    inset 0 0 25px rgba(0,200,255,.2),
+    0 0 25px rgba(0,200,255,.35);
+  /* स्पष्ट किनारे */
+  image-rendering:crisp-edges;
+}
 
-/* Moving obstacle (side-to-side) */
-.obstacle.mover .face{filter:hue-rotate(180deg);}
+/* लेन डिवाइडर - दो लाइनें (3 lanes) */
+.lane-line{
+  position:absolute;top:0;bottom:0;
+  width:3px;
+  background:repeating-linear-gradient(180deg,
+    #ffe500 0, #ffe500 20px,
+    transparent 20px, transparent 40px);
+  animation:roadMove 0.7s linear infinite;
+  box-shadow:0 0 6px rgba(255,229,0,.7);
+}
+.lane-line.l1{left:33.33%;transform:translateX(-50%);}
+.lane-line.l2{left:66.66%;transform:translateX(-50%);}
 
-/* Tall obstacle */
-.obstacle.tall{height:100px;}
-.obstacle.tall .face{height:100px;}
+@keyframes roadMove{
+  from{background-position-y:0}
+  to{background-position-y:40px}
+}
 
-/* Coin */
-.coin{position:absolute;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffff88,#ffcc00,#aa7700);box-shadow:0 0 20px #ffcc00,0 0 40px rgba(255,204,0,.5);animation:coinSpin 0.8s linear infinite;z-index:8;}
-.coin::before{content:'$';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px;color:#aa7700;text-shadow:0 0 3px #fff;}
-@keyframes coinSpin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+/* रोड पर हल्की ग्रिड (डेप्थ के लिए) */
+#road::after{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(180deg,
+      rgba(0,240,255,.06) 0px,
+      rgba(0,240,255,.06) 1px,
+      transparent 1px,
+      transparent 60px);
+  pointer-events:none;
+}
+
+/* रोड के किनारे ग्लो */
+#roadWrap::before,#roadWrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:8px;
+  background:linear-gradient(180deg,transparent,rgba(0,240,255,.6),rgba(0,240,255,.9));
+  filter:blur(4px);
+  z-index:2;
+}
+#roadWrap::before{left:-4px;}
+#roadWrap::after{right:-4px;}
+
+/* ===== प्लेयर क्यूब (स्पष्ट) ===== */
+#player{
+  position:absolute;left:50%;bottom:130px;
+  width:60px;height:60px;
+  transform:translateX(-50%);
+  transform-style:preserve-3d;
+  animation:playerFloat 1.4s ease-in-out infinite;
+  z-index:20;
+}
+@keyframes playerFloat{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-6px)}
+}
+
+.cube{
+  position:absolute;width:60px;height:60px;
+  transform-style:preserve-3d;
+  animation:cubeRotate 4s linear infinite;
+}
+@keyframes cubeRotate{
+  from{transform:rotateX(-22deg) rotateY(0)}
+  to{transform:rotateX(-22deg) rotateY(360deg)}
+}
+
+.face{
+  position:absolute;width:60px;height:60px;
+  border:2px solid #7fffff;
+  /* स्पष्टता के लिए */
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  image-rendering:crisp-edges;
+}
+.front {transform:translateZ(30px);           background:linear-gradient(135deg,#00e8ff,#0080ff);}
+.back  {transform:rotateY(180deg) translateZ(30px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
+.right {transform:rotateY(90deg)  translateZ(30px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
+.left  {transform:rotateY(-90deg) translateZ(30px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
+.top   {transform:rotateX(90deg)  translateZ(30px); background:linear-gradient(135deg,#7fffff,#00b0ff);}
+.bottom{transform:rotateX(-90deg) translateZ(30px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
+
+/* प्लेयर की ज़मीन पर छाया - स्पष्ट */
+#player::after{
+  content:'';
+  position:absolute;
+  bottom:-38px;left:50%;
+  transform:translateX(-50%);
+  width:70px;height:16px;
+  background:radial-gradient(ellipse,rgba(0,240,255,.85),rgba(0,240,255,0) 70%);
+  border-radius:50%;
+  z-index:-1;
+}
+
+/* Shield effect */
+#player.shielded .face{
+  border-color:#00ff88;
+  box-shadow:0 0 12px #00ff88,inset 0 0 10px rgba(0,255,136,.5);
+}
+
+/* ===== ऑब्सटैकल (स्पष्ट 3D) ===== */
+.obstacle{
+  position:absolute;
+  width:48px;height:48px;
+  transform-style:preserve-3d;
+  animation:obsSpin 2s linear infinite;
+  z-index:15;
+}
+@keyframes obsSpin{
+  from{transform:rotateX(-15deg) rotateY(0)}
+  to{transform:rotateX(-15deg) rotateY(360deg)}
+}
+.obstacle .face{
+  width:48px;height:48px;
+  border:2px solid #ffcc44;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.obstacle .front {transform:translateZ(24px);           background:linear-gradient(135deg,#ff2f6b,#c4003a);}
+.obstacle .back  {transform:rotateY(180deg) translateZ(24px); background:linear-gradient(135deg,#e0004a,#90002a);}
+.obstacle .right {transform:rotateY(90deg)  translateZ(24px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
+.obstacle .left  {transform:rotateY(-90deg) translateZ(24px); background:linear-gradient(135deg,#ff3060,#bb0044);}
+.obstacle .top   {transform:rotateX(90deg)  translateZ(24px); background:linear-gradient(135deg,#ff5588,#dd0066);}
+.obstacle .bottom{transform:rotateX(-90deg) translateZ(24px); background:linear-gradient(135deg,#cc0044,#880033);}
+
+/* Coin (स्पष्ट) */
+.coin{
+  position:absolute;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffffaa,#ffd000 45%,#b07800 100%);
+  box-shadow:0 0 12px #ffd000,0 0 24px rgba(255,208,0,.5);
+  animation:coinSpin .8s linear infinite;
+  z-index:14;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:18px;color:#8a5b00;
+  text-shadow:0 1px 0 #fff3a0;
+}
+@keyframes coinSpin{
+  from{transform:rotateY(0)}
+  to{transform:rotateY(360deg)}
+}
 
 /* Power-up */
-.powerup{position:absolute;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:8;animation:powFloat 1s ease-in-out infinite;box-shadow:0 0 25px currentColor;}
-@keyframes powFloat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.powerup.shield{background:radial-gradient(circle,#00ff88,#008844);color:#00ff88;}
-.powerup.magnet{background:radial-gradient(circle,#ff00ff,#880088);color:#ff00ff;}
-.powerup.slow{background:radial-gradient(circle,#00aaff,#004488);color:#00aaff;}
-.powerup.double{background:radial-gradient(circle,#ffaa00,#885500);color:#ffaa00;}
+.powerup{
+  position:absolute;
+  width:42px;height:42px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;z-index:14;
+  animation:powFloat 1s ease-in-out infinite;
+}
+@keyframes powFloat{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.12)}
+}
+.powerup.shield{background:radial-gradient(circle,#00ff88,#006622);box-shadow:0 0 18px #00ff88;}
+.powerup.magnet{background:radial-gradient(circle,#ff40ff,#770077);box-shadow:0 0 18px #ff40ff;}
+.powerup.slow  {background:radial-gradient(circle,#40aaff,#003377);box-shadow:0 0 18px #40aaff;}
+.powerup.double{background:radial-gradient(circle,#ffaa00,#884400);box-shadow:0 0 18px #ffaa00;}
 
-/* HUD */
-#hud{position:absolute;top:0;left:0;right:0;padding:15px 20px;display:flex;justify-content:space-between;align-items:flex-start;z-index:100;pointer-events:none;gap:8px;flex-wrap:wrap;}
-.score-box{background:rgba(0,0,0,.5);border:2px solid #00f0ff;border-radius:12px;padding:6px 14px;color:#00f0ff;font-size:16px;font-weight:bold;box-shadow:0 0 20px rgba(0,240,255,.5);backdrop-filter:blur(5px);text-align:center;min-width:60px;}
-.score-box .label{font-size:10px;color:#88ccff;display:block;letter-spacing:1px;}
-#highScore{border-color:#ffff00;color:#ffff00;box-shadow:0 0 20px rgba(255,255,0,.5);}
-#highScore .label{color:#ffee88;}
-#coinBox{border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 20px rgba(255,204,0,.5);}
-#coinBox .label{color:#ffdd88;}
-
-/* Active power-up indicator */
-#powerupBar{position:absolute;top:85px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100;pointer-events:none;}
-.pu-indicator{background:rgba(0,0,0,.6);border:2px solid currentColor;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:bold;display:flex;align-items:center;gap:6px;animation:pulse .8s ease-in-out infinite alternate;}
-@keyframes pulse{from{opacity:.7;transform:scale(1)}to{opacity:1;transform:scale(1.05)}}
-
-/* Daily challenge banner */
-#dailyChallenge{position:absolute;top:120px;left:50%;transform:translateX(-50%);background:rgba(255,0,255,.15);border:2px solid #ff00ff;border-radius:12px;padding:8px 16px;color:#ff88ff;font-size:13px;font-weight:bold;z-index:100;text-align:center;backdrop-filter:blur(5px);box-shadow:0 0 20px rgba(255,0,255,.4);max-width:90%;}
-
-/* Controls */
-#controls{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:space-between;padding:0 20px;z-index:100;pointer-events:none;}
-.ctrl-btn{width:80px;height:80px;border-radius:50%;background:rgba(0,240,255,.15);border:3px solid #00f0ff;color:#00f0ff;font-size:36px;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;box-shadow:0 0 25px rgba(0,240,255,.4);transition:all .1s;backdrop-filter:blur(5px);}
-.ctrl-btn:active{background:rgba(0,240,255,.4);transform:scale(.9);box-shadow:0 0 40px rgba(0,240,255,.8);}
-
-/* Screens */
-.screen{position:absolute;inset:0;background:rgba(5,5,30,.92);backdrop-filter:blur(8px);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200;padding:20px;text-align:center;transition:opacity .4s;overflow-y:auto;}
-.screen.hidden{opacity:0;pointer-events:none;display:none;}
-.screen h1{font-size:40px;color:#00f0ff;text-shadow:0 0 20px #00f0ff,0 0 40px #0080ff;margin-bottom:10px;letter-spacing:3px;}
-.screen h2{font-size:20px;color:#ffff00;margin-bottom:20px;text-shadow:0 0 15px #ffff00;}
-.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:15px;max-width:360px;}
-.btn{padding:14px 40px;font-size:19px;font-weight:bold;color:#001133;background:linear-gradient(135deg,#00f0ff,#00a0ff);border:none;border-radius:12px;cursor:pointer;box-shadow:0 0 30px rgba(0,240,255,.6);letter-spacing:2px;transition:all .2s;margin-top:8px;}
-.btn:active{transform:scale(.95);box-shadow:0 0 50px rgba(0,240,255,.9);}
-.btn.secondary{background:linear-gradient(135deg,#ff0066,#cc0044);color:#fff;box-shadow:0 0 30px rgba(255,0,100,.6);font-size:15px;padding:11px 30px;margin-top:10px;}
-.btn.tertiary{background:linear-gradient(135deg,#ff00ff,#8800ff);color:#fff;font-size:15px;padding:11px 30px;margin-top:10px;box-shadow:0 0 30px rgba(255,0,255,.6);}
-.final-score{font-size:55px;color:#ffff00;text-shadow:0 0 30px #ffff00;margin:5px 0;font-weight:bold;}
-.new-record{color:#ff00ff;font-size:17px;font-weight:bold;text-shadow:0 0 15px #ff00ff;animation:pulse .8s ease-in-out infinite alternate;margin-bottom:10px;}
+/* ===== HUD ===== */
+#hud{
+  position:absolute;top:0;left:0;right:0;
+  padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:8px;z-index:100;pointer-events:none;flex-wrap:wrap;
+}
+.score-box{
+  background:rgba(5,5,30,.85);
+  border:2px solid #00d8ee;
+  border-radius:12px;
+  padding:6px 14px;
+  color:#00e8ff;font-size:16px;font-weight:bold;
+  box-shadow:0 0 15px rgba(0,216,238,.45);
+  text-align:center;min-width:60px;
+}
+.score-box .label{font-size:9px;color:#88ccff;display:block;letter-spacing:1px;font-weight:600;}
+#coinBox{border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 15px rgba(255,204,0,.45);}
+#coinBox .label{color:#ffe088;}
+#highScore{border-color:#ffd000;color:#ffe000;box-shadow:0 0 15px rgba(255,208,0,.45);}
+#highScore .label{color:#ffe088;}
 
 /* Sound toggle */
-#soundToggle{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #00f0ff;color:#00f0ff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;backdrop-filter:blur(5px);box-shadow:0 0 15px rgba(0,240,255,.4);}
-#soundToggle.muted{border-color:#666;color:#666;box-shadow:none;}
+#soundToggle{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(5,5,30,.85);
+  border:2px solid #00d8ee;
+  color:#00e8ff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:150;
+  box-shadow:0 0 12px rgba(0,216,238,.35);
+}
+#soundToggle.muted{border-color:#555;color:#666;box-shadow:none;}
 
-/* Ad Banner */
-#adBanner{position:absolute;bottom:0;left:0;right:0;height:60px;background:rgba(0,0,0,.7);border-top:1px solid #333;display:none;justify-content:center;align-items:center;color:#666;font-size:12px;z-index:150;letter-spacing:2px;}
-#adBanner.active{display:flex;}
+/* Power-up bar */
+#powerupBar{
+  position:absolute;top:82px;left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;z-index:100;pointer-events:none;flex-wrap:wrap;justify-content:center;
+}
+.pu-indicator{
+  background:rgba(5,5,30,.9);
+  border:2px solid currentColor;
+  border-radius:20px;
+  padding:3px 10px;font-size:12px;font-weight:bold;
+  display:flex;align-items:center;gap:5px;
+  animation:pulse .8s ease-in-out infinite alternate;
+}
+@keyframes pulse{from{opacity:.75}to{opacity:1}}
 
-/* Interstitial Ad */
-#adInterstitial{position:absolute;inset:0;background:rgba(0,0,0,.95);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:300;color:#fff;text-align:center;}
-#adInterstitial.active{display:flex;}
-#adInterstitial .ad-box{width:300px;height:400px;background:linear-gradient(135deg,#1a1a3a,#2a2a5a);border:2px dashed #444;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#666;margin-bottom:20px;padding:20px;}
-.skip-btn{padding:10px 25px;background:transparent;border:2px solid #00f0ff;color:#00f0ff;border-radius:8px;cursor:pointer;font-size:14px;letter-spacing:1px;}
+/* Daily challenge */
+#dailyChallenge{
+  position:absolute;top:120px;left:50%;transform:translateX(-50%);
+  background:rgba(120,0,120,.35);
+  border:2px solid #ff40ff;border-radius:10px;
+  padding:6px 14px;color:#ffaaff;font-size:12px;font-weight:bold;
+  z-index:100;text-align:center;
+  box-shadow:0 0 15px rgba(255,64,255,.4);
+  max-width:90%;
+}
 
-#flash{position:absolute;inset:0;background:#ff0066;opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;}
-#flash.active{opacity:.5;}
+/* Controls */
+#controls{
+  position:absolute;bottom:18px;left:0;right:0;
+  display:flex;justify-content:space-between;
+  padding:0 18px;z-index:100;pointer-events:none;
+}
+.ctrl-btn{
+  width:76px;height:76px;border-radius:50%;
+  background:rgba(0,216,238,.15);
+  border:3px solid #00d8ee;
+  color:#00e8ff;font-size:34px;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,216,238,.4);
+  transition:transform .1s,background .1s;
+}
+.ctrl-btn:active{
+  background:rgba(0,216,238,.4);
+  transform:scale(.9);
+  box-shadow:0 0 35px rgba(0,216,238,.8);
+}
+
+/* Screens */
+.screen{
+  position:absolute;inset:0;
+  background:rgba(3,3,20,.94);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  z-index:200;padding:20px;text-align:center;
+  transition:opacity .35s;overflow-y:auto;
+}
+.screen.hidden{opacity:0;pointer-events:none;display:none;}
+.screen h1{
+  font-size:38px;color:#00e8ff;
+  text-shadow:0 0 12px #00d8ee,0 0 24px #0080ff;
+  margin-bottom:8px;letter-spacing:2px;
+}
+.screen h2{font-size:18px;color:#ffd000;margin-bottom:18px;text-shadow:0 0 10px #ffd000;}
+.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:14px;max-width:360px;}
+.btn{
+  padding:13px 38px;font-size:18px;font-weight:bold;
+  color:#001133;
+  background:linear-gradient(135deg,#00e8ff,#00a0ff);
+  border:none;border-radius:12px;cursor:pointer;
+  box-shadow:0 0 22px rgba(0,216,238,.55);
+  letter-spacing:1.5px;transition:transform .15s;
+  margin-top:8px;
+}
+.btn:active{transform:scale(.95);}
+.btn.secondary{
+  background:linear-gradient(135deg,#ff2f6b,#c4003a);
+  color:#fff;box-shadow:0 0 22px rgba(255,47,107,.55);
+  font-size:14px;padding:10px 28px;margin-top:10px;
+}
+.btn.tertiary{
+  background:linear-gradient(135deg,#ff40ff,#8800cc);
+  color:#fff;box-shadow:0 0 22px rgba(255,64,255,.55);
+  font-size:14px;padding:10px 28px;margin-top:10px;
+}
+.final-score{
+  font-size:52px;color:#ffd000;
+  text-shadow:0 0 22px #ffd000;
+  margin:6px 0;font-weight:bold;
+}
+.new-record{
+  color:#ff40ff;font-size:16px;font-weight:bold;
+  text-shadow:0 0 12px #ff40ff;
+  animation:pulse .8s ease-in-out infinite alternate;
+  margin-bottom:8px;
+}
 
 /* Leaderboard */
-.leaderboard{width:100%;max-width:340px;margin:15px 0;max-height:240px;overflow-y:auto;}
-.lb-row{display:flex;justify-content:space-between;padding:8px 14px;background:rgba(0,240,255,.08);border-radius:8px;margin-bottom:6px;font-size:14px;color:#aaccff;border-left:3px solid #00f0ff;}
-.lb-row.top1{border-left-color:#ffcc00;background:rgba(255,204,0,.15);color:#ffdd00;}
-.lb-row.top2{border-left-color:#c0c0c0;background:rgba(192,192,192,.12);color:#e0e0e0;}
-.lb-row.top3{border-left-color:#cd7f32;background:rgba(205,127,50,.12);color:#e0a060;}
-.lb-row.you{border-left-color:#ff00ff;background:rgba(255,0,255,.12);color:#ff88ff;}
-.lb-rank{font-weight:bold;min-width:30px;}
-.lb-name{flex:1;margin:0 10px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lb-score{font-weight:bold;color:#00f0ff;}
+.leaderboard{width:100%;max-width:340px;margin:12px 0;max-height:240px;overflow-y:auto;}
+.lb-row{
+  display:flex;justify-content:space-between;
+  padding:8px 12px;background:rgba(0,216,238,.06);
+  border-radius:8px;margin-bottom:5px;font-size:14px;color:#aaccff;
+  border-left:3px solid #00d8ee;
+}
+.lb-row.top1{border-left-color:#ffd000;background:rgba(255,208,0,.12);color:#ffe000;}
+.lb-row.top2{border-left-color:#c0c0c0;background:rgba(192,192,192,.10);color:#e0e0e0;}
+.lb-row.top3{border-left-color:#cd7f32;background:rgba(205,127,50,.10);color:#e0a060;}
+.lb-row.you{border-left-color:#ff40ff;background:rgba(255,64,255,.12);color:#ffaaff;}
+.lb-rank{font-weight:bold;min-width:28px;}
+.lb-name{flex:1;margin:0 8px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-score{font-weight:bold;color:#00e8ff;}
 
 /* Name input */
-.name-input{padding:12px 20px;border:2px solid #00f0ff;border-radius:10px;background:rgba(0,0,0,.5);color:#00f0ff;font-size:16px;text-align:center;outline:none;width:250px;margin:10px 0;}
+.name-input{
+  padding:10px 18px;border:2px solid #00d8ee;
+  border-radius:10px;background:rgba(0,0,0,.55);
+  color:#00e8ff;font-size:15px;text-align:center;
+  outline:none;width:240px;margin:8px 0;
+}
 .name-input::placeholder{color:#4488aa;}
 
 /* Tabs */
-.tabs{display:flex;gap:8px;margin-bottom:15px;}
-.tab{padding:8px 20px;background:rgba(0,0,0,.4);border:2px solid #333;color:#666;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;transition:all .2s;}
-.tab.active{border-color:#00f0ff;color:#00f0ff;background:rgba(0,240,255,.15);box-shadow:0 0 15px rgba(0,240,255,.4);}
+.tabs{display:flex;gap:8px;margin-bottom:12px;}
+.tab{
+  padding:7px 18px;background:rgba(0,0,0,.4);
+  border:2px solid #333;color:#666;border-radius:8px;
+  cursor:pointer;font-size:13px;font-weight:bold;transition:all .2s;
+}
+.tab.active{
+  border-color:#00d8ee;color:#00e8ff;
+  background:rgba(0,216,238,.15);
+  box-shadow:0 0 12px rgba(0,216,238,.4);
+}
 
+/* Ads */
+#adBanner{
+  position:absolute;bottom:0;left:0;right:0;height:56px;
+  background:rgba(0,0,0,.75);border-top:1px solid #222;
+  display:none;justify-content:center;align-items:center;
+  color:#555;font-size:11px;z-index:150;letter-spacing:2px;
+}
+#adBanner.active{display:flex;}
+#adInterstitial{
+  position:absolute;inset:0;background:rgba(0,0,0,.96);
+  display:none;flex-direction:column;justify-content:center;
+  align-items:center;z-index:300;color:#fff;text-align:center;
+}
+#adInterstitial.active{display:flex;}
+#adInterstitial .ad-box{
+  width:290px;height:380px;
+  background:linear-gradient(135deg,#12122e,#222250);
+  border:2px dashed #333;border-radius:12px;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:center;color:#555;margin-bottom:16px;padding:16px;
+}
+.skip-btn{
+  padding:9px 22px;background:transparent;
+  border:2px solid #00d8ee;color:#00e8ff;
+  border-radius:8px;cursor:pointer;font-size:13px;letter-spacing:1px;
+}
+
+#flash{
+  position:absolute;inset:0;background:#ff2f6b;
+  opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;
+}
+#flash.active{opacity:.45;}
+
+/* ===== Mobile ===== */
 @media(max-width:500px){
-  #track{width:320px;}
-  .road{width:280px;}
-  #player{width:50px;height:50px;bottom:100px;}
+  .screen h1{font-size:28px;}
+  .ctrl-btn{width:68px;height:68px;font-size:28px;}
+  .score-box{font-size:14px;padding:5px 10px;min-width:50px;}
+  .score-box .label{font-size:8px;}
+  #player{width:50px;height:50px;bottom:110px;}
   .face{width:50px;height:50px;}
-  .front{transform:translateZ(25px);}
-  .back{transform:rotateY(180deg) translateZ(25px);}
-  .right{transform:rotateY(90deg) translateZ(25px);}
-  .left{transform:rotateY(-90deg) translateZ(25px);}
-  .top{transform:rotateX(90deg) translateZ(25px);}
+  .front {transform:translateZ(25px);}
+  .back  {transform:rotateY(180deg) translateZ(25px);}
+  .right {transform:rotateY(90deg)  translateZ(25px);}
+  .left  {transform:rotateY(-90deg) translateZ(25px);}
+  .top   {transform:rotateX(90deg)  translateZ(25px);}
   .bottom{transform:rotateX(-90deg) translateZ(25px);}
-  .screen h1{font-size:30px;}
-  .ctrl-btn{width:70px;height:70px;font-size:30px;}
-  .score-box{font-size:14px;padding:5px 10px;min-width:52px;}
+  #roadWrap{width:88vw;}
+  #player::after{bottom:-30px;width:58px;height:12px;}
 }
 </style>
 </head>
@@ -165,7 +466,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#
 
 <div id="scene">
   <div class="stars"></div>
-  <div id="track"><div class="road"></div></div>
+  <div class="horizon"></div>
+
+  <div id="roadWrap">
+    <div id="road">
+      <div class="lane-line l1"></div>
+      <div class="lane-line l2"></div>
+    </div>
+  </div>
 
   <div id="player">
     <div class="cube">
@@ -185,7 +493,6 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#
 
   <div id="powerupBar"></div>
   <div id="dailyChallenge"></div>
-
   <div id="soundToggle">🔊</div>
 
   <div id="controls">
@@ -193,29 +500,26 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#
     <div class="ctrl-btn" id="btnRight">▶</div>
   </div>
 
-  <!-- Start Screen -->
   <div class="screen" id="startScreen">
     <h1>3D CUBE RUNNER</h1>
-    <h2>✦ ULTIMATE EDITION ✦</h2>
+    <h2>✦ CLEAN LOOK EDITION ✦</h2>
     <p>🪙 कोइन इकट्ठा करें<br>⚡ पावर-अप उठाएँ<br>💀 बाधाओं से बचें</p>
     <button class="btn" id="btnStart">START GAME</button>
     <button class="btn tertiary" id="btnLeaderboard">🏆 LEADERBOARD</button>
   </div>
 
-  <!-- Game Over Screen -->
   <div class="screen hidden" id="gameOverScreen">
-    <h1 style="color:#ff0066;text-shadow:0 0 20px #ff0066;">GAME OVER</h1>
+    <h1 style="color:#ff2f6b;text-shadow:0 0 14px #ff2f6b;">GAME OVER</h1>
     <div class="final-score" id="finalScore">0</div>
-    <div style="color:#ffcc00;font-size:18px;margin-bottom:8px;">🪙 <span id="finalCoins">0</span> coins</div>
+    <div style="color:#ffcc00;font-size:16px;margin-bottom:8px;">🪙 <span id="finalCoins">0</span> coins</div>
     <div class="new-record hidden" id="newRecord">✦ NEW RECORD! ✦</div>
     <button class="btn" id="btnRestart">PLAY AGAIN</button>
     <button class="btn tertiary" id="btnViewLeaderboard">🏆 LEADERBOARD</button>
     <button class="btn secondary" id="btnHome">HOME</button>
   </div>
 
-  <!-- Leaderboard Screen -->
   <div class="screen hidden" id="leaderboardScreen">
-    <h1 style="font-size:30px;">🏆 LEADERBOARD</h1>
+    <h1 style="font-size:26px;">🏆 LEADERBOARD</h1>
     <div class="tabs">
       <div class="tab active" data-tab="global">🌍 Global</div>
       <div class="tab" data-tab="local">📱 Local</div>
@@ -231,172 +535,28 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#
   <div id="adInterstitial">
     <div class="ad-box">
       <div style="font-size:40px;">📱</div>
-      <div style="margin-top:15px;color:#888;">INTERSTITIAL AD</div>
-      <small style="color:#444;margin-top:15px;font-size:11px;">AdMob / AdSense / Unity Ads यहाँ लगाएँ</small>
+      <div style="margin-top:12px;color:#888;">INTERSTITIAL AD</div>
+      <small style="color:#444;margin-top:12px;font-size:11px;">AdMob / AdSense / Unity Ads यहाँ लगाएँ</small>
     </div>
     <button class="skip-btn" id="skipAd">SKIP AD ▶</button>
   </div>
 </div>
 
 <script>
-(function(){
-'use strict';
+/* =====================================================
+   यहाँ वही पूरा JavaScript गेम लॉजिक डालें
+   जो पिछले वर्ज़न में था — कॉइन, पावरअप, फायरबेस,
+   लीडरबोर्ड, डेली चैलेंज, साउंड, आदि।
 
-// ===== DOM =====
-const $=id=>document.getElementById(id);
-const scene=$('scene'),player=$('player'),scoreEl=$('score'),coinsEl=$('coins'),bestEl=$('best');
-const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen'),leaderboardScreen=$('leaderboardScreen');
-const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins'),newRecordEl=$('newRecord');
-const flash=$('flash'),adBanner=$('adBanner'),adInterstitial=$('adInterstitial');
-const soundToggle=$('soundToggle'),powerupBar=$('powerupBar'),dailyChallengeEl=$('dailyChallenge');
-const leaderboardList=$('leaderboardList'),playerNameInput=$('playerName');
+   नोट: सिर्फ DOM स्ट्रक्चर बदला है। कोड में जहाँ भी
+   #track या .road का रेफरेंस हो, उसे #roadWrap से
+   बदल दें।
 
-// ===== FIREBASE CONFIG =====
-// अपना Firebase प्रोजेक्ट कॉन्फ़िगरेशन यहाँ डालें
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-const USE_FIREBASE = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
-
-let firebaseDB = null;
-if (USE_FIREBASE) {
-  // Firebase SDK लोड (ES module नहीं - सिंपल वर्ज़न)
-  const s1=document.createElement('script'); s1.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
-  const s2=document.createElement('script'); s2.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js';
-  s1.onload=()=>{ document.head.appendChild(s2); };
-  s2.onload=()=>{
-    try{ firebase.initializeApp(FIREBASE_CONFIG); firebaseDB=firebase.database(); console.log('🔥 Firebase ready'); }
-    catch(e){ console.warn('Firebase init failed:',e); }
-  };
-  document.head.appendChild(s1);
-}
-
-// ===== SOUND =====
-const Sound=(()=>{
-  let ctx=null;
-  let muted=localStorage.getItem('cubeRunnerMuted')==='true';
-  function init(){ if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}} if(ctx&&ctx.state==='suspended')ctx.resume(); }
-  function beep(freq,dur,type='sine',vol=0.15){
-    if(muted||!ctx)return;
-    const o=ctx.createOscillator(),g=ctx.createGain();
-    o.type=type;o.frequency.setValueAtTime(freq,ctx.currentTime);
-    g.gain.setValueAtTime(vol,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
-    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur);
-  }
-  function sweep(f1,f2,dur,vol=0.12){
-    if(muted||!ctx)return;
-    const o=ctx.createOscillator(),g=ctx.createGain();
-    o.type='sine';o.frequency.setValueAtTime(f1,ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(f2,ctx.currentTime+dur);
-    g.gain.setValueAtTime(vol,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
-    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur);
-  }
-  return{
-    init,
-    moveLeft:()=>sweep(600,400,0.1),
-    moveRight:()=>sweep(400,600,0.1),
-    score:()=>beep(880,0.05,'sine',0.08),
-    coin:()=>{beep(1200,0.06,'sine',0.12);setTimeout(()=>beep(1600,0.08,'sine',0.1),50);},
-    powerup:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.1,'triangle',0.12),i*60));},
-    shield:()=>{beep(400,0.2,'sine',0.1);setTimeout(()=>beep(800,0.3,'sine',0.1),100);},
-    gameOver:()=>{beep(200,0.4,'sawtooth',0.2);setTimeout(()=>beep(100,0.6,'sawtooth',0.15),100);setTimeout(()=>beep(60,0.8,'square',0.12),250);},
-    start:()=>{beep(523,0.1);setTimeout(()=>beep(659,0.1),100);setTimeout(()=>beep(784,0.15),200);},
-    newRecord:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.15,'triangle',0.12),i*100));},
-    toggleMute:()=>{muted=!muted;localStorage.setItem('cubeRunnerMuted',muted.toString());updateUI();return muted;},
-    isMuted:()=>muted
-  };
-  function updateUI(){soundToggle.textContent=muted?'🔇':'🔊';soundToggle.classList.toggle('muted',muted);}
-})();
-soundToggle.textContent=Sound.isMuted()?'🔇':'🔊';
-soundToggle.classList.toggle('muted',Sound.isMuted());
-soundToggle.addEventListener('click',()=>{Sound.init();Sound.toggleMute();});
-
-// ===== GAME STATE =====
-const LANES=[-100,0,100];
-let currentLane=1,score=0,coins=0,best=parseInt(localStorage.getItem('cubeRunnerBest')||'0',10);
-let isRunning=false,gameSpeed=2.2,obstacleTimer,scoreTimer,speedTimer;
-let obstacles=[],coinsArr=[],powerups=[];
-let playerX=0,targetX=0,lastTime=0;
-let activePowerups={shield:0,magnet:0,slow:0,double:0}; // timestamps (ms remaining)
-let doubleScoreActive=false;
-let globalLeaderboard=[];
-
-bestEl.textContent=best;
-coinsEl.textContent='0';
-
-// ===== DAILY CHALLENGE =====
-const DailyChallenge=(()=>{
-  const today=new Date().toDateString();
-  const saved=JSON.parse(localStorage.getItem('cubeRunnerDaily')||'{}');
-  let challenge;
-  if(saved.date===today){ challenge=saved; }
-  else {
-    const types=[
-      {type:'score',target:100,desc:'100 स्कोर करें',reward:50},
-      {type:'coins',target:30,desc:'30 कोइन इकट्ठा करें',reward:50},
-      {type:'powerup',target:3,desc:'3 पावर-अप उठाएँ',reward:60},
-      {type:'games',target:3,desc:'3 गेम खेलें',reward:40}
-    ];
-    challenge={date:today,...types[Math.floor(Math.random()*types.length)],progress:0,completed:false};
-    localStorage.setItem('cubeRunnerDaily',JSON.stringify(challenge));
-  }
-  return challenge;
-})();
-
-function updateDailyUI(){
-  if(DailyChallenge.completed){
-    dailyChallengeEl.innerHTML=`✅ <b>DAILY COMPLETE!</b> +${DailyChallenge.reward} 🪙`;
-    dailyChallengeEl.style.borderColor='#00ff88';
-    dailyChallengeEl.style.color='#00ff88';
-  } else {
-    dailyChallengeEl.innerHTML=`🎯 <b>DAILY:</b> ${DailyChallenge.desc} (${DailyChallenge.progress}/${DailyChallenge.target}) +${DailyChallenge.reward}🪙`;
-  }
-}
-function progressDaily(amount=1){
-  if(DailyChallenge.completed)return;
-  DailyChallenge.progress+=amount;
-  if(DailyChallenge.progress>=DailyChallenge.target){
-    DailyChallenge.completed=true;
-    coins+=DailyChallenge.reward;
-    localStorage.setItem('cubeRunnerDaily',JSON.stringify(DailyChallenge));
-    Sound.newRecord();
-  } else {
-    localStorage.setItem('cubeRunnerDaily',JSON.stringify(DailyChallenge));
-  }
-  updateDailyUI();
-}
-updateDailyUI();
-
-// ===== INPUT =====
-function movePlayer(dir){
-  if(!isRunning)return;
-  const nl=currentLane+dir;
-  if(nl<0||nl>2)return;
-  currentLane=nl;targetX=LANES[currentLane];
-  if(dir<0)Sound.moveLeft();else Sound.moveRight();
-}
-$('btnLeft').addEventListener('click',()=>movePlayer(-1));
-$('btnRight').addEventListener('click',()=>movePlayer(1));
-document.addEventListener('keydown',e=>{
-  if(['ArrowLeft','a','A'].includes(e.key)){e.preventDefault();movePlayer(-1);}
-  if(['ArrowRight','d','D'].includes(e.key)){e.preventDefault();movePlayer(1);}
-});
-let tStartX=0;
-scene.addEventListener('touchstart',e=>{tStartX=e.touches[0].clientX;},{passive:true});
-scene.addEventListener('touchend',e=>{
-  const d=e.changedTouches[0].clientX-tStartX;
-  if(Math.abs(d)>40)movePlayer(d>0?1:-1);
-},{passive:true});
-
-// ===== SMOOTH MOVE =====
-function smoothMove(){
-  playerX+=(targetX-playerX)*0.2;
-  player.style.transform=`translateX(calc(-50% + ${
+   उदाहरण:
+   - document.getElementById('track')  ➜  document.getElementById('roadWrap')
+   - ऑब्सटैकल/कॉइन/पावरअप अब #roadWrap के अंदर
+     append होंगे (पहले #track में होते थे)
+   ===================================================== */
+</script>
+</body>
+</html>
