@@ -4,738 +4,148 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#050520">
-<title>3D Cube Runner - Clean</title>
+<title>3D Cube Runner</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#050520;font-family:'Segoe UI',Arial,sans-serif;user-select:none;touch-action:none;}
 
-html,body{
-  width:100%;height:100%;
-  overflow:hidden;
-  background:#050520;
-  font-family:'Segoe UI',Arial,sans-serif;
-  user-select:none;
-  touch-action:none;
-}
+#game{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse 80% 50% at 50% 0%, #1a1a5e 0%, transparent 60%),radial-gradient(ellipse at 50% 100%, #2a1a5e 0%, #050520 70%);}
 
-/* ============================================
-   गेम कंटेनर - पूरी स्क्रीन के अंदर फिट
-   ============================================ */
-#game{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, #1a1a5e 0%, transparent 60%),
-    radial-gradient(ellipse at 50% 100%, #2a1a5e 0%, #050520 70%);
-}
-
-/* तारे */
-.stars{
-  position:absolute;inset:0;
-  background-image:
-    radial-gradient(1.5px 1.5px at 10% 15%, #fff, transparent),
-    radial-gradient(1px 1px at 25% 35%, #cdf, transparent),
-    radial-gradient(1.5px 1.5px at 45% 10%, #fff, transparent),
-    radial-gradient(1px 1px at 70% 25%, #fcd, transparent),
-    radial-gradient(1.5px 1.5px at 85% 15%, #fff, transparent),
-    radial-gradient(1px 1px at 15% 55%, #cff, transparent),
-    radial-gradient(1px 1px at 90% 45%, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 35% 70%, #fff, transparent),
-    radial-gradient(1px 1px at 65% 80%, #cdf, transparent),
-    radial-gradient(1.5px 1.5px at 82% 65%, #fff, transparent);
-  background-size:100% 100%;
-  animation:twinkle 3s ease-in-out infinite alternate;
-  pointer-events:none;
-}
+/* सितारे */
+.stars{position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 10% 15%, #fff, transparent),radial-gradient(1px 1px at 25% 35%, #cdf, transparent),radial-gradient(1.5px 1.5px at 45% 10%, #fff, transparent),radial-gradient(1px 1px at 70% 25%, #fcd, transparent),radial-gradient(1.5px 1.5px at 85% 15%, #fff, transparent),radial-gradient(1px 1px at 15% 55%, #cff, transparent),radial-gradient(1px 1px at 90% 45%, #fff, transparent),radial-gradient(1.5px 1.5px at 35% 70%, #fff, transparent),radial-gradient(1px 1px at 65% 80%, #cdf, transparent),radial-gradient(1.5px 1.5px at 82% 65%, #fff, transparent);background-size:100% 100%;animation:twinkle 3s ease-in-out infinite alternate;pointer-events:none;}
 @keyframes twinkle{from{opacity:.5}to{opacity:1}}
 
-/* ============================================
-   रोड प्लेट - स्पष्ट, सुंदर, फिक्स्ड साइज़
-   ============================================ */
-#road{
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(340px, 82vw);
-  height:72vh;
-  background:linear-gradient(180deg,
-    rgba(20,20,60,.6) 0%,
-    rgba(25,25,70,.85) 20%,
-    #1a1a45 50%,
-    #22225a 100%);
-  border-left:3px solid #00d8ee;
-  border-right:3px solid #00d8ee;
-  border-bottom:none;
-  box-shadow:
-    inset 0 0 30px rgba(0,200,255,.15),
-    inset 0 -20px 40px rgba(0,200,255,.1),
-    0 0 40px rgba(0,200,255,.35);
-  z-index:5;
-  overflow:hidden;
-}
+/* रोड प्लेट */
+#road{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(320px, 80vw);height:75vh;background:linear-gradient(180deg, rgba(20,20,60,.6) 0%, rgba(25,25,70,.85) 20%, #1a1a45 50%, #22225a 100%);border-left:3px solid #00d8ee;border-right:3px solid #00d8ee;box-shadow:inset 0 0 30px rgba(0,200,255,.15), 0 0 40px rgba(0,200,255,.35);z-index:5;overflow:hidden;}
+#road::before{content:'';position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(180deg,#050520 0%,rgba(5,5,32,.7) 40%,transparent 100%);z-index:10;pointer-events:none;}
 
-/* ऊपर की ओर फेड (होरिज़ॉन्ट इफेक्ट) */
-#road::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;
-  height:80px;
-  background:linear-gradient(180deg,#050520 0%,rgba(5,5,32,.7) 40%,transparent 100%);
-  z-index:10;
-  pointer-events:none;
-}
-
-/* लेन लाइनें - साफ़, स्पष्ट */
-.lane{
-  position:absolute;
-  top:0;bottom:0;
-  width:2px;
-  background:repeating-linear-gradient(180deg,
-    #ffe500 0px,
-    #ffe500 18px,
-    transparent 18px,
-    transparent 36px);
-  box-shadow:0 0 4px rgba(255,229,0,.8);
-  animation:moveLine .8s linear infinite;
-  z-index:3;
-}
+/* लेन लाइनें */
+.lane{position:absolute;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg, #ffe500 0px, #ffe500 18px, transparent 18px, transparent 36px);box-shadow:0 0 4px rgba(255,229,0,.8);animation:moveLine .8s linear infinite;z-index:3;}
 .lane-1{left:33.33%;}
 .lane-2{left:66.66%;}
-@keyframes moveLine{
-  from{background-position-y:0}
-  to{background-position-y:36px}
-}
+@keyframes moveLine{from{background-position-y:0}to{background-position-y:36px}}
 
-/* साइड एज ग्लो */
-#road::after{
-  content:'';
-  position:absolute;inset:0;
-  background:
-    linear-gradient(90deg,rgba(0,216,238,.25) 0%,transparent 8%,transparent 92%,rgba(0,216,238,.25) 100%);
-  pointer-events:none;
-  z-index:2;
-}
+/* प्लेयर */
+#player{position:absolute;left:50%;bottom:15vh;width:50px;height:50px;transform:translateX(-50%);z-index:20;transform-style:preserve-3d;animation:playerFloat 1.4s ease-in-out infinite;}
+@keyframes playerFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+.player-cube{position:absolute;width:50px;height:50px;transform-style:preserve-3d;animation:cubeRotate 3.5s linear infinite;}
+@keyframes cubeRotate{from{transform:rotateX(-25deg) rotateY(0)}to{transform:rotateX(-25deg) rotateY(360deg)}}
 
-/* ============================================
-   प्लेयर - स्पष्ट, सुंदर क्यूब
-   ============================================ */
-#player{
-  position:absolute;
-  left:50%;
-  bottom:18vh;
-  width:54px;
-  height:54px;
-  transform:translateX(-50%);
-  z-index:20;
-  transform-style:preserve-3d;
-  animation:playerFloat 1.4s ease-in-out infinite;
-}
-@keyframes playerFloat{
-  0%,100%{transform:translateX(-50%) translateY(0)}
-  50%{transform:translateX(-50%) translateY(-6px)}
-}
+.pf{position:absolute;width:50px;height:50px;border:2px solid rgba(180,255,255,.9);border-radius:6px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 0 20px rgba(255,255,255,.4);}
+.pf.front {transform:translateZ(25px); background:linear-gradient(135deg,#00e8ff,#0080ff);}
+.pf.back  {transform:rotateY(180deg) translateZ(25px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
+.pf.right {transform:rotateY(90deg) translateZ(25px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
+.pf.left  {transform:rotateY(-90deg) translateZ(25px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
+.pf.top   {transform:rotateX(90deg) translateZ(25px); background:linear-gradient(135deg,#aaffff,#00b0ff);}
+.pf.bottom{transform:rotateX(-90deg) translateZ(25px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
 
-.player-cube{
-  position:absolute;
-  width:54px;
-  height:54px;
-  transform-style:preserve-3d;
-  animation:cubeRotate 3.5s linear infinite;
-}
-@keyframes cubeRotate{
-  from{transform:rotateX(-25deg) rotateY(0)}
-  to{transform:rotateX(-25deg) rotateY(360deg)}
-}
+#player::after{content:'';position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);width:65px;height:12px;background:radial-gradient(ellipse,rgba(0,240,255,.9),rgba(0,240,255,0) 70%);border-radius:50%;z-index:-1;filter:blur(2px);}
+#player.shielded .pf{border-color:#00ff88;box-shadow:inset 0 0 20px rgba(0,255,136,.6),0 0 15px #00ff88;}
 
-.pf{
-  position:absolute;
-  width:54px;
-  height:54px;
-  border:2px solid rgba(180,255,255,.9);
-  border-radius:6px;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  box-shadow:inset 0 0 20px rgba(255,255,255,.4);
-}
-.pf.front {transform:translateZ(27px);           background:linear-gradient(135deg,#00e8ff,#0080ff);}
-.pf.back  {transform:rotateY(180deg) translateZ(27px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
-.pf.right {transform:rotateY(90deg)  translateZ(27px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
-.pf.left  {transform:rotateY(-90deg) translateZ(27px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
-.pf.top   {transform:rotateX(90deg)  translateZ(27px); background:linear-gradient(135deg,#aaffff,#00b0ff);}
-.pf.bottom{transform:rotateX(-90deg) translateZ(27px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
+/* ऑब्सटैकल */
+.obstacle{position:absolute;width:44px;height:44px;top:-60px;z-index:15;transform-style:preserve-3d;animation:obsSpin 1.8s linear infinite;}
+@keyframes obsSpin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+.obstacle .pf{width:44px;height:44px;border:2px solid rgba(255,220,100,.9);box-shadow:inset 0 0 15px rgba(255,255,255,.35);}
+.obstacle .pf.front {transform:translateZ(22px); background:linear-gradient(135deg,#ff2f6b,#c4003a);}
+.obstacle .pf.back  {transform:rotateY(180deg) translateZ(22px); background:linear-gradient(135deg,#e0004a,#90002a);}
+.obstacle .pf.right {transform:rotateY(90deg) translateZ(22px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
+.obstacle .pf.left  {transform:rotateY(-90deg) translateZ(22px); background:linear-gradient(135deg,#ff3060,#bb0044);}
+.obstacle .pf.top   {transform:rotateX(90deg) translateZ(22px); background:linear-gradient(135deg,#ff6f99,#dd0066);}
+.obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(22px); background:linear-gradient(135deg,#cc0044,#880033);}
 
-/* प्लेयर छाया (ज़मीन पर) */
-#player::after{
-  content:'';
-  position:absolute;
-  bottom:-35px;
-  left:50%;
-  transform:translateX(-50%);
-  width:70px;
-  height:14px;
-  background:radial-gradient(ellipse,rgba(0,240,255,.9),rgba(0,240,255,0) 70%);
-  border-radius:50%;
-  z-index:-1;
-  filter:blur(2px);
-}
+/* कॉइन */
+.coin{position:absolute;width:28px;height:28px;border-radius:50%;top:-50px;z-index:14;background:radial-gradient(circle at 35% 30%,#fff8b0 0%,#ffd000 40%,#b07800 100%);border:2px solid #fff5a0;box-shadow:0 0 12px #ffd000,inset 0 0 6px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#8a5b00;text-shadow:0 1px 0 #fff3a0;animation:coinSpin .9s linear infinite;}
+@keyframes coinSpin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
 
-/* Shield */
-#player.shielded .pf{
-  border-color:#00ff88;
-  box-shadow:inset 0 0 20px rgba(0,255,136,.6),0 0 15px #00ff88;
-}
-
-/* ============================================
-   ऑब्सटैकल - स्पष्ट, सुंदर 3D क्यूब
-   ============================================ */
-.obstacle{
-  position:absolute;
-  width:46px;
-  height:46px;
-  top:-60px;
-  z-index:15;
-  transform-style:preserve-3d;
-  animation:obsSpin 1.8s linear infinite;
-}
-@keyframes obsSpin{
-  from{transform:rotateX(-20deg) rotateY(0)}
-  to{transform:rotateX(-20deg) rotateY(360deg)}
-}
-.obstacle .pf{
-  width:46px;
-  height:46px;
-  border:2px solid rgba(255,220,100,.9);
-  box-shadow:inset 0 0 15px rgba(255,255,255,.35);
-}
-.obstacle .pf.front {transform:translateZ(23px);           background:linear-gradient(135deg,#ff2f6b,#c4003a);}
-.obstacle .pf.back  {transform:rotateY(180deg) translateZ(23px); background:linear-gradient(135deg,#e0004a,#90002a);}
-.obstacle .pf.right {transform:rotateY(90deg)  translateZ(23px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
-.obstacle .pf.left  {transform:rotateY(-90deg) translateZ(23px); background:linear-gradient(135deg,#ff3060,#bb0044);}
-.obstacle .pf.top   {transform:rotateX(90deg)  translateZ(23px); background:linear-gradient(135deg,#ff6f99,#dd0066);}
-.obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(23px); background:linear-gradient(135deg,#cc0044,#880033);}
-
-/* ============================================
-   कॉइन - स्पष्ट, चमकीला
-   ============================================ */
-.coin{
-  position:absolute;
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  top:-50px;
-  z-index:14;
-  background:radial-gradient(circle at 35% 30%,#fff8b0 0%,#ffd000 40%,#b07800 100%);
-  border:2px solid #fff5a0;
-  box-shadow:
-    0 0 12px #ffd000,
-    0 0 22px rgba(255,208,0,.5),
-    inset 0 0 6px rgba(255,255,255,.5);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:16px;
-  color:#8a5b00;
-  text-shadow:0 1px 0 #fff3a0;
-  animation:coinSpin .9s linear infinite;
-}
-@keyframes coinSpin{
-  from{transform:rotateY(0) scale(1)}
-  to{transform:rotateY(360deg) scale(1)}
-}
-
-/* ============================================
-   पावर-अप - स्पष्ट गोल
-   ============================================ */
-.powerup{
-  position:absolute;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  top:-50px;
-  z-index:14;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  border:2px solid rgba(255,255,255,.8);
-  animation:powFloat 1s ease-in-out infinite;
-}
-@keyframes powFloat{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.15)}
-}
-.powerup.shield{background:radial-gradient(circle,#00ff88,#008844);box-shadow:0 0 16px #00ff88,inset 0 0 8px rgba(255,255,255,.4);}
-.powerup.magnet{background:radial-gradient(circle,#ff40ff,#880088);box-shadow:0 0 16px #ff40ff,inset 0 0 8px rgba(255,255,255,.4);}
-.powerup.slow  {background:radial-gradient(circle,#40aaff,#004488);box-shadow:0 0 16px #40aaff,inset 0 0 8px rgba(255,255,255,.4);}
-.powerup.double{background:radial-gradient(circle,#ffaa00,#885500);box-shadow:0 0 16px #ffaa00,inset 0 0 8px rgba(255,255,255,.4);}
-
-/* ============================================
-   HUD - ऊपर स्कोर/कॉइन/बेस्ट
-   ============================================ */
-#hud{
-  position:absolute;
-  top:0;left:0;right:0;
-  padding:12px 14px;
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  z-index:100;
-  pointer-events:none;
-}
-.score-box{
-  background:rgba(5,5,30,.85);
-  border:2px solid #00d8ee;
-  border-radius:12px;
-  padding:6px 12px;
-  color:#00e8ff;
-  font-size:15px;
-  font-weight:bold;
-  box-shadow:0 0 12px rgba(0,216,238,.5);
-  text-align:center;
-  min-width:58px;
-  backdrop-filter:blur(4px);
-}
-.score-box .label{
-  font-size:9px;
-  color:#88ccff;
-  display:block;
-  letter-spacing:1px;
-  font-weight:600;
-}
+/* HUD */
+#hud{position:absolute;top:0;left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;z-index:100;pointer-events:none;}
+.score-box{background:rgba(5,5,30,.85);border:2px solid #00d8ee;border-radius:12px;padding:6px 12px;color:#00e8ff;font-size:15px;font-weight:bold;box-shadow:0 0 12px rgba(0,216,238,.5);text-align:center;min-width:58px;backdrop-filter:blur(4px);}
+.score-box .label{font-size:9px;color:#88ccff;display:block;letter-spacing:1px;font-weight:600;}
 #coinBox{border-color:#ffd000;color:#ffd000;box-shadow:0 0 12px rgba(255,208,0,.5);}
 #coinBox .label{color:#ffe088;}
-#highScore{border-color:#ff40ff;color:#ff88ff;box-shadow:0 0 12px rgba(255,64,255,.5);}
-#highScore .label{color:#ffaaff;}
 
-/* साउंड बटन */
-#soundToggle{
-  position:absolute;
-  top:12px;left:50%;
-  transform:translateX(-50%);
-  width:40px;height:40px;
-  border-radius:50%;
-  background:rgba(5,5,30,.85);
-  border:2px solid #00d8ee;
-  color:#00e8ff;
-  font-size:18px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  z-index:150;
-  box-shadow:0 0 10px rgba(0,216,238,.4);
-}
+#soundToggle{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;background:rgba(5,5,30,.85);border:2px solid #00d8ee;color:#00e8ff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;box-shadow:0 0 10px rgba(0,216,238,.4);}
 #soundToggle.muted{border-color:#555;color:#666;box-shadow:none;}
 
-/* पावर-अप बार */
-#powerupBar{
-  position:absolute;
-  top:78px;left:50%;
-  transform:translateX(-50%);
-  display:flex;gap:6px;
-  z-index:100;
-  pointer-events:none;
-  flex-wrap:wrap;
-  justify-content:center;
-  max-width:90%;
-}
-.pu-indicator{
-  background:rgba(5,5,30,.9);
-  border:2px solid currentColor;
-  border-radius:20px;
-  padding:3px 10px;
-  font-size:11px;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  gap:4px;
-  animation:pulse .8s ease-in-out infinite alternate;
-}
-@keyframes pulse{from{opacity:.75}to{opacity:1}}
+/* कंट्रोल */
+#controls{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;z-index:100;pointer-events:none;}
+.ctrl-btn{width:68px;height:68px;border-radius:50%;background:rgba(0,216,238,.18);border:3px solid #00d8ee;color:#00e8ff;font-size:28px;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;box-shadow:0 0 20px rgba(0,216,238,.45);transition:transform .1s,background .1s;backdrop-filter:blur(4px);}
+.ctrl-btn:active{background:rgba(0,216,238,.45);transform:scale(.9);}
 
-/* डेली चैलेंज */
-#dailyChallenge{
-  position:absolute;
-  top:112px;left:50%;
-  transform:translateX(-50%);
-  background:rgba(120,0,120,.35);
-  border:2px solid #ff40ff;
-  border-radius:10px;
-  padding:5px 12px;
-  color:#ffaaff;
-  font-size:11px;
-  font-weight:bold;
-  z-index:100;
-  text-align:center;
-  box-shadow:0 0 12px rgba(255,64,255,.4);
-  max-width:92%;
-}
-
-/* ============================================
-   कंट्रोल बटन - स्क्रीन के अंदर
-   ============================================ */
-#controls{
-  position:absolute;
-  bottom:16px;
-  left:0;right:0;
-  display:flex;
-  justify-content:space-between;
-  padding:0 16px;
-  z-index:100;
-  pointer-events:none;
-}
-.ctrl-btn{
-  width:72px;height:72px;
-  border-radius:50%;
-  background:rgba(0,216,238,.18);
-  border:3px solid #00d8ee;
-  color:#00e8ff;
-  font-size:30px;
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:auto;
-  cursor:pointer;
-  box-shadow:0 0 20px rgba(0,216,238,.45);
-  transition:transform .1s,background .1s;
-  backdrop-filter:blur(4px);
-}
-.ctrl-btn:active{
-  background:rgba(0,216,238,.45);
-  transform:scale(.9);
-  box-shadow:0 0 30px rgba(0,216,238,.85);
-}
-
-/* ============================================
-   स्क्रीन्स (स्टार्ट, गेम ओवर, लीडरबोर्ड)
-   ============================================ */
-.screen{
-  position:absolute;
-  inset:0;
-  background:rgba(3,3,20,.94);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:200;
-  padding:20px;
-  text-align:center;
-  overflow-y:auto;
-  transition:opacity .35s;
-  backdrop-filter:blur(6px);
-}
+/* स्क्रीन्स */
+.screen{position:absolute;inset:0;background:rgba(3,3,20,.94);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200;padding:20px;text-align:center;overflow-y:auto;backdrop-filter:blur(6px);}
 .screen.hidden{opacity:0;pointer-events:none;display:none;}
-.screen h1{
-  font-size:34px;
-  color:#00e8ff;
-  text-shadow:0 0 12px #00d8ee,0 0 24px #0080ff;
-  margin-bottom:8px;
-  letter-spacing:2px;
-}
-.screen h2{
-  font-size:16px;
-  color:#ffd000;
-  margin-bottom:16px;
-  text-shadow:0 0 10px #ffd000;
-  letter-spacing:2px;
-}
-.screen p{
-  color:#aaccff;
-  font-size:14px;
-  line-height:1.7;
-  margin-bottom:14px;
-  max-width:340px;
-}
-.btn{
-  padding:13px 38px;
-  font-size:17px;
-  font-weight:bold;
-  color:#001133;
-  background:linear-gradient(135deg,#00e8ff,#00a0ff);
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  box-shadow:0 0 22px rgba(0,216,238,.55);
-  letter-spacing:1.5px;
-  transition:transform .15s;
-  margin-top:8px;
-}
+.screen h1{font-size:34px;color:#00e8ff;text-shadow:0 0 12px #00d8ee;margin-bottom:8px;letter-spacing:2px;}
+.screen h2{font-size:16px;color:#ffd000;margin-bottom:16px;letter-spacing:2px;}
+.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:14px;max-width:340px;}
+.btn{padding:13px 38px;font-size:17px;font-weight:bold;color:#001133;background:linear-gradient(135deg,#00e8ff,#00a0ff);border:none;border-radius:12px;cursor:pointer;box-shadow:0 0 22px rgba(0,216,238,.55);letter-spacing:1.5px;margin-top:8px;}
 .btn:active{transform:scale(.95);}
-.btn.secondary{
-  background:linear-gradient(135deg,#ff2f6b,#c4003a);
-  color:#fff;
-  box-shadow:0 0 22px rgba(255,47,107,.55);
-  font-size:14px;
-  padding:10px 28px;
-  margin-top:10px;
-}
-.btn.tertiary{
-  background:linear-gradient(135deg,#ff40ff,#8800cc);
-  color:#fff;
-  box-shadow:0 0 22px rgba(255,64,255,.55);
-  font-size:14px;
-  padding:10px 28px;
-  margin-top:10px;
-}
-.final-score{
-  font-size:52px;
-  color:#ffd000;
-  text-shadow:0 0 22px #ffd000;
-  margin:6px 0;
-  font-weight:bold;
-}
-.new-record{
-  color:#ff40ff;
-  font-size:16px;
-  font-weight:bold;
-  text-shadow:0 0 12px #ff40ff;
-  animation:pulse .8s ease-in-out infinite alternate;
-  margin-bottom:8px;
-}
+.btn.secondary{background:linear-gradient(135deg,#ff2f6b,#c4003a);color:#fff;font-size:14px;padding:10px 28px;}
+.final-score{font-size:52px;color:#ffd000;text-shadow:0 0 22px #ffd000;margin:6px 0;font-weight:bold;}
 
-/* लीडरबोर्ड */
-.leaderboard{
-  width:100%;
-  max-width:340px;
-  margin:12px 0;
-  max-height:240px;
-  overflow-y:auto;
-}
-.lb-row{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 12px;
-  background:rgba(0,216,238,.06);
-  border-radius:8px;
-  margin-bottom:5px;
-  font-size:13px;
-  color:#aaccff;
-  border-left:3px solid #00d8ee;
-}
-.lb-row.top1{border-left-color:#ffd000;background:rgba(255,208,0,.12);color:#ffe000;}
-.lb-row.top2{border-left-color:#c0c0c0;background:rgba(192,192,192,.10);color:#e0e0e0;}
-.lb-row.top3{border-left-color:#cd7f32;background:rgba(205,127,50,.10);color:#e0a060;}
-.lb-row.you{border-left-color:#ff40ff;background:rgba(255,64,255,.12);color:#ffaaff;}
-.lb-rank{font-weight:bold;min-width:26px;}
-.lb-name{flex:1;margin:0 8px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lb-score{font-weight:bold;color:#00e8ff;}
-
-.name-input{
-  padding:10px 18px;
-  border:2px solid #00d8ee;
-  border-radius:10px;
-  background:rgba(0,0,0,.55);
-  color:#00e8ff;
-  font-size:14px;
-  text-align:center;
-  outline:none;
-  width:230px;
-  margin:8px 0;
-}
-.name-input::placeholder{color:#4488aa;}
-
-.tabs{display:flex;gap:8px;margin-bottom:12px;}
-.tab{
-  padding:7px 16px;
-  background:rgba(0,0,0,.4);
-  border:2px solid #333;
-  color:#666;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:bold;
-  transition:all .2s;
-}
-.tab.active{
-  border-color:#00d8ee;
-  color:#00e8ff;
-  background:rgba(0,216,238,.15);
-  box-shadow:0 0 10px rgba(0,216,238,.4);
-}
-
-/* विज्ञापन */
-#adBanner{
-  position:absolute;
-  bottom:0;left:0;right:0;
-  height:52px;
-  background:rgba(0,0,0,.75);
-  border-top:1px solid #222;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  color:#555;
-  font-size:11px;
-  z-index:150;
-  letter-spacing:2px;
-}
+#adBanner{position:absolute;bottom:0;left:0;right:0;height:52px;background:rgba(0,0,0,.75);display:none;justify-content:center;align-items:center;color:#555;font-size:11px;z-index:150;}
 #adBanner.active{display:flex;}
 
-#adInterstitial{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.96);
-  display:none;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:300;
-  color:#fff;
-  text-align:center;
-  padding:20px;
-}
+#adInterstitial{position:absolute;inset:0;background:rgba(0,0,0,.96);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:300;color:#fff;}
 #adInterstitial.active{display:flex;}
-#adInterstitial .ad-box{
-  width:min(290px,85vw);
-  height:min(380px,60vh);
-  background:linear-gradient(135deg,#12122e,#222250);
-  border:2px dashed #333;
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  color:#555;
-  margin-bottom:16px;
-  padding:16px;
-}
-.skip-btn{
-  padding:9px 22px;
-  background:transparent;
-  border:2px solid #00d8ee;
-  color:#00e8ff;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-  letter-spacing:1px;
-}
+.ad-box{width:min(290px,85vw);height:min(380px,60vh);background:linear-gradient(135deg,#12122e,#222250);border:2px dashed #333;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#555;margin-bottom:16px;}
+.skip-btn{padding:9px 22px;background:transparent;border:2px solid #00d8ee;color:#00e8ff;border-radius:8px;cursor:pointer;font-size:13px;}
 
-#flash{
-  position:absolute;
-  inset:0;
-  background:#ff2f6b;
-  opacity:0;
-  pointer-events:none;
-  z-index:90;
-  transition:opacity .15s;
-}
+#flash{position:absolute;inset:0;background:#ff2f6b;opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;}
 #flash.active{opacity:.45;}
-
-/* ============================================
-   मोबाइल रिस्पॉन्सिव
-   ============================================ */
-@media(max-width:420px){
-  .screen h1{font-size:26px;}
-  .ctrl-btn{width:64px;height:64px;font-size:26px;}
-  .score-box{font-size:13px;padding:5px 10px;min-width:50px;}
-  .score-box .label{font-size:8px;}
-  #player{width:46px;height:46px;bottom:16vh;}
-  .player-cube,.pf{width:46px;height:46px;}
-  .pf.front {transform:translateZ(23px);}
-  .pf.back  {transform:rotateY(180deg) translateZ(23px);}
-  .pf.right {transform:rotateY(90deg)  translateZ(23px);}
-  .pf.left  {transform:rotateY(-90deg) translateZ(23px);}
-  .pf.top   {transform:rotateX(90deg)  translateZ(23px);}
-  .pf.bottom{transform:rotateX(-90deg) translateZ(23px);}
-  .obstacle{width:42px;height:42px;}
-  .obstacle .pf{width:42px;height:42px;}
-  .obstacle .pf.front {transform:translateZ(21px);}
-  .obstacle .pf.back  {transform:rotateY(180deg) translateZ(21px);}
-  .obstacle .pf.right {transform:rotateY(90deg)  translateZ(21px);}
-  .obstacle .pf.left  {transform:rotateY(-90deg) translateZ(21px);}
-  .obstacle .pf.top   {transform:rotateX(90deg)  translateZ(21px);}
-  .obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(21px);}
-}
-
-/* लैंडस्केप */
-@media(orientation:landscape) and (max-height:500px){
-  #road{height:80vh;width:min(280px,55vw);}
-  .ctrl-btn{width:60px;height:60px;font-size:24px;}
-  #player{bottom:20vh;}
-}
 </style>
 </head>
 <body>
 
 <div id="game">
   <div class="stars"></div>
-
-  <!-- रोड प्लेट -->
+  
   <div id="road">
     <div class="lane lane-1"></div>
     <div class="lane lane-2"></div>
   </div>
 
-  <!-- प्लेयर -->
   <div id="player">
     <div class="player-cube">
-      <div class="pf front"></div>
-      <div class="pf back"></div>
-      <div class="pf right"></div>
-      <div class="pf left"></div>
-      <div class="pf top"></div>
-      <div class="pf bottom"></div>
+      <div class="pf front"></div><div class="pf back"></div>
+      <div class="pf right"></div><div class="pf left"></div>
+      <div class="pf top"></div><div class="pf bottom"></div>
     </div>
   </div>
 
   <div id="flash"></div>
 
-  <!-- HUD -->
   <div id="hud">
     <div class="score-box"><span class="label">SCORE</span><span id="score">0</span></div>
     <div class="score-box" id="coinBox"><span class="label">COINS</span><span id="coins">0</span></div>
-    <div class="score-box" id="highScore"><span class="label">BEST</span><span id="best">0</span></div>
+    <div class="score-box" id="bestBox"><span class="label">BEST</span><span id="best">0</span></div>
   </div>
 
-  <div id="powerupBar"></div>
-  <div id="dailyChallenge"></div>
   <div id="soundToggle">🔊</div>
 
-  <!-- कंट्रोल -->
   <div id="controls">
     <div class="ctrl-btn" id="btnLeft">◀</div>
     <div class="ctrl-btn" id="btnRight">▶</div>
   </div>
 
-  <!-- स्टार्ट स्क्रीन -->
   <div class="screen" id="startScreen">
     <h1>3D CUBE RUNNER</h1>
-    <h2>✦ ULTIMATE EDITION ✦</h2>
-    <p>🪙 कोइन इकट्ठा करें<br>⚡ पावर-अप उठाएँ<br>💀 बाधाओं से बचें</p>
+    <p>🪙 कोइन इकट्ठा करें<br>💀 बाधाओं से बचें</p>
     <button class="btn" id="btnStart">START GAME</button>
-    <button class="btn tertiary" id="btnLeaderboard">🏆 LEADERBOARD</button>
   </div>
 
-  <!-- गेम ओवर स्क्रीन -->
   <div class="screen hidden" id="gameOverScreen">
     <h1 style="color:#ff2f6b;text-shadow:0 0 14px #ff2f6b;">GAME OVER</h1>
     <div class="final-score" id="finalScore">0</div>
-    <div style="color:#ffcc00;font-size:16px;margin-bottom:8px;">🪙 <span id="finalCoins">0</span> coins</div>
-    <div class="new-record hidden" id="newRecord">✦ NEW RECORD! ✦</div>
-    <button class="btn" id="btnRestart">PLAY AGAIN</button>
-    <button class="btn tertiary" id="btnViewLeaderboard">🏆 LEADERBOARD</button>
+    <div style="color:#ffcc00;font-size:16px;">🪙 <span id="finalCoins">0</span></div>
+    <button class="btn" id="btnRestart" style="margin-top:20px;">PLAY AGAIN</button>
     <button class="btn secondary" id="btnHome">HOME</button>
   </div>
 
-  <!-- लीडरबोर्ड स्क्रीन -->
-  <div class="screen hidden" id="leaderboardScreen">
-    <h1 style="font-size:24px;">🏆 LEADERBOARD</h1>
-    <div class="tabs">
-      <div class="tab active" data-tab="global">🌍 Global</div>
-      <div class="tab" data-tab="local">📱 Local</div>
-    </div>
-    <input type="text" class="name-input" id="playerName" placeholder="अपना नाम लिखें..." maxlength="12">
-    <div class="leaderboard" id="leaderboardList">
-      <div style="color:#666;padding:20px;">लोड हो रहा है...</div>
-    </div>
-    <button class="btn secondary" id="btnLbBack">BACK</button>
-  </div>
-
-  <!-- विज्ञापन -->
   <div id="adBanner">📢 AD BANNER</div>
   <div id="adInterstitial">
-    <div class="ad-box">
-      <div style="font-size:40px;">📱</div>
-      <div style="margin-top:12px;color:#888;">INTERSTITIAL AD</div>
-      <small style="color:#444;margin-top:12px;font-size:11px;">AdMob / AdSense / Unity Ads</small>
-    </div>
-    <button class="skip-btn" id="skipAd">SKIP AD ▶</button>
+    <div class="ad-box"><h2>AD HERE</h2></div>
+    <button class="skip-btn" id="skipAd">SKIP ▶</button>
   </div>
 </div>
 
@@ -743,53 +153,227 @@ html,body{
 (function(){
 'use strict';
 
-// ============ DOM ============
 const $=id=>document.getElementById(id);
-const game=$('game'),road=$('road'),player=$('player');
+const player=$('player'),road=$('road');
 const scoreEl=$('score'),coinsEl=$('coins'),bestEl=$('best');
-const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen'),leaderboardScreen=$('leaderboardScreen');
-const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins'),newRecordEl=$('newRecord');
-const flash=$('flash'),adBanner=$('adBanner'),adInterstitial=$('adInterstitial');
-const soundToggle=$('soundToggle'),powerupBar=$('powerupBar'),dailyChallengeEl=$('dailyChallenge');
-const leaderboardList=$('leaderboardList'),playerNameInput=$('playerName');
+const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen');
+const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins');
+const flash=$('flash'),adInterstitial=$('adInterstitial'),adBanner=$('adBanner');
 
-// ============ FIREBASE (ऑप्शनल) ============
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT"
-};
-const USE_FIREBASE = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
-let firebaseDB = null;
+// ==== STATE ====
+const LANES=[-90,0,90]; // 3 lanes
+let currentLane=1, score=0, coins=0, isRunning=false;
+let gameSpeed=3, obstacleTimer, scoreTimer;
+let obstacles=[], coinDrops=[], playerX=0, targetX=0;
+let best=parseInt(localStorage.getItem('crBest')||'0',10);
+bestEl.textContent=best;
 
-if (USE_FIREBASE) {
-  const s1=document.createElement('script');
-  s1.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
-  const s2=document.createElement('script');
-  s2.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js';
-  s1.onload=()=>document.head.appendChild(s2);
-  s2.onload=()=>{
-    try{
-      firebase.initializeApp(FIREBASE_CONFIG);
-      firebaseDB=firebase.database();
-      console.log('🔥 Firebase ready');
-    }catch(e){console.warn('Firebase:',e);}
-  };
-  document.head.appendChild(s1);
-}
-
-// ============ साउंड ============
+// ==== SOUND ====
 const Sound=(()=>{
   let ctx=null;
   let muted=localStorage.getItem('crMuted')==='true';
-  function init(){
-    if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
-    if(ctx&&ctx.state==='suspended')ctx.resume();
+  function init(){if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(ctx&&ctx.state==='suspended')ctx.resume();}
+  function beep(f,d,t='sine',v=0.1){if(muted||!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain();o.type=t;o.frequency.setValueAtTime(f,ctx.currentTime);g.gain.setValueAtTime(v,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+d);}
+  return {
+    init,
+    move:()=>beep(400,0.08),
+    coin:()=>beep(1200,0.1,'sine',0.15),
+    gameOver:()=>{beep(200,0.4,'sawtooth',0.2);setTimeout(()=>beep(100,0.6,'sawtooth',0.15),100);},
+    toggle:()=>{muted=!muted;localStorage.setItem('crMuted',muted);$('soundToggle').textContent=muted?'🔇':'🔊';return muted;}
+  };
+})();
+$('soundToggle').textContent=localStorage.getItem('crMuted')==='true'?'🔇':'🔊';
+$('soundToggle').addEventListener('click',()=>{Sound.init();Sound.toggle();});
+
+// ==== MOVE ====
+function movePlayer(dir){
+  if(!isRunning)return;
+  const nl=currentLane+dir;
+  if(nl<0||nl>2)return;
+  currentLane=nl; targetX=LANES[currentLane];
+  Sound.move();
+}
+$('btnLeft').addEventListener('click',()=>movePlayer(-1));
+$('btnRight').addEventListener('click',()=>movePlayer(1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'){e.preventDefault();movePlayer(-1);}
+  if(e.key==='ArrowRight'||e.key==='d'){e.preventDefault();movePlayer(1);}
+});
+let touchStartX=0;
+road.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
+road.addEventListener('touchend',e=>{
+  const d=e.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(d)>30)movePlayer(d>0?1:-1);
+},{passive:true});
+
+// ==== SMOOTH MOVE ====
+function smoothMove(){
+  playerX+=(targetX-playerX)*0.2;
+  player.style.transform=`translateX(calc(-50% + ${playerX}px))`;
+  if(isRunning)requestAnimationFrame(smoothMove);
+}
+
+// ==== SPAWN ====
+function spawnObstacle(){
+  if(!isRunning)return;
+  const lane=Math.floor(Math.random()*3);
+  const obs=document.createElement('div');
+  obs.className='obstacle';
+  obs.innerHTML=`<div class="pf front"></div><div class="pf back"></div><div class="pf right"></div><div class="pf left"></div><div class="pf top"></div><div class="pf bottom"></div>`;
+  // Position based on lane center
+  const roadWidth=road.offsetWidth;
+  const laneX=[roadWidth*0.166,roadWidth*0.5,roadWidth*0.833][lane];
+  obs.style.left=`calc(${laneX}px - 22px)`;
+  obs.dataset.lane=lane;
+  obs.dataset.y=-60;
+  obs.style.top='-60px';
+  road.appendChild(obs);
+  obstacles.push(obs);
+
+  // 30% chance to spawn a coin
+  if(Math.random()<0.3){
+    setTimeout(()=>spawnCoin(lane),200);
   }
-  function beep(freq,dur,type='sine',vol=0.15){
-    if(muted||!ctx)return;
-    const o=ctx.createOscillator(),g=ctx.createGain();
-    o.type=type;
-    o.frequency.setValueAtTime(freq,ctx.currentTime);
-    g.gain.setValueAtTime(vol,ctx.currentTime);
-    g.gain.exponentialRampToValue
+}
+
+function spawnCoin(lane){
+  if(!isRunning)return;
+  const c=document.createElement('div');
+  c.className='coin';
+  c.textContent='$';
+  const roadWidth=road.offsetWidth;
+  const laneX=[roadWidth*0.166,roadWidth*0.5,roadWidth*0.833][lane];
+  c.style.left=`calc(${laneX}px - 14px)`;
+  c.dataset.lane=lane;
+  c.dataset.y=-50;
+  c.style.top='-50px';
+  road.appendChild(c);
+  coinDrops.push(c);
+}
+
+// ==== LOOP ====
+let lastTime=0;
+function gameLoop(timestamp){
+  if(!isRunning)return;
+  if(!lastTime)lastTime=timestamp;
+  const dt=Math.min((timestamp-lastTime)/16.67,3);
+  lastTime=timestamp;
+  const roadHeight=road.offsetHeight;
+
+  // Move Obstacles
+  for(let i=obstacles.length-1;i>=0;i--){
+    const o=obstacles[i];
+    let y=parseFloat(o.dataset.y);
+    y+=gameSpeed*4*dt;
+    o.dataset.y=y; o.style.top=y+'px';
+
+    // Collision Check
+    const playerY = roadHeight - (window.innerHeight*0.15) - 50; // approx player top in road coords
+    // Better: check if obstacle is in hit zone (bottom part of road)
+    if(y > roadHeight-150 && y < roadHeight-50){
+      if(parseInt(o.dataset.lane)===currentLane){
+        gameOver(); return;
+      }
+    }
+    if(y>roadHeight+100){o.remove();obstacles.splice(i,1);}
+  }
+
+  // Move Coins
+  for(let i=coinDrops.length-1;i>=0;i--){
+    const c=coinDrops[i];
+    let y=parseFloat(c.dataset.y);
+    y+=gameSpeed*4*dt;
+    c.dataset.y=y; c.style.top=y+'px';
+
+    // Collect Check
+    if(y > roadHeight-150 && y < roadHeight-50){
+      if(parseInt(c.dataset.lane)===currentLane){
+        coins++; coinsEl.textContent=coins; Sound.coin();
+        c.remove(); coinDrops.splice(i,1); continue;
+      }
+    }
+    if(y>roadHeight+100){c.remove();coinDrops.splice(i,1);}
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ==== START ====
+function startGame(){
+  Sound.init();
+  // Reset
+  obstacles.forEach(o=>o.remove()); obstacles=[];
+  coinDrops.forEach(c=>c.remove()); coinDrops=[];
+  score=0; coins=0; gameSpeed=3;
+  currentLane=1; playerX=0; targetX=0;
+  player.style.transform='translateX(-50%)';
+  scoreEl.textContent='0'; coinsEl.textContent='0';
+  startScreen.classList.add('hidden');
+  gameOverScreen.classList.add('hidden');
+  adBanner.classList.add('active');
+  
+  isRunning=true; lastTime=0;
+  requestAnimationFrame(smoothMove);
+  requestAnimationFrame(gameLoop);
+
+  scoreTimer=setInterval(()=>{ if(isRunning){score++;scoreEl.textContent=score;} },150);
+  
+  function spawnLoop(){
+    if(!isRunning)return;
+    spawnObstacle();
+    const delay=Math.max(350, 1000-gameSpeed*50);
+    obstacleTimer=setTimeout(spawnLoop, delay);
+  }
+  spawnLoop();
+
+  // Speed up over time
+  setTimeout(()=>{ if(isRunning) gameSpeed=4; }, 10000);
+  setTimeout(()=>{ if(isRunning) gameSpeed=5; }, 20000);
+}
+
+// ==== GAME OVER ====
+function gameOver(){
+  isRunning=false;
+  clearInterval(scoreTimer);
+  clearTimeout(obstacleTimer);
+  Sound.gameOver();
+  flash.classList.add('active');
+  setTimeout(()=>flash.classList.remove('active'),200);
+  if(navigator.vibrate)navigator.vibrate([100,50,100]);
+
+  if(score>best){best=score;localStorage.setItem('crBest',best);bestEl.textContent=best;}
+  finalScoreEl.textContent=score;
+  finalCoinsEl.textContent=coins;
+  
+  showAd(()=>{
+    gameOverScreen.classList.remove('hidden');
+    adBanner.classList.remove('active');
+  });
+}
+
+function showAd(cb){
+  adInterstitial.classList.add('active');
+  const btn=$('skipAd');
+  const close=()=>{
+    adInterstitial.classList.remove('active');
+    btn.removeEventListener('click',close);
+    if(cb)cb();
+  };
+  btn.addEventListener('click',close);
+  setTimeout(close, 4000);
+}
+
+// ==== BUTTONS ====
+$('btnStart').addEventListener('click', startGame);
+$('btnRestart').addEventListener('click', startGame);
+$('btnHome').addEventListener('click', ()=>{
+  gameOverScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+  obstacles.forEach(o=>o.remove()); obstacles=[];
+  coinDrops.forEach(c=>c.remove()); coinDrops=[];
+});
+
+})();
+</script>
+</body>
+</html>
