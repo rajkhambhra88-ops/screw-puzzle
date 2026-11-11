@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Unscrew Nuts 3D</title>
+<title>Unscrew Nuts 3D - Color Box Edition</title>
 <style>
 :root {
-  --bg-dark: #12151c;
-  --bg-panel: #1e2433;
-  --bg-card: #283044;
+  --bg-dark: #10141e;
+  --bg-panel: #1a2233;
+  --bg-card: #253046;
   --accent-gold: #ffbe0b;
   --accent-green: #06d6a0;
   --accent-blue: #118ab2;
   --accent-red: #ef476f;
   --text-main: #f8f9fa;
-  --text-muted: #8d99ae;
-  --tray-slot-size: 52px;
+  --text-muted: #94a3b8;
 }
 * {
   box-sizing: border-box;
@@ -41,22 +40,22 @@ body, html {
   max-width: 480px;
   height: 100%;
   max-height: 960px;
-  background: radial-gradient(circle at 50% 30%, #202739 0%, #0d1017 100%);
+  background: radial-gradient(circle at 50% 25%, #1f293d 0%, #0b0f17 100%);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 40px rgba(0,0,0,0.8);
 }
-/* Top Bar */
+/* Header */
 .header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: rgba(18, 21, 28, 0.7);
+  padding: 10px 16px;
+  background: rgba(16, 20, 30, 0.85);
   backdrop-filter: blur(8px);
-  z-index: 20;
+  z-index: 30;
 }
 .header-left, .header-right {
   display: flex;
@@ -64,9 +63,9 @@ body, html {
   gap: 10px;
 }
 .coin-badge {
-  background: linear-gradient(135deg, #2b3245, #1e222e);
-  border: 1px solid #4a5568;
-  padding: 4px 12px 4px 8px;
+  background: #253046;
+  border: 1px solid #3e4f70;
+  padding: 4px 12px;
   border-radius: 20px;
   font-weight: 700;
   font-size: 14px;
@@ -78,73 +77,119 @@ body, html {
 .level-badge {
   font-size: 16px;
   font-weight: 800;
-  color: var(--text-main);
-  text-transform: uppercase;
+  color: #fff;
   letter-spacing: 0.5px;
 }
 .btn-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--bg-card);
-  border: 1px solid #414d68;
+  background: #253046;
+  border: 1px solid #3e4f70;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
   transition: transform 0.1s;
 }
-.btn-icon:active {
-  transform: scale(0.92);
-}
-/* Screw Tray Station */
-.tray-container {
-  background: linear-gradient(180deg, #1b202c, #131720);
-  border: 2px solid #323b50;
-  border-radius: 16px;
-  margin: 10px 16px;
-  padding: 8px 12px;
+.btn-icon:active { transform: scale(0.92); }
+
+/* COLOR MATCH TARGET BOX (TOP) */
+.target-box-area {
+  padding: 10px 16px 4px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.3);
-  z-index: 15;
+  z-index: 25;
 }
-.tray-header {
+.target-box-title {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-muted);
   margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
-.tray-slots {
+.active-color-box {
+  width: 220px;
+  height: 70px;
+  border-radius: 14px;
   display: flex;
-  gap: 8px;
-  justify-content: center;
   align-items: center;
+  justify-content: space-evenly;
+  padding: 0 10px;
+  position: relative;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -4px 8px rgba(0,0,0,0.4);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  transform-style: preserve-3d;
 }
-.tray-slot {
-  width: var(--tray-slot-size);
-  height: var(--tray-slot-size);
+.active-color-box.disappear {
+  transform: scale(0.1) rotate(20deg) translateY(-80px);
+  opacity: 0;
+}
+.active-color-box.appear {
+  animation: popIn 0.35s ease forwards;
+}
+@keyframes popIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Box Colors */
+.box-gold { background: linear-gradient(180deg, #f59e0b, #b45309); border: 3px solid #fde047; }
+.box-red { background: linear-gradient(180deg, #ef4444, #991b1b); border: 3px solid #fca5a5; }
+.box-blue { background: linear-gradient(180deg, #3b82f6, #1e40af); border: 3px solid #93c5fd; }
+.box-green { background: linear-gradient(180deg, #10b981, #065f46); border: 3px solid #6ee7b7; }
+.box-purple { background: linear-gradient(180deg, #a855f7, #6b21a8); border: 3px solid #d8b4fe; }
+.box-silver { background: linear-gradient(180deg, #94a3b8, #475569); border: 3px solid #e2e8f0; }
+
+.box-hole {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: radial-gradient(circle, #0b0d13 50%, #1e2434 100%);
-  border: 2px dashed #404b62;
+  background: radial-gradient(circle, #080b11 60%, rgba(0,0,0,0.5) 100%);
+  border: 2px dashed rgba(255,255,255,0.3);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s;
+  box-shadow: inset 0 3px 6px #000;
 }
-.tray-slot.locked {
-  background: #11141a;
-  border: 1px solid #282f3d;
+
+/* BUFFER TRAY (HOLDING MISMATCH SCREWS) */
+.tray-container {
+  background: rgba(22, 28, 40, 0.85);
+  border: 1px solid #313e54;
+  border-radius: 12px;
+  margin: 6px 16px 2px 16px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 20;
 }
-/* Game Canvas Stage */
+.tray-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.tray-slots {
+  display: flex;
+  gap: 8px;
+}
+.tray-slot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #0d121b;
+  border: 1.5px dashed #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px #000;
+}
+
+/* Game Stage & 3D Elements */
 #stage {
   flex: 1;
   width: 100%;
@@ -156,17 +201,17 @@ body, html {
   position: absolute;
   border-radius: 12px;
   transform-style: preserve-3d;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.55), inset 0 0 10px rgba(255,255,255,0.1);
   transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s;
   pointer-events: none;
 }
 .board-wood {
-  background: repeating-linear-gradient(45deg, #8b4513, #8b4513 12px, #7c3a0d 12px, #7c3a0d 24px);
-  border: 3px solid #5a2909;
+  background: repeating-linear-gradient(45deg, #8b4513, #8b4513 14px, #78380c 14px, #78380c 28px);
+  border: 3px solid #5a2808;
 }
 .board-metal {
-  background: linear-gradient(135deg, #9ca3af 0%, #4b5563 50%, #9ca3af 100%);
-  border: 3px solid #374151;
+  background: linear-gradient(135deg, #9ca3af 0%, #475569 50%, #9ca3af 100%);
+  border: 3px solid #334155;
 }
 .board-glass {
   background: rgba(147, 197, 253, 0.25);
@@ -177,17 +222,17 @@ body, html {
   background: #52525b;
   border: 3px solid #27272a;
 }
-/* Screws */
+
+/* Screws & Caps */
 .screw {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   position: absolute;
   border-radius: 50%;
   cursor: pointer;
   z-index: 25;
-  touch-action: none;
   transform: translate(-50%, -50%);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .screw-cap {
   width: 100%;
@@ -196,26 +241,26 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5);
+  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.55);
   position: relative;
 }
 .screw-cap::after {
   content: '';
   position: absolute;
-  width: 22px;
-  height: 6px;
-  background: rgba(0,0,0,0.5);
+  width: 20px;
+  height: 5px;
+  background: rgba(0,0,0,0.55);
   border-radius: 2px;
-  box-shadow: 0 1px 1px rgba(255,255,255,0.2);
+  box-shadow: 0 1px 1px rgba(255,255,255,0.25);
 }
 .screw-cap::before {
   content: '';
   position: absolute;
-  height: 22px;
-  width: 6px;
-  background: rgba(0,0,0,0.5);
+  height: 20px;
+  width: 5px;
+  background: rgba(0,0,0,0.55);
   border-radius: 2px;
-  box-shadow: 0 1px 1px rgba(255,255,255,0.2);
+  box-shadow: 0 1px 1px rgba(255,255,255,0.25);
 }
 .screw-gold { background: radial-gradient(circle, #fde047 30%, #ca8a04 90%); }
 .screw-red { background: radial-gradient(circle, #f87171 30%, #b91c1c 90%); }
@@ -223,36 +268,33 @@ body, html {
 .screw-green { background: radial-gradient(circle, #4ade80 30%, #15803d 90%); }
 .screw-purple { background: radial-gradient(circle, #c084fc 30%, #7e22ce 90%); }
 .screw-silver { background: radial-gradient(circle, #e2e8f0 30%, #64748b 90%); }
-.screw.selected {
-  transform: translate(-50%, -50%) scale(1.25) translateZ(30px);
-  box-shadow: 0 0 15px 4px var(--accent-gold);
-}
-/* Holes */
+
 .hole {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: radial-gradient(circle, #000 65%, #333 100%);
+  background: radial-gradient(circle, #05070a 65%, #2a3447 100%);
   position: absolute;
   transform: translate(-50%, -50%);
-  box-shadow: inset 0 3px 6px #000;
-  border: 1px solid #444;
+  box-shadow: inset 0 3px 5px #000;
+  border: 1px solid #334155;
   z-index: 10;
 }
-/* Bottom Booster Bar */
+
+/* Boosters */
 .boosters-bar {
   display: flex;
   justify-content: space-around;
-  padding: 10px 16px;
-  background: rgba(18, 21, 28, 0.9);
-  border-top: 1px solid #293245;
-  z-index: 20;
+  padding: 8px 16px;
+  background: rgba(16, 20, 30, 0.95);
+  border-top: 1px solid #232c3f;
+  z-index: 30;
 }
 .booster-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: none;
   border: none;
   color: var(--text-main);
@@ -260,31 +302,27 @@ body, html {
   position: relative;
 }
 .booster-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--bg-card);
-  border: 1px solid #44516d;
+  border: 1px solid #3d4a63;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: transform 0.1s;
-}
-.booster-btn:active .booster-icon-wrap {
-  transform: scale(0.92);
 }
 .booster-count {
   position: absolute;
-  top: -4px;
+  top: -3px;
   right: -2px;
   background: var(--accent-gold);
   color: #000;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -296,24 +334,12 @@ body, html {
   font-weight: 600;
   color: var(--text-muted);
 }
-/* Ad Banner Area */
-#banner-ad-container {
-  width: 100%;
-  height: 50px;
-  background: #090b0e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #1a202c;
-  font-size: 11px;
-  color: #64748b;
-  z-index: 20;
-}
-/* Overlays & Modals */
+
+/* Modals */
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(8, 10, 14, 0.85);
+  background: rgba(8, 11, 16, 0.85);
   backdrop-filter: blur(6px);
   display: flex;
   flex-direction: column;
@@ -331,96 +357,68 @@ body, html {
 }
 .modal-box {
   width: 100%;
-  max-width: 340px;
-  background: linear-gradient(145deg, #1f2637, #151a24);
-  border: 1px solid #374259;
+  max-width: 320px;
+  background: linear-gradient(145deg, #20283a, #141924);
+  border: 1px solid #37435b;
   border-radius: 20px;
   padding: 24px;
   text-align: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  transform: scale(0.9);
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.modal-overlay.active .modal-box {
-  transform: scale(1);
-}
-.modal-title {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-.modal-body {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
+.modal-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.modal-body { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 .btn-primary {
   width: 100%;
-  padding: 14px;
+  padding: 13px;
   border-radius: 12px;
   background: linear-gradient(135deg, #ffbe0b, #f59e0b);
   border: none;
   color: #000;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
   margin-bottom: 10px;
-  transition: transform 0.1s;
 }
 .btn-secondary {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
-  background: #2a3346;
-  border: 1px solid #3d4a66;
+  background: #253046;
+  border: 1px solid #384661;
   color: #fff;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
 }
-.btn-primary:active, .btn-secondary:active {
-  transform: scale(0.96);
-}
-/* Level Select Grid */
+/* Level Grid */
 .level-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  max-height: 320px;
+  gap: 8px;
+  max-height: 280px;
   overflow-y: auto;
-  padding: 4px;
   margin-bottom: 16px;
 }
 .level-node {
   aspect-ratio: 1;
-  background: #262e40;
-  border: 1px solid #3c4966;
-  border-radius: 10px;
+  background: #253046;
+  border: 1px solid #384661;
+  border-radius: 8px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
-.level-node.locked {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: #181d29;
-}
-.level-node.completed {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
-}
-/* Canvas particle effect */
+.level-node.locked { opacity: 0.35; cursor: not-allowed; }
+.level-node.completed { border-color: var(--accent-gold); color: var(--accent-gold); }
+
 #fx-canvas {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 30;
+  z-index: 40;
 }
 </style>
 </head>
@@ -430,77 +428,73 @@ body, html {
   <!-- Top Bar -->
   <header class="header-bar">
     <div class="header-left">
-      <button class="btn-icon" id="btn-pause" title="Pause">⏸</button>
       <div class="coin-badge">🪙 <span id="coin-counter">0</span></div>
     </div>
     <div class="level-badge" id="level-title">Level 1</div>
     <div class="header-right">
-      <button class="btn-icon" id="btn-levels" title="Levels">☰</button>
-      <button class="btn-icon" id="btn-sound" title="Sound">🔊</button>
+      <button class="btn-icon" id="btn-levels">☰</button>
+      <button class="btn-icon" id="btn-sound">🔊</button>
     </div>
   </header>
 
-  <!-- Tray Slot Container -->
-  <div class="tray-container">
-    <div class="tray-header">
-      <span>SCREW BUFFER TRAY</span>
-      <span id="tray-occupancy">0 / 4</span>
+  <!-- OPEN COLOR BOX AREA (MATCH 3 SCREWS) -->
+  <div class="target-box-area">
+    <div class="target-box-title" id="box-status-text">FILL THE BOX (3 HOLES)</div>
+    <div class="active-color-box box-gold" id="active-box">
+      <div class="box-hole" id="box-hole-0"></div>
+      <div class="box-hole" id="box-hole-1"></div>
+      <div class="box-hole" id="box-hole-2"></div>
     </div>
+  </div>
+
+  <!-- BUFFER TRAY (HOLD MISMATCHED SCREWS) -->
+  <div class="tray-container">
+    <span class="tray-label">BUFFER TRAY:</span>
     <div class="tray-slots" id="tray-slot-row"></div>
   </div>
 
-  <!-- Interactive 3D Puzzle Canvas -->
+  <!-- 3D PUZZLE STAGE -->
   <main id="stage">
     <canvas id="fx-canvas"></canvas>
   </main>
 
-  <!-- Booster Controls -->
+  <!-- BOOSTERS -->
   <footer class="boosters-bar">
     <button class="booster-btn" id="btn-boost-undo">
       <div class="booster-icon-wrap">↺<div class="booster-count" id="count-undo">3</div></div>
       <span class="booster-label">Undo</span>
     </button>
     <button class="booster-btn" id="btn-boost-tray">
-      <div class="booster-icon-wrap">➕<div class="booster-count" id="count-tray">+1</div></div>
-      <span class="booster-label">Extra Hole</span>
+      <div class="booster-icon-wrap">➕<div class="booster-count">+1</div></div>
+      <span class="booster-label">Extra Slot</span>
     </button>
     <button class="booster-btn" id="btn-boost-hammer">
       <div class="booster-icon-wrap">🔨<div class="booster-count" id="count-hammer">1</div></div>
       <span class="booster-label">Hammer</span>
     </button>
-    <button class="booster-btn" id="btn-boost-hint">
-      <div class="booster-icon-wrap">💡<div class="booster-count" id="count-hint">2</div></div>
-      <span class="booster-label">Hint</span>
-    </button>
   </footer>
 
-  <!-- Mock Ad Slot -->
-  <div id="banner-ad-container">
-    <span>ADVERTISEMENT BANNER SLOT [DEMO MODE]</span>
-  </div>
-
-  <!-- Win Modal -->
+  <!-- VICTORY MODAL -->
   <div class="modal-overlay" id="modal-victory">
     <div class="modal-box">
-      <div class="modal-title" style="color:var(--accent-gold)">🎉 VICTORY!</div>
-      <div class="modal-body">Level Cleared! All plates unbolted cleanly.</div>
-      <div style="font-size:26px; margin-bottom: 16px;">⭐⭐⭐</div>
+      <div class="modal-title" style="color:var(--accent-gold)">🎉 LEVEL CLEARED!</div>
+      <div class="modal-body">All boxes filled & boards released cleanly!</div>
+      <div style="font-size:26px; margin-bottom:16px;">⭐⭐⭐</div>
       <button class="btn-primary" id="btn-next-lvl">NEXT LEVEL</button>
-      <button class="btn-secondary" id="btn-reward-ad-win">📺 2x COINS (WATCH AD)</button>
     </div>
   </div>
 
-  <!-- Lose Modal -->
+  <!-- GAMEOVER MODAL -->
   <div class="modal-overlay" id="modal-gameover">
     <div class="modal-box">
-      <div class="modal-title" style="color:var(--accent-red)">⚠️ TRAY FULL</div>
-      <div class="modal-body">No more room left in the buffer tray! Expand the tray or retry.</div>
-      <button class="btn-primary" id="btn-ad-free-tray">📺 UNLOCK SLOT (WATCH AD)</button>
+      <div class="modal-title" style="color:var(--accent-red)">⚠️ BUFFER FULL</div>
+      <div class="modal-body">Buffer tray me jagah nahi bachi! Extra slot unlock karein ya retry karein.</div>
+      <button class="btn-primary" id="btn-ad-free-tray">📺 UNLOCK SLOT (+1)</button>
       <button class="btn-secondary" id="btn-retry-lvl">TRY AGAIN</button>
     </div>
   </div>
 
-  <!-- Level Select Modal -->
+  <!-- LEVEL SELECT MODAL -->
   <div class="modal-overlay" id="modal-levels">
     <div class="modal-box">
       <div class="modal-title">Select Level</div>
@@ -508,34 +502,10 @@ body, html {
       <button class="btn-secondary" id="btn-close-levels">CLOSE</button>
     </div>
   </div>
-
-  <!-- Daily Bonus Modal -->
-  <div class="modal-overlay" id="modal-daily">
-    <div class="modal-box">
-      <div class="modal-title" style="color:var(--accent-gold)">🎁 DAILY BONUS</div>
-      <div class="modal-body">Welcome back! Claim today's bonus reward:</div>
-      <div style="font-size: 28px; font-weight:800; color:var(--accent-gold); margin-bottom:16px;">🪙 +250</div>
-      <button class="btn-primary" id="btn-claim-daily">CLAIM NOW</button>
-    </div>
-  </div>
-
-  <!-- Ad Simulator Modal -->
-  <div class="modal-overlay" id="modal-ad-sim">
-    <div class="modal-box">
-      <div class="modal-title">Rewarded Ad Playing</div>
-      <div class="modal-body" id="ad-sim-text">Simulating partner advertisement network...</div>
-      <div style="height:6px; background:#1b202c; border-radius:3px; overflow:hidden; margin-bottom:16px;">
-        <div id="ad-progress-bar" style="height:100%; width:0%; background:var(--accent-green); transition: width 3s linear;"></div>
-      </div>
-      <button class="btn-secondary" id="btn-ad-cancel">Cancel</button>
-    </div>
-  </div>
 </div>
 
 <script>
-/* ==========================================================================
-   AUDIO SYNTHESIZER (ZERO EXTERNAL ASSETS)
-   ========================================================================== */
+/* AUDIO ENGINE */
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -564,30 +534,28 @@ class SoundEngine {
     } catch(e) {}
   }
   unscrew() {
-    this.playTone(320, 'triangle', 0.15, 0.25);
-    setTimeout(() => this.playTone(540, 'sine', 0.1, 0.2), 60);
+    this.playTone(380, 'triangle', 0.12, 0.25);
+    setTimeout(() => this.playTone(600, 'sine', 0.1, 0.2), 50);
   }
-  clink() {
-    this.playTone(880, 'sine', 0.08, 0.15);
+  boxComplete() {
+    [440, 554, 659, 880].forEach((f, i) => {
+      setTimeout(() => this.playTone(f, 'sine', 0.18, 0.25), i * 80);
+    });
   }
-  boardFall() {
-    this.playTone(140, 'triangle', 0.4, 0.3);
-  }
+  boardFall() { this.playTone(130, 'triangle', 0.4, 0.35); }
   win() {
     [392, 523, 659, 784].forEach((f, i) => {
-      setTimeout(() => this.playTone(f, 'triangle', 0.25, 0.3), i * 120);
+      setTimeout(() => this.playTone(f, 'triangle', 0.22, 0.3), i * 110);
     });
   }
   lose() {
-    [320, 280, 240, 180].forEach((f, i) => {
+    [320, 260, 200].forEach((f, i) => {
       setTimeout(() => this.playTone(f, 'sawtooth', 0.2, 0.25), i * 100);
     });
   }
 }
 
-/* ==========================================================================
-   PARTICLE FX SYSTEM
-   ========================================================================== */
+/* CONFETTI FX */
 class FXEngine {
   constructor(canvas) {
     this.canvas = canvas;
@@ -601,9 +569,9 @@ class FXEngine {
     this.canvas.width = this.canvas.parentElement.clientWidth;
     this.canvas.height = this.canvas.parentElement.clientHeight;
   }
-  spawnConfetti(x, y) {
+  spawn(x, y, count = 25) {
     const colors = ['#ffbe0b', '#06d6a0', '#118ab2', '#ef476f', '#ffffff'];
-    for(let i = 0; i < 35; i++) {
+    for(let i = 0; i < count; i++) {
       this.particles.push({
         x, y,
         vx: (Math.random() - 0.5) * 8,
@@ -611,7 +579,7 @@ class FXEngine {
         size: Math.random() * 6 + 4,
         color: colors[Math.floor(Math.random() * colors.length)],
         life: 1,
-        decay: Math.random() * 0.02 + 0.015,
+        decay: Math.random() * 0.02 + 0.02,
         rot: Math.random() * 360,
         vRot: (Math.random() - 0.5) * 10
       });
@@ -623,7 +591,7 @@ class FXEngine {
       const p = this.particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.2; // Gravity
+      p.vy += 0.25;
       p.rot += p.vRot;
       p.life -= p.decay;
       if (p.life <= 0) {
@@ -642,85 +610,77 @@ class FXEngine {
   }
 }
 
-/* ==========================================================================
-   LEVEL GENERATOR & DEFINITIONS (30 PLAYABLE LEVELS)
-   ========================================================================== */
+/* 30 BALANCED PROCEDURAL LEVELS */
 function buildLevelDatabase() {
   const levels = [];
   const materials = ['wood', 'metal', 'glass', 'stone'];
   const colors = ['gold', 'red', 'blue', 'green', 'purple', 'silver'];
 
   for (let i = 1; i <= 30; i++) {
-    const numBoards = Math.min(2 + Math.floor(i / 5), 6);
-    const colorSubset = colors.slice(0, Math.min(2 + Math.floor(i / 6), colors.length));
+    // 3 ke multiple me screws rakhein taaki box clean complete hon
+    const activeColorCount = Math.min(2 + Math.floor(i / 8), 5);
+    const chosenColors = colors.slice(0, activeColorCount);
     const boards = [];
     const screws = [];
 
-    // Procedural Board Layout Generation
+    const numBoards = Math.min(2 + Math.floor(i / 6), 5);
     for (let b = 0; b < numBoards; b++) {
-      const mat = materials[b % materials.length];
       const isHorizontal = (b % 2 === 0);
-      const width = isHorizontal ? 220 + (i * 2) % 60 : 60;
-      const height = isHorizontal ? 60 : 200 + (i * 3) % 60;
-      const left = 50 + (b * 28 + i * 7) % 160;
-      const top = 60 + (b * 45 + i * 11) % 240;
-      const boardId = `board_${i}_${b}`;
-      boards.push({ id: boardId, x: left, y: top, w: width, h: height, mat: mat });
+      const w = isHorizontal ? 200 : 56;
+      const h = isHorizontal ? 56 : 180;
+      const left = 60 + (b * 26 + i * 5) % 150;
+      const top = 50 + (b * 40 + i * 9) % 200;
+      const boardId = `b_${i}_${b}`;
+      boards.push({ id: boardId, x: left, y: top, w, h, mat: materials[b % materials.length] });
 
-      // Generate Screws per Board
-      const screwCount = (i === 1) ? 2 : Math.min(2 + Math.floor(i / 10), 4);
-      for (let s = 0; s < screwCount; s++) {
-        const sx = left + (isHorizontal ? 30 + s * ((width - 60) / (screwCount - 1 || 1)) : width / 2);
-        const sy = top + (isHorizontal ? height / 2 : 30 + s * ((height - 60) / (screwCount - 1 || 1)));
+      const screwsPerBoard = (i < 4) ? 3 : 3; // Har board par 3 screws for box match
+      for (let s = 0; s < screwsPerBoard; s++) {
+        const sx = left + (isHorizontal ? 30 + s * ((w - 60) / 2) : w / 2);
+        const sy = top + (isHorizontal ? h / 2 : 30 + s * ((h - 60) / 2));
         screws.push({
-          id: `screw_${i}_${b}_${s}`,
+          id: `s_${i}_${b}_${s}`,
           boardId: boardId,
           x: sx,
           y: sy,
-          color: colorSubset[(b + s) % colorSubset.length]
+          color: chosenColors[(b + s) % chosenColors.length]
         });
       }
     }
 
     levels.push({
       levelNumber: i,
-      trayCapacity: (i < 4) ? 4 : (i < 15 ? 4 : 5),
-      boards: boards,
-      screws: screws
+      bufferTraySize: (i < 5) ? 3 : 4,
+      boards,
+      screws
     });
   }
   return levels;
 }
 
-/* ==========================================================================
-   GAME ENGINE & STATE MACHINE
-   ========================================================================== */
+/* MAIN GAME CONTROLLER */
 class GameEngine {
   constructor() {
     this.audio = new SoundEngine();
     this.fx = new FXEngine(document.getElementById('fx-canvas'));
     this.levelDb = buildLevelDatabase();
-    
-    // Persistent Data
+
     this.coins = parseInt(localStorage.getItem('un_coins') || '100', 10);
     this.unlockedLevel = parseInt(localStorage.getItem('un_level') || '1', 10);
     this.currentLevelIndex = 0;
     this.inventory = {
       undo: parseInt(localStorage.getItem('un_undo') || '3', 10),
-      hammer: parseInt(localStorage.getItem('un_hammer') || '1', 10),
-      tray: 0
+      hammer: parseInt(localStorage.getItem('un_hammer') || '1', 10)
     };
 
-    // Active Level State
-    this.boards = [];
-    this.screws = [];
-    this.traySlots = [];
-    this.trayMax = 4;
-    this.moveHistory = [];
+    // Box and Buffer States
+    this.activeBoxColor = 'gold';
+    this.boxSlots = [null, null, null]; // Exactly 3 holes
+    this.bufferTray = [];
+    this.bufferTrayMax = 3;
     this.hammerMode = false;
+    this.moveHistory = [];
 
     this.initUI();
-    this.checkDailyReward();
     this.loadLevel(this.unlockedLevel - 1);
   }
 
@@ -741,7 +701,7 @@ class GameEngine {
       document.getElementById('btn-sound').innerText = this.audio.muted ? '🔇' : '🔊';
     };
     document.getElementById('btn-levels').onclick = () => this.showLevelModal();
-    document.getElementById('btn-close-levels').onclick = () => this.hideLevelModal();
+    document.getElementById('btn-close-levels').onclick = () => document.getElementById('modal-levels').classList.remove('active');
     document.getElementById('btn-next-lvl').onclick = () => {
       document.getElementById('modal-victory').classList.remove('active');
       this.loadLevel(this.currentLevelIndex + 1);
@@ -750,39 +710,21 @@ class GameEngine {
       document.getElementById('modal-gameover').classList.remove('active');
       this.loadLevel(this.currentLevelIndex);
     };
-    document.getElementById('btn-claim-daily').onclick = () => {
-      this.coins += 250;
-      this.save();
-      this.audio.win();
-      document.getElementById('modal-daily').classList.remove('active');
-    };
-    document.getElementById('btn-reward-ad-win').onclick = () => {
-      this.playRewardedAd(() => {
-        this.coins += 100;
-        this.save();
-        document.getElementById('modal-victory').classList.remove('active');
-        this.loadLevel(this.currentLevelIndex + 1);
-      });
-    };
     document.getElementById('btn-ad-free-tray').onclick = () => {
-      this.playRewardedAd(() => {
-        document.getElementById('modal-gameover').classList.remove('active');
-        this.addTraySlot();
-      });
+      this.bufferTrayMax++;
+      this.renderBufferTray();
+      document.getElementById('modal-gameover').classList.remove('active');
     };
-    // Boosters
-    document.getElementById('btn-boost-undo').onclick = () => this.useUndoBooster();
-    document.getElementById('btn-boost-tray').onclick = () => this.addTraySlot();
-    document.getElementById('btn-boost-hammer').onclick = () => this.toggleHammerBooster();
-  }
-
-  checkDailyReward() {
-    const lastDaily = localStorage.getItem('un_last_daily');
-    const today = new Date().toDateString();
-    if (lastDaily !== today) {
-      localStorage.setItem('un_last_daily', today);
-      document.getElementById('modal-daily').classList.add('active');
-    }
+    document.getElementById('btn-boost-undo').onclick = () => this.useUndo();
+    document.getElementById('btn-boost-tray').onclick = () => {
+      this.bufferTrayMax++;
+      this.renderBufferTray();
+    };
+    document.getElementById('btn-boost-hammer').onclick = () => {
+      if (this.inventory.hammer <= 0) return;
+      this.hammerMode = !this.hammerMode;
+      document.getElementById('btn-boost-hammer').style.filter = this.hammerMode ? 'drop-shadow(0 0 8px red)' : 'none';
+    };
   }
 
   loadLevel(index) {
@@ -791,44 +733,75 @@ class GameEngine {
     const lvl = this.levelDb[index];
 
     document.getElementById('level-title').innerText = `Level ${lvl.levelNumber}`;
-    this.trayMax = lvl.trayCapacity + this.inventory.tray;
-    this.traySlots = new Array(this.trayMax).fill(null);
+    this.bufferTrayMax = lvl.bufferTraySize;
+    this.bufferTray = [];
+    this.boxSlots = [null, null, null];
     this.moveHistory = [];
     this.hammerMode = false;
 
-    this.renderTray();
-    this.buildPuzzleStage(lvl);
+    this.boards = JSON.parse(JSON.stringify(lvl.boards));
+    this.screws = JSON.parse(JSON.stringify(lvl.screws));
+
+    // Choose first active color from existing screws
+    this.setupNextColorBox();
+    this.renderBufferTray();
+    this.renderStage();
   }
 
-  renderTray() {
+  // Naya matching color box set karna jo hamare bache huye screws me ho
+  setupNextColorBox() {
+    const availableColors = [...new Set(this.screws.map(s => s.color))];
+    if (availableColors.length > 0) {
+      this.activeBoxColor = availableColors[0];
+    } else {
+      // Agar board par screws khatam ho gaye lekin buffer me hain
+      const bufColors = [...new Set(this.bufferTray.filter(Boolean).map(s => s.color))];
+      if (bufColors.length > 0) this.activeBoxColor = bufColors[0];
+    }
+
+    const boxEl = document.getElementById('active-box');
+    boxEl.className = `active-color-box box-${this.activeBoxColor} appear`;
+    this.boxSlots = [null, null, null];
+    this.renderBoxHoles();
+
+    // Check karein kya buffer tray me is color ke screw pehle se baithe hain
+    this.flushBufferToBox();
+  }
+
+  renderBoxHoles() {
+    for (let i = 0; i < 3; i++) {
+      const hole = document.getElementById(`box-hole-${i}`);
+      hole.innerHTML = '';
+      if (this.boxSlots[i]) {
+        const cap = document.createElement('div');
+        cap.className = `screw-cap screw-${this.boxSlots[i].color}`;
+        hole.appendChild(cap);
+      }
+    }
+  }
+
+  renderBufferTray() {
     const row = document.getElementById('tray-slot-row');
     row.innerHTML = '';
-    for (let i = 0; i < this.trayMax; i++) {
+    for (let i = 0; i < this.bufferTrayMax; i++) {
       const slot = document.createElement('div');
       slot.className = 'tray-slot';
-      if (this.traySlots[i]) {
-        const sc = this.traySlots[i];
+      if (this.bufferTray[i]) {
         const cap = document.createElement('div');
-        cap.className = `screw-cap screw-${sc.color}`;
+        cap.className = `screw-cap screw-${this.bufferTray[i].color}`;
         slot.appendChild(cap);
       }
       row.appendChild(slot);
     }
-    const filled = this.traySlots.filter(s => s !== null).length;
-    document.getElementById('tray-occupancy').innerText = `${filled} / ${this.trayMax}`;
   }
 
-  buildPuzzleStage(levelData) {
+  renderStage() {
     const stage = document.getElementById('stage');
-    // Clear old elements (keep particle canvas)
     Array.from(stage.children).forEach(child => {
       if (child.id !== 'fx-canvas') stage.removeChild(child);
     });
 
-    this.boards = JSON.parse(JSON.stringify(levelData.boards));
-    this.screws = JSON.parse(JSON.stringify(levelData.screws));
-
-    // Render Boards
+    // Boards
     this.boards.forEach(b => {
       const el = document.createElement('div');
       el.id = b.id;
@@ -840,189 +813,195 @@ class GameEngine {
       stage.appendChild(el);
     });
 
-    // Render Holes and Screws
+    // Holes & Screws
     this.screws.forEach(s => {
-      // Under-hole
       const hole = document.createElement('div');
       hole.className = 'hole';
       hole.style.left = `${s.x}px`;
       hole.style.top = `${s.y}px`;
       stage.appendChild(hole);
 
-      // Screw
       const el = document.createElement('div');
       el.id = s.id;
       el.className = 'screw';
       el.style.left = `${s.x}px`;
       el.style.top = `${s.y}px`;
-      
       const cap = document.createElement('div');
       cap.className = `screw-cap screw-${s.color}`;
       el.appendChild(cap);
 
       el.addEventListener('pointerdown', (e) => {
         e.stopPropagation();
-        this.handleScrewClick(s);
+        this.onScrewTap(s);
       });
       stage.appendChild(el);
     });
   }
 
-  handleScrewClick(screw) {
+  onScrewTap(screw) {
     if (this.hammerMode) {
-      this.executeHammer(screw);
+      this.useHammerOnScrew(screw);
       return;
     }
 
-    // Check empty tray slot
-    const emptyIndex = this.traySlots.findIndex(s => s === null);
-    if (emptyIndex === -1) {
-      this.audio.lose();
-      document.getElementById('modal-gameover').classList.add('active');
-      return;
-    }
-
-    // Unscrew Action
-    this.audio.unscrew();
     const screwEl = document.getElementById(screw.id);
     if (!screwEl) return;
 
-    // Record for Undo
-    this.moveHistory.push({
-      screw: Object.assign({}, screw),
-      slotIndex: emptyIndex
+    // Check: Kya yeh screw current open box ke color se match hota hai?
+    const isMatchingBox = (screw.color === this.activeBoxColor);
+    const boxEmptyIndex = this.boxSlots.findIndex(s => s === null);
+
+    if (isMatchingBox && boxEmptyIndex !== -1) {
+      // MATCH HO GAYA -> seedha Box ke hole me jayega
+      this.audio.unscrew();
+      this.animateScrewRemoval(screwEl);
+      this.boxSlots[boxEmptyIndex] = screw;
+      this.screws = this.screws.filter(s => s.id !== screw.id);
+      this.renderBoxHoles();
+
+      // Check karein kya box bhar gaya (3 holes full)?
+      if (this.boxSlots.every(s => s !== null)) {
+        this.onBoxFilled();
+      }
+    } else {
+      // MISMATCH -> Buffer tray me jayega
+      const emptyBufferSlot = this.findEmptyBufferSlot();
+      if (emptyBufferSlot === -1) {
+        // Buffer tray full -> Game Over
+        this.audio.lose();
+        document.getElementById('modal-gameover').classList.add('active');
+        return;
+      }
+      this.audio.unscrew();
+      this.animateScrewRemoval(screwEl);
+      this.bufferTray[emptyBufferSlot] = screw;
+      this.screws = this.screws.filter(s => s.id !== screw.id);
+      this.renderBufferTray();
+    }
+
+    // Check falling boards & Win condition
+    this.checkBoardPhysics();
+  }
+
+  findEmptyBufferSlot() {
+    for (let i = 0; i < this.bufferTrayMax; i++) {
+      if (!this.bufferTray[i]) return i;
+    }
+    return -1;
+  }
+
+  animateScrewRemoval(el) {
+    el.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(360deg)';
+    el.style.opacity = '0';
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 240);
+  }
+
+  // Jab 3 holes baith jayein -> Box gayab aur doosre color ka box aana
+  onBoxFilled() {
+    this.audio.boxComplete();
+    const boxEl = document.getElementById('active-box');
+    this.fx.spawn(window.innerWidth / 2, 90, 30);
+
+    // Box gayab hone ka animation
+    setTimeout(() => {
+      boxEl.classList.add('disappear');
+      setTimeout(() => {
+        this.coins += 20;
+        this.save();
+        // Agla box lana
+        this.setupNextColorBox();
+      }, 350);
+    }, 200);
+  }
+
+  // Agar buffer me match hone wale screws hain toh wo box me chale jayein
+  flushBufferToBox() {
+    let moved = false;
+    for (let i = 0; i < this.bufferTray.length; i++) {
+      const sc = this.bufferTray[i];
+      if (sc && sc.color === this.activeBoxColor) {
+        const boxEmptyIndex = this.boxSlots.findIndex(s => s === null);
+        if (boxEmptyIndex !== -1) {
+          this.boxSlots[boxEmptyIndex] = sc;
+          this.bufferTray[i] = null;
+          moved = true;
+        }
+      }
+    }
+    if (moved) {
+      this.renderBufferTray();
+      this.renderBoxHoles();
+      if (this.boxSlots.every(s => s !== null)) {
+        this.onBoxFilled();
+      }
+    }
+  }
+
+  checkBoardPhysics() {
+    this.boards.forEach(b => {
+      if (b.fallen) return;
+      const attached = this.screws.filter(s => s.boardId === b.id);
+      if (attached.length === 0) {
+        b.fallen = true;
+        this.dropBoard(b);
+      }
     });
 
-    // Animate unscrewing
-    screwEl.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(360deg)';
-    screwEl.style.opacity = '0';
-    
-    setTimeout(() => {
-      if (screwEl.parentNode) screwEl.parentNode.removeChild(screwEl);
-    }, 280);
-
-    // Place into tray
-    this.traySlots[emptyIndex] = screw;
-    this.screws = this.screws.filter(s => s.id !== screw.id);
-    this.renderTray();
-
-    // Check Board Physics
-    this.checkBoardFalling();
-
-    // Check Fail condition if tray is now completely full
-    if (this.screws.length > 0 && this.traySlots.filter(s => s !== null).length >= this.trayMax) {
+    // Win condition check
+    const remainingBoards = this.boards.filter(b => !b.fallen);
+    if (remainingBoards.length === 0) {
       setTimeout(() => {
-        if (this.screws.length > 0) {
-          this.audio.lose();
-          document.getElementById('modal-gameover').classList.add('active');
+        this.audio.win();
+        this.fx.spawn(window.innerWidth / 2, window.innerHeight / 2, 50);
+        this.coins += 50;
+        if (this.unlockedLevel <= this.currentLevelIndex + 1) {
+          this.unlockedLevel = Math.min(this.currentLevelIndex + 2, this.levelDb.length);
         }
+        this.save();
+        document.getElementById('modal-victory').classList.add('active');
       }, 600);
     }
   }
 
-  checkBoardFalling() {
-    this.boards.forEach(b => {
-      if (b.fallen) return;
-      // Remaining screws attached to this board
-      const remaining = this.screws.filter(s => s.boardId === b.id);
-      if (remaining.length === 0) {
-        b.fallen = true;
-        this.triggerBoardPhysicsFall(b);
-      }
-    });
-
-    // Check Win
-    const activeBoards = this.boards.filter(b => !b.fallen);
-    if (activeBoards.length === 0) {
-      setTimeout(() => this.triggerVictory(), 700);
-    }
-  }
-
-  triggerBoardPhysicsFall(board) {
-    const el = document.getElementById(board.id);
+  dropBoard(b) {
+    const el = document.getElementById(b.id);
     if (!el) return;
     this.audio.boardFall();
-    
-    const randomRot = (Math.random() - 0.5) * 60;
-    el.style.transform = `translate3d(0, 480px, 100px) rotate(${randomRot}deg)`;
+    const rot = (Math.random() - 0.5) * 60;
+    el.style.transform = `translate3d(0, 500px, 80px) rotate(${rot}deg)`;
     el.style.opacity = '0';
-
-    this.fx.spawnConfetti(board.x + board.w / 2, board.y + board.h / 2);
-
-    setTimeout(() => {
-      if (el.parentNode) el.parentNode.removeChild(el);
-    }, 600);
+    this.fx.spawn(b.x + b.w / 2, b.y + b.h / 2, 15);
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 550);
   }
 
-  triggerVictory() {
-    this.audio.win();
-    this.fx.spawnConfetti(window.innerWidth / 2, window.innerHeight / 2);
-    this.coins += 50;
-    if (this.unlockedLevel <= this.currentLevelIndex + 1) {
-      this.unlockedLevel = Math.min(this.currentLevelIndex + 2, this.levelDb.length);
-    }
-    this.save();
-    document.getElementById('modal-victory').classList.add('active');
-  }
-
-  /* Boosters */
-  useUndoBooster() {
-    if (this.inventory.undo <= 0 || this.moveHistory.length === 0) return;
-    this.inventory.undo--;
-    this.save();
-
-    const lastMove = this.moveHistory.pop();
-    this.traySlots[lastMove.slotIndex] = null;
-    this.screws.push(lastMove.screw);
-    this.renderTray();
-
-    // Recreate element
-    const stage = document.getElementById('stage');
-    const el = document.createElement('div');
-    el.id = lastMove.screw.id;
-    el.className = 'screw';
-    el.style.left = `${lastMove.screw.x}px`;
-    el.style.top = `${lastMove.screw.y}px`;
-    const cap = document.createElement('div');
-    cap.className = `screw-cap screw-${lastMove.screw.color}`;
-    el.appendChild(cap);
-    el.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      this.handleScrewClick(lastMove.screw);
-    });
-    stage.appendChild(el);
-    this.audio.clink();
-  }
-
-  addTraySlot() {
-    this.trayMax++;
-    this.traySlots.push(null);
-    this.renderTray();
-    this.audio.clink();
-  }
-
-  toggleHammerBooster() {
-    if (this.inventory.hammer <= 0) return;
-    this.hammerMode = !this.hammerMode;
-    const btn = document.getElementById('btn-boost-hammer');
-    btn.style.filter = this.hammerMode ? 'drop-shadow(0 0 8px var(--accent-red))' : 'none';
-  }
-
-  executeHammer(screw) {
+  useHammerOnScrew(screw) {
     this.inventory.hammer--;
     this.hammerMode = false;
     document.getElementById('btn-boost-hammer').style.filter = 'none';
     this.save();
-
-    this.audio.boardFall();
-    const screwEl = document.getElementById(screw.id);
-    if (screwEl && screwEl.parentNode) screwEl.parentNode.removeChild(screwEl);
-    this.fx.spawnConfetti(screw.x, screw.y);
+    const el = document.getElementById(screw.id);
+    if (el) el.remove();
     this.screws = this.screws.filter(s => s.id !== screw.id);
-    this.checkBoardFalling();
+    this.audio.boardFall();
+    this.fx.spawn(screw.x, screw.y, 20);
+    this.checkBoardPhysics();
   }
 
-  /* Level Select */
+  useUndo() {
+    if (this.inventory.undo <= 0) return;
+    // Undo buffer last item if available
+    const lastIdx = this.bufferTray.map(Boolean).lastIndexOf(true);
+    if (lastIdx !== -1) {
+      this.inventory.undo--;
+      const sc = this.bufferTray[lastIdx];
+      this.bufferTray[lastIdx] = null;
+      this.screws.push(sc);
+      this.save();
+      this.renderBufferTray();
+      this.renderStage();
+    }
+  }
+
   showLevelModal() {
     const grid = document.getElementById('level-grid-container');
     grid.innerHTML = '';
@@ -1033,40 +1012,15 @@ class GameEngine {
       if (i <= this.unlockedLevel) {
         node.onclick = () => {
           this.loadLevel(i - 1);
-          this.hideLevelModal();
+          document.getElementById('modal-levels').classList.remove('active');
         };
       }
       grid.appendChild(node);
     }
     document.getElementById('modal-levels').classList.add('active');
   }
-
-  hideLevelModal() {
-    document.getElementById('modal-levels').classList.remove('active');
-  }
-
-  /* Ad Integration System Placeholder */
-  playRewardedAd(onReward) {
-    const modal = document.getElementById('modal-ad-sim');
-    const bar = document.getElementById('ad-progress-bar');
-    modal.classList.add('active');
-    bar.style.width = '0%';
-
-    setTimeout(() => bar.style.width = '100%', 50);
-
-    const timer = setTimeout(() => {
-      modal.classList.remove('active');
-      onReward();
-    }, 3100);
-
-    document.getElementById('btn-ad-cancel').onclick = () => {
-      clearTimeout(timer);
-      modal.classList.remove('active');
-    };
-  }
 }
 
-// Start Game on DOM load
 window.addEventListener('DOMContentLoaded', () => {
   window.game = new GameEngine();
 });
