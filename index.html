@@ -2,1141 +2,401 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0a0d14">
-<title>Screw Jam 3D - Ultimate Deluxe Master</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>3D Cube Runner - Ultimate</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- AdSense (अपनी PUBLISHER ID डालें) -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
 <style>
-  :root {
-    --c-blue: #00d4ff;
-    --c-pink: #ff007f;
-    --c-yellow: #ffb700;
-    --c-green: #00e676;
-  }
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
-  body {
-    min-height: 100dvh;
-    background: radial-gradient(circle at 50% 30%, #151e2f 0%, #070a10 80%, #020305 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-  #game-viewport {
-    width: min(100%, 450px);
-    height: 100dvh;
-    max-height: 920px;
-    background: radial-gradient(ellipse at 50% 25%, #141b29 0%, #090d14 65%, #040508 100%);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
-    overflow: hidden;
-  }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(180deg,#0a0a2e,#1a1a4e,#2a1a5e);overflow:hidden;height:100vh;width:100vw;display:flex;justify-content:center;align-items:center;touch-action:none;user-select:none;}
 
-  /* HUD Top Bar */
-  .top-hud {
-    height: 58px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    background: linear-gradient(180deg, rgba(20, 28, 44, 0.95), rgba(8, 12, 18, 0.95));
-    border-bottom: 1.5px solid rgba(0, 212, 255, 0.3);
-    z-index: 100;
-  }
-  .hud-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(145deg, #1e293b, #0f172a);
-    border: 1px solid rgba(255,255,255,0.15);
-    font-size: 17px;
-    font-weight: 900;
-    color: #00d4ff;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-  }
-  .hud-btn:active { transform: scale(0.92); }
-  .hud-title { text-align: center; }
-  .title-main {
-    font-size: 19px;
-    font-weight: 1000;
-    letter-spacing: 1.5px;
-    background: linear-gradient(180deg, #ffffff 20%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .title-sub {
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #00d4ff;
-  }
-  .coin-pill {
-    background: linear-gradient(145deg, #1e293b, #0f172a);
-    border: 1px solid #ffb700;
-    padding: 5px 12px;
-    border-radius: 14px;
-    font-weight: 900;
-    color: #ffb700;
-    font-size: 13px;
-    box-shadow: 0 0 10px rgba(255, 183, 0, 0.25);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+#scene{position:relative;width:100%;height:100%;perspective:900px;perspective-origin:50% 40%;overflow:hidden;}
 
-  /* Progress Line */
-  .rail-bar {
-    height: 4px;
-    background: #0f172a;
-    width: 100%;
-    z-index: 90;
-  }
-  #fill-line {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #00d4ff, #00e676, #ffb700);
-    box-shadow: 0 0 10px #00d4ff;
-    transition: width 0.35s ease;
-  }
+.stars{position:absolute;inset:0;background-image:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 70%,#fff,transparent),radial-gradient(2px 2px at 80% 20%,#aaf,transparent),radial-gradient(1px 1px at 40% 90%,#fff,transparent),radial-gradient(1px 1px at 90% 50%,#fff,transparent);background-size:200% 200%;animation:twinkle 4s ease-in-out infinite alternate;opacity:.7;}
+@keyframes twinkle{from{opacity:.4}to{opacity:.9}}
 
-  /* 3D Distinct Colored Toolboxes */
-  .boxes-dock {
-    display: flex;
-    justify-content: center;
-    gap: 9px;
-    padding: 10px 12px 6px;
-    z-index: 90;
-  }
-  .tool-box {
-    width: clamp(74px, 21vw, 88px);
-    height: clamp(68px, 18vw, 78px);
-    border-radius: 18px;
-    background: linear-gradient(145deg, #162030, #0a0e17);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 0 4px;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.18),
-                0 10px 20px rgba(0,0,0,0.6);
-    transition: transform 0.2s cubic-bezier(0.34, 1.5, 0.64, 1);
-  }
-  .tool-box.box-blue {
-    border: 2.5px solid var(--c-blue);
-    box-shadow: 0 0 18px rgba(0, 212, 255, 0.45);
-  }
-  .tool-box.box-pink {
-    border: 2.5px solid var(--c-pink);
-    box-shadow: 0 0 18px rgba(255, 0, 127, 0.45);
-  }
-  .tool-box.box-yellow {
-    border: 2.5px solid var(--c-yellow);
-    box-shadow: 0 0 18px rgba(255, 183, 0, 0.45);
-  }
-  .tool-box.box-green {
-    border: 2.5px solid var(--c-green);
-    box-shadow: 0 0 18px rgba(0, 230, 118, 0.45);
-  }
+#track{position:absolute;left:50%;bottom:0;width:400px;height:100%;transform:translateX(-50%) rotateX(60deg);transform-origin:center bottom;transform-style:preserve-3d;}
+.road{position:absolute;left:50%;transform:translateX(-50%);width:340px;height:3000px;bottom:0;background:linear-gradient(180deg,#2a2a5a,#1a1a3a);box-shadow:0 0 40px rgba(100,100,255,.4);border-left:4px solid #00f0ff;border-right:4px solid #00f0ff;}
+.road::before{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:6px;height:100%;background:repeating-linear-gradient(180deg,#ffff00 0,#ffff00 40px,transparent 40px,transparent 80px);animation:roadMove 1s linear infinite;}
+@keyframes roadMove{from{background-position-y:0}to{background-position-y:80px}}
 
-  .box-label-pill {
-    position: absolute;
-    top: -8px;
-    font-size: 8px;
-    font-weight: 1000;
-    padding: 1px 6px;
-    border-radius: 6px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .pill-blue   { background: var(--c-blue); color: #000; }
-  .pill-pink   { background: var(--c-pink); color: #fff; }
-  .pill-yellow { background: var(--c-yellow); color: #000; }
-  .pill-green  { background: var(--c-green); color: #000; }
+#player{position:absolute;left:50%;bottom:120px;width:60px;height:60px;transform:translateX(-50%);transform-style:preserve-3d;animation:playerFloat 1.5s ease-in-out infinite;z-index:10;}
+@keyframes playerFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+#player.shielded .face{border-color:#00ff00;box-shadow:inset 0 0 25px rgba(0,255,0,.8),0 0 15px #00ff00;}
+.cube{position:absolute;width:60px;height:60px;transform-style:preserve-3d;animation:cubeRotate 4s linear infinite;}
+@keyframes cubeRotate{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+.face{position:absolute;width:60px;height:60px;border:2px solid #fff;box-shadow:inset 0 0 20px rgba(255,255,255,.3);}
+.front{transform:translateZ(30px);background:linear-gradient(135deg,#00f0ff,#0080ff);}
+.back{transform:rotateY(180deg) translateZ(30px);background:linear-gradient(135deg,#00c0cc,#0060cc);}
+.right{transform:rotateY(90deg) translateZ(30px);background:linear-gradient(135deg,#00d0dd,#0070dd);}
+.left{transform:rotateY(-90deg) translateZ(30px);background:linear-gradient(135deg,#00e0ee,#0090ee);}
+.top{transform:rotateX(90deg) translateZ(30px);background:linear-gradient(135deg,#00ffff,#00aaff);}
+.bottom{transform:rotateX(-90deg) translateZ(30px);background:linear-gradient(135deg,#00b0bb,#0050bb);}
+#player::after{content:'';position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:20px;background:radial-gradient(ellipse,rgba(0,240,255,.6),transparent);border-radius:50%;filter:blur(8px);}
 
-  .box-socket {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, #020305, #0f1622);
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: inset 2px 2px 5px #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
+/* Obstacles */
+.obstacle{position:absolute;width:50px;height:50px;transform-style:preserve-3d;animation:obsSpin 2s linear infinite;}
+@keyframes obsSpin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+.obstacle .face{width:50px;height:50px;border:2px solid #ff0;}
+.obstacle .front{transform:translateZ(25px);background:linear-gradient(135deg,#ff0066,#cc0044);}
+.obstacle .back{transform:rotateY(180deg) translateZ(25px);background:linear-gradient(135deg,#dd0055,#aa0033);}
+.obstacle .right{transform:rotateY(90deg) translateZ(25px);background:linear-gradient(135deg,#ee0055,#bb0044);}
+.obstacle .left{transform:rotateY(-90deg) translateZ(25px);background:linear-gradient(135deg,#ff1177,#cc0055);}
+.obstacle .top{transform:rotateX(90deg) translateZ(25px);background:linear-gradient(135deg,#ff3388,#dd0066);}
+.obstacle .bottom{transform:rotateX(-90deg) translateZ(25px);background:linear-gradient(135deg,#cc0055,#990033);}
 
-  .tool-box.ad-slot {
-    border: 2px dashed #ffb700;
-    cursor: pointer;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2px;
-  }
-  .tool-box.ad-slot span { font-size: 26px; color: #ffb700; line-height: 1; }
-  .tool-box.ad-slot small { font-size: 8px; font-weight: 900; background: #ffb700; color: #000; padding: 1px 5px; border-radius: 4px; }
+/* Moving obstacle (side-to-side) */
+.obstacle.mover .face{filter:hue-rotate(180deg);}
 
-  /* Buffer Rack */
-  .buffer-deck {
-    display: flex;
-    justify-content: center;
-    gap: 11px;
-    padding: 4px 14px 8px;
-    z-index: 90;
-  }
-  .buffer-cup {
-    width: 29px;
-    height: 29px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #1c2738, #05070a);
-    border: 1.5px solid rgba(0, 212, 255, 0.35);
-    box-shadow: inset 3px 3px 6px #000, 0 0 8px rgba(0, 212, 255, 0.15);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
+/* Tall obstacle */
+.obstacle.tall{height:100px;}
+.obstacle.tall .face{height:100px;}
 
-  /* 3D Dark Arena */
-  .arena {
-    flex: 1;
-    position: relative;
-    margin: 4px 12px 10px;
-    border-radius: 26px;
-    background: radial-gradient(ellipse at 50% 40%, #131b28 0%, #0b0f17 65%, #05070a 100%);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: inset 0 0 35px rgba(0,0,0,0.85);
-    overflow: hidden;
-  }
-  .arena::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(0, 212, 255, 0.12) 1.5px, transparent 1.5px);
-    background-size: 22px 22px;
-    pointer-events: none;
-  }
+/* Coin */
+.coin{position:absolute;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffff88,#ffcc00,#aa7700);box-shadow:0 0 20px #ffcc00,0 0 40px rgba(255,204,0,.5);animation:coinSpin 0.8s linear infinite;z-index:8;}
+.coin::before{content:'$';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px;color:#aa7700;text-shadow:0 0 3px #fff;}
+@keyframes coinSpin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
 
-  /* Diverse Geometric 3D Neon Plates */
-  .neon-plate {
-    position: absolute;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 0 10px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.65), inset 0 1px 3px rgba(255,255,255,0.7);
-    transition: transform 0.65s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s;
-    will-change: transform;
-  }
-  /* Different Unique Plate Shapes */
-  .shape-leaf      { width: 145px; height: 56px; border-radius: 70px 0 70px 0; }
-  .shape-beam      { width: 140px; height: 48px; border-radius: 24px; }
-  .shape-square    { width: 100px; height: 95px; border-radius: 22px; }
-  .shape-circle    { width: 95px;  height: 95px; border-radius: 50%; }
-  .shape-arch      { width: 145px; height: 55px; border-radius: 40px 40px 12px 12px; }
-  .shape-trapezoid { width: 140px; height: 54px; border-radius: 35px 8px 35px 8px; }
+/* Power-up */
+.powerup{position:absolute;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;z-index:8;animation:powFloat 1s ease-in-out infinite;box-shadow:0 0 25px currentColor;}
+@keyframes powFloat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.powerup.shield{background:radial-gradient(circle,#00ff88,#008844);color:#00ff88;}
+.powerup.magnet{background:radial-gradient(circle,#ff00ff,#880088);color:#ff00ff;}
+.powerup.slow{background:radial-gradient(circle,#00aaff,#004488);color:#00aaff;}
+.powerup.double{background:radial-gradient(circle,#ffaa00,#885500);color:#ffaa00;}
 
-  /* Plate Glow Themes */
-  .theme-blue {
-    background: rgba(0, 212, 255, 0.28);
-    border: 3px solid var(--c-blue);
-    box-shadow: 0 0 22px rgba(0, 212, 255, 0.45), inset 0 0 12px rgba(0, 212, 255, 0.3);
-  }
-  .theme-pink {
-    background: rgba(255, 0, 127, 0.28);
-    border: 3px solid var(--c-pink);
-    box-shadow: 0 0 22px rgba(255, 0, 127, 0.45), inset 0 0 12px rgba(255, 0, 127, 0.3);
-  }
-  .theme-yellow {
-    background: rgba(255, 183, 0, 0.28);
-    border: 3px solid var(--c-yellow);
-    box-shadow: 0 0 22px rgba(255, 183, 0, 0.45), inset 0 0 12px rgba(255, 183, 0, 0.3);
-  }
-  .theme-green {
-    background: rgba(0, 230, 118, 0.28);
-    border: 3px solid var(--c-green);
-    box-shadow: 0 0 22px rgba(0, 230, 118, 0.45), inset 0 0 12px rgba(0, 230, 118, 0.3);
-  }
+/* HUD */
+#hud{position:absolute;top:0;left:0;right:0;padding:15px 20px;display:flex;justify-content:space-between;align-items:flex-start;z-index:100;pointer-events:none;gap:8px;flex-wrap:wrap;}
+.score-box{background:rgba(0,0,0,.5);border:2px solid #00f0ff;border-radius:12px;padding:6px 14px;color:#00f0ff;font-size:16px;font-weight:bold;box-shadow:0 0 20px rgba(0,240,255,.5);backdrop-filter:blur(5px);text-align:center;min-width:60px;}
+.score-box .label{font-size:10px;color:#88ccff;display:block;letter-spacing:1px;}
+#highScore{border-color:#ffff00;color:#ffff00;box-shadow:0 0 20px rgba(255,255,0,.5);}
+#highScore .label{color:#ffee88;}
+#coinBox{border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 20px rgba(255,204,0,.5);}
+#coinBox .label{color:#ffdd88;}
 
-  /* Plate Hole Socket */
-  .acrylic-hole {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, #030507 45%, #111722 80%, #1b2636 100%);
-    border: 1.5px solid rgba(255,255,255,0.35);
-    box-shadow: inset 2px 2px 5px #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    flex-shrink: 0;
-  }
+/* Active power-up indicator */
+#powerupBar{position:absolute;top:85px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100;pointer-events:none;}
+.pu-indicator{background:rgba(0,0,0,.6);border:2px solid currentColor;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:bold;display:flex;align-items:center;gap:6px;animation:pulse .8s ease-in-out infinite alternate;}
+@keyframes pulse{from{opacity:.7;transform:scale(1)}to{opacity:1;transform:scale(1.05)}}
 
-  /* High-Contrast Screws (दूर से साफ पहचान) */
-  .metallic-screw {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    z-index: 5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: inset 0 2px 3px rgba(255,255,255,0.9),
-                inset 0 -3px 4px rgba(0,0,0,0.8),
-                0 6px 12px rgba(0,0,0,0.7);
-    transition: filter 0.2s, transform 0.1s;
-  }
-  .metallic-screw::before, .metallic-screw::after {
-    content: '';
-    position: absolute;
-    background: #090d14;
-    border-radius: 2px;
-    box-shadow: 0 1px 1px rgba(255,255,255,0.7);
-  }
-  .metallic-screw::before { width: 15px; height: 3.5px; }
-  .metallic-screw::after  { width: 3.5px; height: 15px; }
+/* Daily challenge banner */
+#dailyChallenge{position:absolute;top:120px;left:50%;transform:translateX(-50%);background:rgba(255,0,255,.15);border:2px solid #ff00ff;border-radius:12px;padding:8px 16px;color:#ff88ff;font-size:13px;font-weight:bold;z-index:100;text-align:center;backdrop-filter:blur(5px);box-shadow:0 0 20px rgba(255,0,255,.4);max-width:90%;}
 
-  /* Screws matching box colors directly with rich gradients */
-  .screw-blue {
-    background: radial-gradient(circle at 35% 30%, #b3f4ff 0%, #00d4ff 50%, #006b80 100%);
-    border: 2px solid #00d4ff;
-    box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
-  }
-  .screw-pink {
-    background: radial-gradient(circle at 35% 30%, #ffb3d9 0%, #ff007f 50%, #800040 100%);
-    border: 2px solid #ff007f;
-    box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
-  }
-  .screw-yellow {
-    background: radial-gradient(circle at 35% 30%, #fff2b3 0%, #ffb700 50%, #805c00 100%);
-    border: 2px solid #ffb700;
-    box-shadow: 0 0 12px rgba(255, 183, 0, 0.6);
-  }
-  .screw-green {
-    background: radial-gradient(circle at 35% 30%, #b3ffd9 0%, #00e676 50%, #00733b 100%);
-    border: 2px solid #00e676;
-    box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
-  }
+/* Controls */
+#controls{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:space-between;padding:0 20px;z-index:100;pointer-events:none;}
+.ctrl-btn{width:80px;height:80px;border-radius:50%;background:rgba(0,240,255,.15);border:3px solid #00f0ff;color:#00f0ff;font-size:36px;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;box-shadow:0 0 25px rgba(0,240,255,.4);transition:all .1s;backdrop-filter:blur(5px);}
+.ctrl-btn:active{background:rgba(0,240,255,.4);transform:scale(.9);box-shadow:0 0 40px rgba(0,240,255,.8);}
 
-  .metallic-screw.locked {
-    filter: brightness(0.38) saturate(0.4);
-    cursor: not-allowed;
-  }
-  .metallic-screw.shake {
-    animation: buzzAnim 0.3s ease;
-  }
-  @keyframes buzzAnim {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px) rotate(-15deg); }
-    75% { transform: translateX(5px) rotate(15deg); }
-  }
+/* Screens */
+.screen{position:absolute;inset:0;background:rgba(5,5,30,.92);backdrop-filter:blur(8px);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:200;padding:20px;text-align:center;transition:opacity .4s;overflow-y:auto;}
+.screen.hidden{opacity:0;pointer-events:none;display:none;}
+.screen h1{font-size:40px;color:#00f0ff;text-shadow:0 0 20px #00f0ff,0 0 40px #0080ff;margin-bottom:10px;letter-spacing:3px;}
+.screen h2{font-size:20px;color:#ffff00;margin-bottom:20px;text-shadow:0 0 15px #ffff00;}
+.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:15px;max-width:360px;}
+.btn{padding:14px 40px;font-size:19px;font-weight:bold;color:#001133;background:linear-gradient(135deg,#00f0ff,#00a0ff);border:none;border-radius:12px;cursor:pointer;box-shadow:0 0 30px rgba(0,240,255,.6);letter-spacing:2px;transition:all .2s;margin-top:8px;}
+.btn:active{transform:scale(.95);box-shadow:0 0 50px rgba(0,240,255,.9);}
+.btn.secondary{background:linear-gradient(135deg,#ff0066,#cc0044);color:#fff;box-shadow:0 0 30px rgba(255,0,100,.6);font-size:15px;padding:11px 30px;margin-top:10px;}
+.btn.tertiary{background:linear-gradient(135deg,#ff00ff,#8800ff);color:#fff;font-size:15px;padding:11px 30px;margin-top:10px;box-shadow:0 0 30px rgba(255,0,255,.6);}
+.final-score{font-size:55px;color:#ffff00;text-shadow:0 0 30px #ffff00;margin:5px 0;font-weight:bold;}
+.new-record{color:#ff00ff;font-size:17px;font-weight:bold;text-shadow:0 0 15px #ff00ff;animation:pulse .8s ease-in-out infinite alternate;margin-bottom:10px;}
 
-  .screw-mini { width: 17px; height: 17px; }
-  .screw-mini::before { width: 8px; height: 2px; }
-  .screw-mini::after  { width: 2px; height: 8px; }
+/* Sound toggle */
+#soundToggle{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #00f0ff;color:#00f0ff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;backdrop-filter:blur(5px);box-shadow:0 0 15px rgba(0,240,255,.4);}
+#soundToggle.muted{border-color:#666;color:#666;box-shadow:none;}
 
-  /* 3D Flying Screw */
-  .flying-screw {
-    position: fixed;
-    z-index: 1000;
-    pointer-events: none;
-    transition: all 0.42s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    transform: translate(-50%, -50%) scale(1.25) rotate(720deg);
-  }
+/* Ad Banner */
+#adBanner{position:absolute;bottom:0;left:0;right:0;height:60px;background:rgba(0,0,0,.7);border-top:1px solid #333;display:none;justify-content:center;align-items:center;color:#666;font-size:12px;z-index:150;letter-spacing:2px;}
+#adBanner.active{display:flex;}
 
-  /* Bottom Boosters */
-  .boosters-dock {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 8px 16px 65px;
-    background: linear-gradient(180deg, rgba(16, 24, 38, 0.95), #06090e);
-    border-top: 1px solid rgba(0, 212, 255, 0.2);
-    z-index: 90;
-  }
-  .boost-card {
-    width: 30%;
-    height: 54px;
-    background: linear-gradient(145deg, #1e293b, #0f172a);
-    border: 1.5px solid rgba(0, 212, 255, 0.4);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    cursor: pointer;
-  }
-  .boost-card:active { transform: translateY(2px); }
-  .boost-badge {
-    font-size: 11px;
-    font-weight: 1000;
-    background: #00d4ff;
-    color: #000;
-    padding: 1px 6px;
-    border-radius: 6px;
-  }
+/* Interstitial Ad */
+#adInterstitial{position:absolute;inset:0;background:rgba(0,0,0,.95);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:300;color:#fff;text-align:center;}
+#adInterstitial.active{display:flex;}
+#adInterstitial .ad-box{width:300px;height:400px;background:linear-gradient(135deg,#1a1a3a,#2a2a5a);border:2px dashed #444;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#666;margin-bottom:20px;padding:20px;}
+.skip-btn{padding:10px 25px;background:transparent;border:2px solid #00f0ff;color:#00f0ff;border-radius:8px;cursor:pointer;font-size:14px;letter-spacing:1px;}
 
-  /* Dialogs */
-  .overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(3, 7, 18, 0.85);
-    backdrop-filter: blur(8px);
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 500;
-    padding: 20px;
-  }
-  .glow-dialog {
-    width: min(340px, 90%);
-    background: linear-gradient(145deg, #131c2e, #090e17);
-    border: 2px solid #00d4ff;
-    box-shadow: 0 0 35px rgba(0, 212, 255, 0.35);
-    border-radius: 24px;
-    padding: 24px 20px;
-    text-align: center;
-  }
-  .glow-dialog h2 {
-    font-size: 26px;
-    font-weight: 1000;
-    color: #fff;
-    margin-bottom: 8px;
-  }
-  .glow-dialog p {
-    font-size: 14px;
-    font-weight: 700;
-    color: #94a3b8;
-    line-height: 1.5;
-  }
-  .glow-btn {
-    margin-top: 18px;
-    width: 100%;
-    padding: 12px 0;
-    background: linear-gradient(135deg, #00d4ff, #0284c7);
-    color: #000;
-    border: none;
-    font-size: 16px;
-    font-weight: 1000;
-    border-radius: 14px;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-    cursor: pointer;
-  }
-  .glow-btn.sec {
-    background: #1e293b;
-    color: #cbd5e1;
-    box-shadow: none;
-    margin-top: 8px;
-  }
+#flash{position:absolute;inset:0;background:#ff0066;opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;}
+#flash.active{opacity:.5;}
 
-  .toast {
-    position: absolute;
-    top: 48%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid #00d4ff;
-    color: #00d4ff;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 800;
-    z-index: 600;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-    white-space: nowrap;
-  }
-  .toast.show { opacity: 1; }
+/* Leaderboard */
+.leaderboard{width:100%;max-width:340px;margin:15px 0;max-height:240px;overflow-y:auto;}
+.lb-row{display:flex;justify-content:space-between;padding:8px 14px;background:rgba(0,240,255,.08);border-radius:8px;margin-bottom:6px;font-size:14px;color:#aaccff;border-left:3px solid #00f0ff;}
+.lb-row.top1{border-left-color:#ffcc00;background:rgba(255,204,0,.15);color:#ffdd00;}
+.lb-row.top2{border-left-color:#c0c0c0;background:rgba(192,192,192,.12);color:#e0e0e0;}
+.lb-row.top3{border-left-color:#cd7f32;background:rgba(205,127,50,.12);color:#e0a060;}
+.lb-row.you{border-left-color:#ff00ff;background:rgba(255,0,255,.12);color:#ff88ff;}
+.lb-rank{font-weight:bold;min-width:30px;}
+.lb-name{flex:1;margin:0 10px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-score{font-weight:bold;color:#00f0ff;}
+
+/* Name input */
+.name-input{padding:12px 20px;border:2px solid #00f0ff;border-radius:10px;background:rgba(0,0,0,.5);color:#00f0ff;font-size:16px;text-align:center;outline:none;width:250px;margin:10px 0;}
+.name-input::placeholder{color:#4488aa;}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:15px;}
+.tab{padding:8px 20px;background:rgba(0,0,0,.4);border:2px solid #333;color:#666;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;transition:all .2s;}
+.tab.active{border-color:#00f0ff;color:#00f0ff;background:rgba(0,240,255,.15);box-shadow:0 0 15px rgba(0,240,255,.4);}
+
+@media(max-width:500px){
+  #track{width:320px;}
+  .road{width:280px;}
+  #player{width:50px;height:50px;bottom:100px;}
+  .face{width:50px;height:50px;}
+  .front{transform:translateZ(25px);}
+  .back{transform:rotateY(180deg) translateZ(25px);}
+  .right{transform:rotateY(90deg) translateZ(25px);}
+  .left{transform:rotateY(-90deg) translateZ(25px);}
+  .top{transform:rotateX(90deg) translateZ(25px);}
+  .bottom{transform:rotateX(-90deg) translateZ(25px);}
+  .screen h1{font-size:30px;}
+  .ctrl-btn{width:70px;height:70px;font-size:30px;}
+  .score-box{font-size:14px;padding:5px 10px;min-width:52px;}
+}
 </style>
 </head>
 <body>
 
-<div id="game-viewport">
-  <header class="top-hud">
-    <button class="hud-btn" onclick="togglePause()">❚❚</button>
-    <div class="hud-title">
-      <div class="title-main" id="lvl-display">LEVEL 1</div>
-      <div class="title-sub">SCREW JAM 3D</div>
-    </div>
-    <div class="coin-pill">🪙 <span id="coin-display">100</span></div>
-  </header>
+<div id="scene">
+  <div class="stars"></div>
+  <div id="track"><div class="road"></div></div>
 
-  <div class="rail-bar">
-    <div id="fill-line"></div>
-  </div>
-
-  <section class="boxes-dock" id="boxes-container"></section>
-  <section class="buffer-deck" id="buffer-container"></section>
-  <main class="arena" id="arena"></main>
-
-  <footer class="boosters-dock">
-    <button class="boost-card" onclick="useBooster('drill')">
-      <span style="font-size:22px;">🪛</span>
-      <span class="boost-badge" id="drill-count">2</span>
-    </button>
-    <button class="boost-card" onclick="useBooster('hammer')">
-      <span style="font-size:22px;">🔨</span>
-      <span class="boost-badge" id="hammer-count">1</span>
-    </button>
-    <button class="boost-card" onclick="useBooster('cleaner')">
-      <span style="font-size:22px;">🧹</span>
-      <span class="boost-badge" id="cleaner-count">1</span>
-    </button>
-  </footer>
-
-  <div class="toast" id="toast"></div>
-
-  <div class="overlay" id="win-modal">
-    <div class="glow-dialog">
-      <h2>शानदार जीत! 🏆</h2>
-      <p>लेवल पूरा हुआ! आपको 25 बोनस सिक्के मिले।</p>
-      <button class="glow-btn" onclick="nextLevel()">अगला लेवल ➔</button>
+  <div id="player">
+    <div class="cube">
+      <div class="face front"></div><div class="face back"></div>
+      <div class="face right"></div><div class="face left"></div>
+      <div class="face top"></div><div class="face bottom"></div>
     </div>
   </div>
 
-  <div class="overlay" id="fail-modal">
-    <div class="glow-dialog">
-      <h2 style="color:#ff007f;">गेम ओवर! ⚠️</h2>
-      <p>बफ़र के सभी स्लॉट भर गए हैं।</p>
-      <button class="glow-btn" style="background:#ff007f; color:#fff;" onclick="retryLevel()">पुनः प्रयास करें</button>
-    </div>
+  <div id="flash"></div>
+
+  <div id="hud">
+    <div class="score-box"><span class="label">SCORE</span><span id="score">0</span></div>
+    <div class="score-box" id="coinBox"><span class="label">COINS</span><span id="coins">0</span></div>
+    <div class="score-box" id="highScore"><span class="label">BEST</span><span id="best">0</span></div>
   </div>
 
-  <div class="overlay" id="pause-modal">
-    <div class="glow-dialog">
-      <h2>गेम रुका हुआ है ⏸️</h2>
-      <p>आपकी प्रगति सुरक्षित है।</p>
-      <button class="glow-btn" onclick="togglePause()">जारी रखें</button>
-      <button class="glow-btn sec" onclick="retryLevel()">लेवल दोबारा शुरू करें</button>
-    </div>
+  <div id="powerupBar"></div>
+  <div id="dailyChallenge"></div>
+
+  <div id="soundToggle">🔊</div>
+
+  <div id="controls">
+    <div class="ctrl-btn" id="btnLeft">◀</div>
+    <div class="ctrl-btn" id="btnRight">▶</div>
   </div>
 
-  <div class="overlay" id="ad-timer-modal">
-    <div class="glow-dialog">
-      <h2>प्रचार देखा जा रहा है... 🎬</h2>
-      <div style="font-size:40px; margin:15px auto;">🎁</div>
-      <p id="ad-timer-text">अतिरिक्त बॉक्स अनलॉक हो रहा है: 5s</p>
+  <!-- Start Screen -->
+  <div class="screen" id="startScreen">
+    <h1>3D CUBE RUNNER</h1>
+    <h2>✦ ULTIMATE EDITION ✦</h2>
+    <p>🪙 कोइन इकट्ठा करें<br>⚡ पावर-अप उठाएँ<br>💀 बाधाओं से बचें</p>
+    <button class="btn" id="btnStart">START GAME</button>
+    <button class="btn tertiary" id="btnLeaderboard">🏆 LEADERBOARD</button>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div class="screen hidden" id="gameOverScreen">
+    <h1 style="color:#ff0066;text-shadow:0 0 20px #ff0066;">GAME OVER</h1>
+    <div class="final-score" id="finalScore">0</div>
+    <div style="color:#ffcc00;font-size:18px;margin-bottom:8px;">🪙 <span id="finalCoins">0</span> coins</div>
+    <div class="new-record hidden" id="newRecord">✦ NEW RECORD! ✦</div>
+    <button class="btn" id="btnRestart">PLAY AGAIN</button>
+    <button class="btn tertiary" id="btnViewLeaderboard">🏆 LEADERBOARD</button>
+    <button class="btn secondary" id="btnHome">HOME</button>
+  </div>
+
+  <!-- Leaderboard Screen -->
+  <div class="screen hidden" id="leaderboardScreen">
+    <h1 style="font-size:30px;">🏆 LEADERBOARD</h1>
+    <div class="tabs">
+      <div class="tab active" data-tab="global">🌍 Global</div>
+      <div class="tab" data-tab="local">📱 Local</div>
     </div>
+    <input type="text" class="name-input" id="playerName" placeholder="अपना नाम लिखें..." maxlength="12">
+    <div class="leaderboard" id="leaderboardList">
+      <div style="color:#666;padding:20px;">लोड हो रहा है...</div>
+    </div>
+    <button class="btn secondary" id="btnLbBack">BACK</button>
+  </div>
+
+  <div id="adBanner">📢 AD BANNER</div>
+  <div id="adInterstitial">
+    <div class="ad-box">
+      <div style="font-size:40px;">📱</div>
+      <div style="margin-top:15px;color:#888;">INTERSTITIAL AD</div>
+      <small style="color:#444;margin-top:15px;font-size:11px;">AdMob / AdSense / Unity Ads यहाँ लगाएँ</small>
+    </div>
+    <button class="skip-btn" id="skipAd">SKIP AD ▶</button>
   </div>
 </div>
 
 <script>
-(() => {
-  'use strict';
-
-  let audioCtx;
-  function playSound(type) {
-    try {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
-
-      if (type === 'unscrew') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(420, now);
-        osc.frequency.linearRampToValueAtTime(950, now + 0.14);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
-        osc.start(now);
-        osc.stop(now + 0.15);
-      } else if (type === 'land') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.setValueAtTime(800, now + 0.05);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now);
-        osc.stop(now + 0.1);
-      } else if (type === 'box-full') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523, now);
-        osc.frequency.setValueAtTime(659, now + 0.08);
-        osc.frequency.setValueAtTime(783, now + 0.16);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
-        osc.start(now);
-        osc.stop(now + 0.28);
-      } else if (type === 'blocked') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.setValueAtTime(90, now + 0.08);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now);
-        osc.stop(now + 0.1);
-      }
-    } catch(e) {}
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
-  }
-
-  const NEON_COLORS = ['blue', 'pink', 'yellow', 'green'];
-  const SHAPE_STYLES = ['shape-leaf', 'shape-beam', 'shape-square', 'shape-circle', 'shape-arch', 'shape-trapezoid'];
-
-  let level = Math.max(1, parseInt(localStorage.getItem('sj3_level') || '1'));
-  let coins = Math.max(0, parseInt(localStorage.getItem('sj3_coins') || '100'));
-  let boxes = [];
-  let buffer = [null, null, null, null, null];
-  let plates = [];
-  let totalScrews = 0;
-  let removedCount = 0;
-  let boosters = { drill: 2, hammer: 1, cleaner: 1 };
-  let isPaused = false;
-  let isGameOver = false;
-
-  function saveGame() {
-    localStorage.setItem('sj3_level', level);
-    localStorage.setItem('sj3_coins', coins);
-  }
-
-  // 100% सटीक गणितीय संतुलन: हमेशा 3 के गुणक में स्क्रू बनेंगे ताकि कोई बॉक्स अधूरा न रहे
-  function buildLevel(lvl) {
-    let activeColors = (lvl === 1) ? ['blue', 'yellow'] : (lvl === 2 ? ['blue', 'pink', 'yellow'] : NEON_COLORS);
-
-    let setsPerColor = (lvl === 1) ? 2 : (lvl <= 3 ? 3 : 4); // हर रंग के कितने सेट (3x) बनेंगे
-    let screwPool = [];
-
-    activeColors.forEach(c => {
-      for (let s = 0; s < setsPerColor; s++) {
-        screwPool.push(c, c, c); // 3 स्क्रू प्रति सेट
-      }
-    });
-
-    // स्क्रू को यादृच्छिक रूप से मिलाएं (Shuffle)
-    for (let i = screwPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [screwPool[i], screwPool[j]] = [screwPool[j], screwPool[i]];
-    }
-
-    boxes = [
-      { type: 'box', color: activeColors[0], count: 0 },
-      { type: 'box', color: activeColors[1] || activeColors[0], count: 0 },
-      { type: 'ad', unlocked: false },
-      { type: 'ad', unlocked: false }
-    ];
-
-    buffer = [null, null, null, null, null];
-    plates = [];
-    let screwCounter = 1;
-
-    let pIdx = 0;
-    while (screwPool.length > 0) {
-      let numSlots = (screwPool.length === 2 || (pIdx % 2 === 0 && screwPool.length >= 2)) ? 2 : Math.min(3, screwPool.length);
-      let slots = [];
-
-      for (let s = 0; s < numSlots; s++) {
-        let scColor = screwPool.pop();
-        slots.push({
-          slotId: s,
-          color: scColor,
-          screwId: 's_' + (screwCounter++)
-        });
-      }
-
-      let shape = SHAPE_STYLES[pIdx % SHAPE_STYLES.length];
-      let pColor = slots[0].color;
-      let topPos = 40 + (pIdx * 25) + (Math.sin(pIdx * 1.5) * 16);
-      let leftPos = 20 + ((pIdx % 3) * 65) + (Math.cos(pIdx) * 20);
-      let baseRot = -25 + ((pIdx * 35) % 65);
-
-      plates.push({
-        id: 'p_' + (pIdx + 1),
-        layer: pIdx,
-        top: Math.round(topPos),
-        left: Math.round(leftPos),
-        currentRot: baseRot,
-        pivotOrigin: 'center center',
-        color: pColor,
-        shape: shape,
-        slots: slots,
-        isHanging: false,
-        hangBaseAngle: 0,
-        swingPhase: Math.random() * Math.PI * 2,
-        swingSpeed: 1.8 + Math.random() * 0.6,
-        swingAmplitude: 12 + Math.random() * 6
-      });
-
-      pIdx++;
-    }
-
-    totalScrews = 0;
-    plates.forEach(p => p.slots.forEach(s => { if (s.color) totalScrews++; }));
-    removedCount = 0;
-    isGameOver = false;
-    isPaused = false;
-
-    document.getElementById('lvl-display').textContent = `LEVEL ${lvl}`;
-    document.getElementById('coin-display').textContent = coins;
-    updateProgress();
-    renderBoxes();
-    renderBuffer();
-    renderArena();
-  }
-
-  function isScrewPhysicallyBlocked(screwElem, plateId) {
-    if (!screwElem) return false;
-    const r = screwElem.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-
-    const stack = document.elementsFromPoint(cx, cy);
-    const myIdx = plates.findIndex(p => p.id === plateId);
-
-    for (let el of stack) {
-      const parent = el.closest('.neon-plate');
-      if (parent && parent.id !== plateId) {
-        const otherIdx = plates.findIndex(p => p.id === parent.id);
-        if (otherIdx > myIdx) return true;
-      }
-    }
-    return false;
-  }
-
-  function renderBoxes() {
-    const root = document.getElementById('boxes-container');
-    root.innerHTML = '';
-
-    boxes.forEach((b, idx) => {
-      const card = document.createElement('div');
-      card.className = 'tool-box';
-      card.id = 'box-card-' + idx;
-
-      if (b.type === 'box') {
-        card.classList.add('box-' + b.color);
-        const pill = document.createElement('div');
-        pill.className = `box-label-pill pill-${b.color}`;
-        pill.textContent = b.color;
-        card.appendChild(pill);
-
-        for (let i = 0; i < 3; i++) {
-          const socket = document.createElement('div');
-          socket.className = 'box-socket';
-          socket.id = `box-hole-${idx}-${i}`;
-          if (i < b.count) {
-            const sc = document.createElement('div');
-            sc.className = `metallic-screw screw-mini screw-${b.color}`;
-            socket.appendChild(sc);
-          }
-          card.appendChild(socket);
-        }
-      } else {
-        card.classList.add('ad-slot');
-        card.innerHTML = `<span>+</span><small>EXTRA</small>`;
-        card.onclick = () => watchRewardedAd(idx);
-      }
-      root.appendChild(card);
-    });
-  }
-
-  function renderBuffer() {
-    const root = document.getElementById('buffer-container');
-    root.innerHTML = '';
-    buffer.forEach((c, idx) => {
-      const cup = document.createElement('div');
-      cup.className = 'buffer-cup';
-      cup.id = 'buffer-cup-' + idx;
-      if (c) {
-        const sc = document.createElement('div');
-        sc.className = `metallic-screw screw-mini screw-${c}`;
-        cup.appendChild(sc);
-      }
-      root.appendChild(cup);
-    });
-  }
-
-  function renderArena() {
-    const root = document.getElementById('arena');
-    root.innerHTML = '';
-
-    plates.forEach((p, pIdx) => {
-      const pEl = document.createElement('div');
-      pEl.className = `neon-plate theme-${p.color} ${p.shape}`;
-      pEl.id = p.id;
-      pEl.style.top = p.top + 'px';
-      pEl.style.left = p.left + 'px';
-      pEl.style.transformOrigin = p.pivotOrigin;
-      pEl.style.transform = `rotate(${p.currentRot}deg)`;
-      pEl.style.zIndex = pIdx + 1;
-
-      p.slots.forEach(s => {
-        const socket = document.createElement('div');
-        socket.className = 'acrylic-hole';
-
-        if (s.color) {
-          const sc = document.createElement('div');
-          sc.className = `metallic-screw screw-${s.color}`;
-          sc.id = s.screwId;
-
-          sc.onclick = (e) => {
-            e.stopPropagation();
-            onScrewTap(p.id, s.screwId, s.color, sc);
-          };
-          socket.appendChild(sc);
-        }
-        pEl.appendChild(socket);
-      });
-
-      root.appendChild(pEl);
-    });
-  }
-
-  // Physics Loop
-  let lastTime = performance.now();
-  function physicsEngine(now) {
-    const dt = (now - lastTime) / 1000;
-    lastTime = now;
-
-    plates.forEach(p => {
-      if (p.isHanging) {
-        p.swingPhase += p.swingSpeed * dt;
-        const sway = Math.sin(p.swingPhase) * p.swingAmplitude;
-        p.currentRot = p.hangBaseAngle + sway;
-
-        const el = document.getElementById(p.id);
-        if (el) {
-          el.style.transformOrigin = p.pivotOrigin;
-          el.style.transform = `rotate(${p.currentRot}deg)`;
-        }
-      }
-    });
-
-    plates.forEach(p => {
-      p.slots.forEach(s => {
-        if (s.color) {
-          const sc = document.getElementById(s.screwId);
-          if (sc) {
-            if (isScrewPhysicallyBlocked(sc, p.id)) {
-              sc.classList.add('locked');
-            } else {
-              sc.classList.remove('locked');
-            }
-          }
-        }
-      });
-    });
-
-    requestAnimationFrame(physicsEngine);
-  }
-  requestAnimationFrame(physicsEngine);
-
-  function animateScrewFlight(startElem, targetElem, color, onComplete) {
-    const sRect = startElem.getBoundingClientRect();
-    const tRect = targetElem.getBoundingClientRect();
-
-    const ghost = document.createElement('div');
-    ghost.className = `metallic-screw screw-${color} flying-screw`;
-    ghost.style.left = (sRect.left + sRect.width / 2) + 'px';
-    ghost.style.top = (sRect.top + sRect.height / 2) + 'px';
-    document.body.appendChild(ghost);
-
-    playSound('unscrew');
-
-    requestAnimationFrame(() => {
-      ghost.style.left = (tRect.left + tRect.width / 2) + 'px';
-      ghost.style.top = (tRect.top + tRect.height / 2) + 'px';
-      ghost.style.transform = 'translate(-50%, -50%) scale(0.65) rotate(720deg)';
-    });
-
-    setTimeout(() => {
-      ghost.remove();
-      playSound('land');
-      if (onComplete) onComplete();
-    }, 420);
-  }
-
-  function onScrewTap(plateId, screwId, color, screwElem) {
-    if (isPaused || isGameOver) return;
-
-    if (isScrewPhysicallyBlocked(screwElem, plateId)) {
-      playSound('blocked');
-      screwElem.classList.remove('shake');
-      void screwElem.offsetWidth;
-      screwElem.classList.add('shake');
-      showToast('ऊपर की प्लेट हटने तक यह लॉक है!');
-      return;
-    }
-
-    let targetBoxIdx = boxes.findIndex(b => b.type === 'box' && b.color === color && b.count < 3);
-    let destElem = null;
-    let targetMode = '';
-
-    if (targetBoxIdx !== -1) {
-      targetMode = 'box';
-      const slotNum = boxes[targetBoxIdx].count;
-      destElem = document.getElementById(`box-hole-${targetBoxIdx}-${slotNum}`);
-    } else {
-      let emptyBuf = buffer.indexOf(null);
-      if (emptyBuf !== -1) {
-        targetMode = 'buffer';
-        destElem = document.getElementById(`buffer-cup-${emptyBuf}`);
-      } else {
-        playSound('blocked');
-        showToast('बफ़र स्लॉट भर गए हैं!');
-        checkFailCondition();
-        return;
-      }
-    }
-
-    const plate = plates.find(p => p.id === plateId);
-    if (!plate) return;
-    const slot = plate.slots.find(s => s.screwId === screwId);
-    if (!slot) return;
-    slot.color = null;
-    screwElem.remove();
-
-    animateScrewFlight(screwElem, destElem, color, () => {
-      removedCount++;
-      if (targetMode === 'box') {
-        boxes[targetBoxIdx].count++;
-        if (boxes[targetBoxIdx].count === 3) {
-          playSound('box-full');
-          setTimeout(() => recycleBox(boxes[targetBoxIdx]), 350);
-        }
-      } else {
-        const emptyBuf = buffer.indexOf(null);
-        if (emptyBuf !== -1) buffer[emptyBuf] = color;
-      }
-
-      checkBufferHops();
-      renderBoxes();
-      renderBuffer();
-      updateProgress();
-      checkWinCondition();
-    });
-
-    handlePlateBalance(plate);
-  }
-
-  function handlePlateBalance(plate) {
-    const leftSlots = plate.slots.filter(s => s.color !== null);
-
-    if (leftSlots.length === 0) {
-      plate.isHanging = false;
-      const el = document.getElementById(plate.id);
-      if (el) {
-        el.style.transform += ' scale(1.15) translateY(-50px)';
-        el.style.opacity = '0';
-        setTimeout(() => {
-          plates = plates.filter(p => p.id !== plate.id);
-          renderArena();
-        }, 450);
-      }
-      return;
-    }
-
-    if (leftSlots.length === 1) {
-      const pivot = leftSlots[0];
-      const tot = plate.slots.length;
-      let pct = (tot === 2)
-        ? (pivot.slotId === 0 ? '25%' : '75%')
-        : (pivot.slotId === 0 ? '18%' : (pivot.slotId === 1 ? '50%' : '82%'));
-
-      plate.pivotOrigin = `${pct} 50%`;
-      plate.isHanging = true;
-
-      if (tot === 2) {
-        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : -82;
-      } else {
-        plate.hangBaseAngle = (pivot.slotId === 0) ? 82 : (pivot.slotId === 2 ? -82 : 80);
-      }
-      plate.currentRot = plate.hangBaseAngle;
-    }
-  }
-
-  function checkBufferHops() {
-    buffer.forEach((c, i) => {
-      if (!c) return;
-      let match = boxes.find(b => b.type === 'box' && b.color === c && b.count < 3);
-      if (match) {
-        match.count++;
-        buffer[i] = null;
-        if (match.count === 3) {
-          playSound('box-full');
-          setTimeout(() => recycleBox(match), 350);
-        }
-      }
-    });
-  }
-
-  // रीसाइक्लिंग: बॉक्स पूरा होने पर बोर्ड पर बचे हुए रंग का ही अगला बॉक्स आएगा
-  function recycleBox(box) {
-    box.count = 0;
-    const remaining = [];
-    plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
-    buffer.forEach(c => { if (c) remaining.push(c); });
-
-    // सक्रिय बॉक्स के रंगों को छोड़कर कोई अन्य रंग चुनें
-    const activeBoxColors = boxes.filter(b => b.type === 'box' && b !== box).map(b => b.color);
-    const candidate = remaining.find(c => !activeBoxColors.includes(c)) || remaining[0];
-
-    if (candidate) {
-      box.color = candidate;
-    }
-
-    renderBoxes();
-    checkBufferHops();
-  }
-
-  function watchRewardedAd(boxIdx) {
-    if (boxes[boxIdx].unlocked) return;
-    playSound('unscrew');
-
-    const modal = document.getElementById('ad-timer-modal');
-    const timerText = document.getElementById('ad-timer-text');
-    modal.style.display = 'flex';
-
-    let sec = 5;
-    timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
-
-    const timer = setInterval(() => {
-      sec--;
-      if (sec > 0) {
-        timerText.textContent = `अतिरिक्त बॉक्स अनलॉक हो रहा है: ${sec}s`;
-      } else {
-        clearInterval(timer);
-        modal.style.display = 'none';
-
-        const remaining = [];
-        plates.forEach(p => p.slots.forEach(s => { if (s.color) remaining.push(s.color); }));
-        buffer.forEach(c => { if (c) remaining.push(c); });
-
-        const active = boxes.filter(b => b.type === 'box').map(b => b.color);
-        const nextColor = remaining.find(c => !active.includes(c)) || 'green';
-
-        boxes[boxIdx] = { type: 'box', color: nextColor, count: 0, unlocked: true };
-
-        playSound('box-full');
-        showToast('चौथा बॉक्स सफलतापूर्वक अनलॉक हुआ! 🎉');
-        renderBoxes();
-        checkBufferHops();
-      }
-    }, 1000);
-  }
-
-  function updateProgress() {
-    const pct = totalScrews > 0 ? Math.min(100, Math.floor((removedCount / totalScrews) * 100)) : 100;
-    document.getElementById('fill-line').style.width = pct + '%';
-  }
-
-  function checkWinCondition() {
-    if (removedCount >= totalScrews && totalScrews > 0) {
-      isGameOver = true;
-      coins += 25;
-      saveGame();
-      playSound('box-full');
-      setTimeout(() => {
-        document.getElementById('win-modal').style.display = 'flex';
-      }, 550);
-    }
-  }
-
-  function checkFailCondition() {
-    if (buffer.every(c => c !== null)) {
-      isGameOver = true;
-      playSound('blocked');
-      document.getElementById('fail-modal').style.display = 'flex';
-    }
-  }
-
-  window.nextLevel = function() {
-    document.getElementById('win-modal').style.display = 'none';
-    level++;
-    saveGame();
-    buildLevel(level);
+(function(){
+'use strict';
+
+// ===== DOM =====
+const $=id=>document.getElementById(id);
+const scene=$('scene'),player=$('player'),scoreEl=$('score'),coinsEl=$('coins'),bestEl=$('best');
+const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen'),leaderboardScreen=$('leaderboardScreen');
+const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins'),newRecordEl=$('newRecord');
+const flash=$('flash'),adBanner=$('adBanner'),adInterstitial=$('adInterstitial');
+const soundToggle=$('soundToggle'),powerupBar=$('powerupBar'),dailyChallengeEl=$('dailyChallenge');
+const leaderboardList=$('leaderboardList'),playerNameInput=$('playerName');
+
+// ===== FIREBASE CONFIG =====
+// अपना Firebase प्रोजेक्ट कॉन्फ़िगरेशन यहाँ डालें
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const USE_FIREBASE = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
+
+let firebaseDB = null;
+if (USE_FIREBASE) {
+  // Firebase SDK लोड (ES module नहीं - सिंपल वर्ज़न)
+  const s1=document.createElement('script'); s1.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
+  const s2=document.createElement('script'); s2.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js';
+  s1.onload=()=>{ document.head.appendChild(s2); };
+  s2.onload=()=>{
+    try{ firebase.initializeApp(FIREBASE_CONFIG); firebaseDB=firebase.database(); console.log('🔥 Firebase ready'); }
+    catch(e){ console.warn('Firebase init failed:',e); }
   };
+  document.head.appendChild(s1);
+}
 
-  window.retryLevel = function() {
-    document.getElementById('fail-modal').style.display = 'none';
-    document.getElementById('pause-modal').style.display = 'none';
-    buildLevel(level);
+// ===== SOUND =====
+const Sound=(()=>{
+  let ctx=null;
+  let muted=localStorage.getItem('cubeRunnerMuted')==='true';
+  function init(){ if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}} if(ctx&&ctx.state==='suspended')ctx.resume(); }
+  function beep(freq,dur,type='sine',vol=0.15){
+    if(muted||!ctx)return;
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(vol,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur);
+  }
+  function sweep(f1,f2,dur,vol=0.12){
+    if(muted||!ctx)return;
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(f1,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f2,ctx.currentTime+dur);
+    g.gain.setValueAtTime(vol,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur);
+  }
+  return{
+    init,
+    moveLeft:()=>sweep(600,400,0.1),
+    moveRight:()=>sweep(400,600,0.1),
+    score:()=>beep(880,0.05,'sine',0.08),
+    coin:()=>{beep(1200,0.06,'sine',0.12);setTimeout(()=>beep(1600,0.08,'sine',0.1),50);},
+    powerup:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.1,'triangle',0.12),i*60));},
+    shield:()=>{beep(400,0.2,'sine',0.1);setTimeout(()=>beep(800,0.3,'sine',0.1),100);},
+    gameOver:()=>{beep(200,0.4,'sawtooth',0.2);setTimeout(()=>beep(100,0.6,'sawtooth',0.15),100);setTimeout(()=>beep(60,0.8,'square',0.12),250);},
+    start:()=>{beep(523,0.1);setTimeout(()=>beep(659,0.1),100);setTimeout(()=>beep(784,0.15),200);},
+    newRecord:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.15,'triangle',0.12),i*100));},
+    toggleMute:()=>{muted=!muted;localStorage.setItem('cubeRunnerMuted',muted.toString());updateUI();return muted;},
+    isMuted:()=>muted
   };
-
-  window.togglePause = function() {
-    isPaused = !isPaused;
-    document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
-  };
-
-  window.useBooster = function(type) {
-    if (isPaused || isGameOver) return;
-    if (boosters[type] <= 0) {
-      showToast('यह बूस्टर समाप्त हो गया है!');
-      return;
-    }
-
-    if (type === 'drill') {
-      for (let i = plates.length - 1; i >= 0; i--) {
-        const p = plates[i];
-        for (let s of p.slots) {
-          if (s.color) {
-            const sc = document.getElementById(s.screwId);
-            if (sc && !isScrewPhysicallyBlocked(sc, p.id)) {
-              boosters.drill--;
-              document.getElementById('drill-count').textContent = boosters.drill;
-              onScrewTap(p.id, s.screwId, s.color, sc);
-              return;
-            }
-          }
-        }
-      }
-      showToast('कोई अनलॉक स्क्रू नहीं मिला!');
-    } else if (type === 'hammer') {
-      if (plates.length > 0) {
-        const topPlate = plates[plates.length - 1];
-        boosters.hammer--;
-        document.getElementById('hammer-count').textContent = boosters.hammer;
-        removedCount += topPlate.slots.filter(s => s.color !== null).length;
-        plates.pop();
-        playSound('box-full');
-        renderArena();
-        updateProgress();
-        checkWinCondition();
-        showToast('हथौड़े से शीर्ष प्लेट हटा दी गई!');
-      }
-    } else if (type === 'cleaner') {
-      if (buffer.every(c => c === null)) {
-        showToast('बफ़र पहले से खाली है!');
-        return;
-      }
-      boosters.cleaner--;
-      document.getElementById('cleaner-count').textContent = boosters.cleaner;
-      buffer = [null, null, null, null, null];
-      playSound('unscrew');
-      renderBuffer();
-      showToast('बफ़र पूरी तरह साफ़ कर दिया गया!');
-    }
-  };
-
-  buildLevel(level);
+  function updateUI(){soundToggle.textContent=muted?'🔇':'🔊';soundToggle.classList.toggle('muted',muted);}
 })();
-</script>
-</body>
-</html>
+soundToggle.textContent=Sound.isMuted()?'🔇':'🔊';
+soundToggle.classList.toggle('muted',Sound.isMuted());
+soundToggle.addEventListener('click',()=>{Sound.init();Sound.toggleMute();});
+
+// ===== GAME STATE =====
+const LANES=[-100,0,100];
+let currentLane=1,score=0,coins=0,best=parseInt(localStorage.getItem('cubeRunnerBest')||'0',10);
+let isRunning=false,gameSpeed=2.2,obstacleTimer,scoreTimer,speedTimer;
+let obstacles=[],coinsArr=[],powerups=[];
+let playerX=0,targetX=0,lastTime=0;
+let activePowerups={shield:0,magnet:0,slow:0,double:0}; // timestamps (ms remaining)
+let doubleScoreActive=false;
+let globalLeaderboard=[];
+
+bestEl.textContent=best;
+coinsEl.textContent='0';
+
+// ===== DAILY CHALLENGE =====
+const DailyChallenge=(()=>{
+  const today=new Date().toDateString();
+  const saved=JSON.parse(localStorage.getItem('cubeRunnerDaily')||'{}');
+  let challenge;
+  if(saved.date===today){ challenge=saved; }
+  else {
+    const types=[
+      {type:'score',target:100,desc:'100 स्कोर करें',reward:50},
+      {type:'coins',target:30,desc:'30 कोइन इकट्ठा करें',reward:50},
+      {type:'powerup',target:3,desc:'3 पावर-अप उठाएँ',reward:60},
+      {type:'games',target:3,desc:'3 गेम खेलें',reward:40}
+    ];
+    challenge={date:today,...types[Math.floor(Math.random()*types.length)],progress:0,completed:false};
+    localStorage.setItem('cubeRunnerDaily',JSON.stringify(challenge));
+  }
+  return challenge;
+})();
+
+function updateDailyUI(){
+  if(DailyChallenge.completed){
+    dailyChallengeEl.innerHTML=`✅ <b>DAILY COMPLETE!</b> +${DailyChallenge.reward} 🪙`;
+    dailyChallengeEl.style.borderColor='#00ff88';
+    dailyChallengeEl.style.color='#00ff88';
+  } else {
+    dailyChallengeEl.innerHTML=`🎯 <b>DAILY:</b> ${DailyChallenge.desc} (${DailyChallenge.progress}/${DailyChallenge.target}) +${DailyChallenge.reward}🪙`;
+  }
+}
+function progressDaily(amount=1){
+  if(DailyChallenge.completed)return;
+  DailyChallenge.progress+=amount;
+  if(DailyChallenge.progress>=DailyChallenge.target){
+    DailyChallenge.completed=true;
+    coins+=DailyChallenge.reward;
+    localStorage.setItem('cubeRunnerDaily',JSON.stringify(DailyChallenge));
+    Sound.newRecord();
+  } else {
+    localStorage.setItem('cubeRunnerDaily',JSON.stringify(DailyChallenge));
+  }
+  updateDailyUI();
+}
+updateDailyUI();
+
+// ===== INPUT =====
+function movePlayer(dir){
+  if(!isRunning)return;
+  const nl=currentLane+dir;
+  if(nl<0||nl>2)return;
+  currentLane=nl;targetX=LANES[currentLane];
+  if(dir<0)Sound.moveLeft();else Sound.moveRight();
+}
+$('btnLeft').addEventListener('click',()=>movePlayer(-1));
+$('btnRight').addEventListener('click',()=>movePlayer(1));
+document.addEventListener('keydown',e=>{
+  if(['ArrowLeft','a','A'].includes(e.key)){e.preventDefault();movePlayer(-1);}
+  if(['ArrowRight','d','D'].includes(e.key)){e.preventDefault();movePlayer(1);}
+});
+let tStartX=0;
+scene.addEventListener('touchstart',e=>{tStartX=e.touches[0].clientX;},{passive:true});
+scene.addEventListener('touchend',e=>{
+  const d=e.changedTouches[0].clientX-tStartX;
+  if(Math.abs(d)>40)movePlayer(d>0?1:-1);
+},{passive:true});
+
+// ===== SMOOTH MOVE =====
+function smoothMove(){
+  playerX+=(targetX-playerX)*0.2;
+  player.style.transform=`translateX(calc(-50% + ${
