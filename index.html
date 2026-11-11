@@ -1,135 +1,1075 @@
-<!doctype html>
-<html lang="hi">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#eee3c5">
-<title>Crown Match 3D</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Unscrew Nuts 3D</title>
 <style>
-:root{--cream:#eee3c5;--ink:#51432d;--purple:#8750d4;--blue:#426be9;--pink:#e64b68;--brown:#956d5b;--orange:#ef8b35;--yellow:#f2c83c;--green:#a9e783}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--cream);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);touch-action:manipulation}
-#game{height:100dvh;min-height:560px;max-width:520px;margin:auto;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#fff4d9 0,#eee3c5 67%)}
-.top{height:108px;padding:18px 16px 0;display:grid;grid-template-columns:42px 1fr 70px 70px;align-items:center;gap:8px}
-.pause{font-size:28px;border:0;background:none;color:#665d4c;font-weight:900}
-.level{text-align:center;font-weight:1000;font-size:23px;color:white;-webkit-text-stroke:1px #51432d;text-shadow:2px 3px 0 #75654a,0 0 2px #fff;letter-spacing:.5px}
-.topIcon{font-size:35px;text-align:center;filter:drop-shadow(0 3px 1px #9c8250)}
-.star{width:62px;height:62px;position:relative;display:grid;place-items:center;font-size:16px;font-weight:900;color:white;text-shadow:1px 2px #684b27;background:#f0bb39;clip-path:polygon(50% 0,62% 31%,96% 35%,72% 59%,79% 95%,50% 77%,20% 95%,27% 59%,3% 35%,38% 31%);filter:drop-shadow(0 3px 1px #927b4f)}
-.bays{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding:2px 14px 0;height:144px}
-.bay{height:132px;border-radius:27px;background:linear-gradient(145deg,#fff 5%,#e4e5e9 80%);border:5px solid var(--purple);box-shadow:0 6px 0 #58279a, inset 0 2px 3px #fff;position:relative;display:flex;justify-content:center;align-items:flex-start;padding-top:17px}
-.bay.blue{border-color:#5275f4;box-shadow:0 6px 0 #2946b4,inset 0 2px 3px #fff}
-.bay.add{background:#f8d44e;border:2px solid #c59b1d;box-shadow:0 5px 0 #a27b16;color:#8c6a17;align-items:center;padding:0;font-size:58px;font-weight:300;border-radius:21px}
-.bay .orb{width:45px;height:45px;position:absolute;top:17px}
-.bay .dots{position:absolute;bottom:12px;display:flex;gap:24px}
-.dot{width:34px;height:34px;border-radius:50%;background:#9da6b4;border:3px solid #dce0e7;box-shadow:inset 0 2px 3px #657080}
-.ad{position:absolute;bottom:7px;right:3px;font-size:12px;font-weight:900;background:#43b96d;color:#fff;border-radius:10px;padding:1px 6px;border:2px solid #d9f5df}
-.orb{border-radius:50%;display:grid;place-items:center;color:#573b2d;font-size:26px;font-weight:1000;text-shadow:0 1px 1px #fff8;background:radial-gradient(circle at 32% 25%,#fff8 0 8%,transparent 24%),radial-gradient(circle at 35% 28%,var(--c) 0 50%,var(--d) 100%);box-shadow:inset 0 -4px 0 #0002,0 3px 3px #66543b66;border:1px solid #0002}
-.orb:after{content:"✦";transform:translateY(-1px);text-shadow:0 1px 1px #fff6}
-.queue{height:55px;display:flex;justify-content:center;align-items:center;gap:11px;position:relative}
-.queue .dot{width:31px;height:31px}
-.boost{position:absolute;right:22px;width:76px;height:76px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#9d6b2d,#60320b 68%,#321900);border:4px solid #9c7b4a;box-shadow:0 4px 2px #6d5738;color:white;font-size:27px}
-.boost span{position:absolute;right:-7px;bottom:-9px;font-size:25px;font-weight:900;text-shadow:2px 2px #4b321a}
-.playfield{position:absolute;top:310px;bottom:190px;width:100%;display:flex;align-items:center;justify-content:center}
-.board{position:relative;width:100%;height:100%;max-height:520px}
-.track{position:absolute;left:29%;right:29%;top:45%;height:18%;border-radius:30px;background:#cb80a6;border:7px solid #fff2;box-shadow:0 5px 0 #866a6e,0 9px 12px #76664b55}
-.track:before{content:"";position:absolute;left:30%;right:30%;top:-42%;height:50%;background:#cb80a6;border:7px solid #fff2;border-bottom:0;border-radius:25px 25px 0 0}
-.cloud{position:absolute;left:3%;right:3%;top:22%;height:62%;background:#aaa99d;border:5px solid #858579;border-radius:42% 35% 37% 42%;opacity:.75;filter:drop-shadow(0 4px 0 #6d6b61)}
-.arrow{position:absolute;bottom:0;width:23%;height:30%;background:#aaa99d;border:6px solid #888579;border-radius:32px;opacity:.85}
-.arrow:before{content:"";position:absolute;left:-28%;top:-34%;width:150%;height:65%;background:#aaa99d;border:6px solid #888579;clip-path:polygon(50% 0,100% 80%,75% 100%,25% 100%,0 80%);border-radius:20px}
-.arrow.left{left:7%}.arrow.right{right:7%}
-.crown{position:absolute;width:28%;height:37%;background:linear-gradient(145deg,var(--c1),var(--c2));border:6px solid #fff0;border-radius:18px 18px 30px 30px;clip-path:polygon(0 27%,23% 48%,39% 0,57% 40%,76% 0,100% 28%,91% 100%,9% 100%);filter:drop-shadow(0 5px 1px #62544a);display:flex;align-items:center;justify-content:center}
-.crown:after{content:"";position:absolute;inset:5px;border:4px solid #fff8;border-radius:15px 15px 28px 28px;clip-path:polygon(0 27%,23% 48%,39% 0,57% 40%,76% 0,100% 28%,91% 100%,9% 100%);pointer-events:none}
-.crown.p1{left:3%;top:45%;--c1:#a27be9;--c2:#6940b9;transform:rotate(-7deg)}
-.crown.p2{left:19%;top:22%;--c1:#e78bb5;--c2:#b35b91;transform:rotate(5deg)}
-.crown.p3{left:34%;top:14%;--c1:#a18ae8;--c2:#6b50c1;transform:rotate(-2deg);z-index:3}
-.crown.p4{left:49%;top:15%;--c1:#e5b09a;--c2:#b77d68;transform:rotate(5deg);z-index:2}
-.crown.p5{right:3%;top:44%;--c1:#e6b49c;--c2:#b9826c;transform:rotate(7deg)}
-.crown .gem{position:absolute;width:35px;height:35px;z-index:4}
-.crown .g1{left:12%;top:24%}.crown .g2{right:13%;top:42%}.crown .g3{left:40%;bottom:10%}
-.crown .socket{position:absolute;width:28px;height:28px;border:2px solid #fff9;border-radius:50%;z-index:4}
-.crown .s1{left:12%;bottom:10%}.crown .s2{right:12%;bottom:10%}
-.crown.selected{outline:4px solid #fff;filter:drop-shadow(0 0 9px #fff)}
-.crown:active{transform:scale(.97)}
-.gem{width:43px;height:43px;cursor:pointer;z-index:5}
-.gem.small{width:34px;height:34px}
-.greenTray{position:absolute;z-index:8;top:0;left:30%;width:40%;height:88px;border:6px solid #fff9;border-radius:29px;background:#aee986;box-shadow:0 5px 0 #83bc65;display:flex;align-items:center;justify-content:space-evenly}
-.greenTray .slot{width:28px;height:28px;border:2px solid #fff9;border-radius:50%;display:grid;place-items:center}
-.greenTray .slot .orb{width:34px;height:34px}
-.tools{position:absolute;bottom:18px;left:5%;right:5%;height:94px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.tool{background:#f8d34e;border:2px solid #c49b1d;border-radius:19px;box-shadow:0 6px 0 #a77f17;display:grid;place-items:center;position:relative;font-size:45px}
-.tool b{position:absolute;right:-7px;top:-12px;background:white;border:3px solid #777;border-radius:13px;padding:0 8px;font-size:22px;color:#333}
-.tool:active,.tool.active{transform:translateY(4px);box-shadow:0 2px 0 #a77f17}
-.hint{position:absolute;bottom:125px;left:0;right:0;text-align:center;font-size:12px;color:#857657}
-.toast{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);background:#49331d;color:white;padding:12px 20px;border-radius:20px;z-index:30;display:none;box-shadow:0 4px 12px #0004}
-.overlay{position:absolute;inset:0;background:#342a1d99;z-index:40;display:none;align-items:center;justify-content:center;padding:25px}
-.panel{width:100%;background:#fff2d7;border:5px solid #fff;border-radius:28px;padding:25px;text-align:center;box-shadow:0 8px 0 #90784d}
-.panel h2{margin:0 0 10px;font-size:28px}.panel p{line-height:1.5}
-.action{border:0;border-radius:16px;padding:13px 24px;background:linear-gradient(#ffdf62,#f2b72e);box-shadow:0 5px 0 #a87917;font-weight:900;font-size:17px;color:#594015;margin:8px}
-@media(max-height:700px){.top{height:90px}.bays{height:120px}.bay{height:108px}.playfield{top:270px;bottom:155px}.tools{height:76px}.hint{bottom:103px}}
+:root {
+  --bg-dark: #12151c;
+  --bg-panel: #1e2433;
+  --bg-card: #283044;
+  --accent-gold: #ffbe0b;
+  --accent-green: #06d6a0;
+  --accent-blue: #118ab2;
+  --accent-red: #ef476f;
+  --text-main: #f8f9fa;
+  --text-muted: #8d99ae;
+  --tray-slot-size: 52px;
+}
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin: 0;
+  padding: 0;
+}
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#game-container {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  max-height: 960px;
+  background: radial-gradient(circle at 50% 30%, #202739 0%, #0d1017 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+/* Top Bar */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(18, 21, 28, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 20;
+}
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.coin-badge {
+  background: linear-gradient(135deg, #2b3245, #1e222e);
+  border: 1px solid #4a5568;
+  padding: 4px 12px 4px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.level-badge {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid #414d68;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+.btn-icon:active {
+  transform: scale(0.92);
+}
+/* Screw Tray Station */
+.tray-container {
+  background: linear-gradient(180deg, #1b202c, #131720);
+  border: 2px solid #323b50;
+  border-radius: 16px;
+  margin: 10px 16px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 15;
+}
+.tray-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.tray-slots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.tray-slot {
+  width: var(--tray-slot-size);
+  height: var(--tray-slot-size);
+  border-radius: 50%;
+  background: radial-gradient(circle, #0b0d13 50%, #1e2434 100%);
+  border: 2px dashed #404b62;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s;
+}
+.tray-slot.locked {
+  background: #11141a;
+  border: 1px solid #282f3d;
+}
+/* Game Canvas Stage */
+#stage {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  perspective: 900px;
+}
+.interactive-board {
+  position: absolute;
+  border-radius: 12px;
+  transform-style: preserve-3d;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s;
+  pointer-events: none;
+}
+.board-wood {
+  background: repeating-linear-gradient(45deg, #8b4513, #8b4513 12px, #7c3a0d 12px, #7c3a0d 24px);
+  border: 3px solid #5a2909;
+}
+.board-metal {
+  background: linear-gradient(135deg, #9ca3af 0%, #4b5563 50%, #9ca3af 100%);
+  border: 3px solid #374151;
+}
+.board-glass {
+  background: rgba(147, 197, 253, 0.25);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+.board-stone {
+  background: #52525b;
+  border: 3px solid #27272a;
+}
+/* Screws */
+.screw {
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 25;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.screw-cap {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 -3px 4px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5);
+  position: relative;
+}
+.screw-cap::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 6px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgba(255,255,255,0.2);
+}
+.screw-cap::before {
+  content: '';
+  position: absolute;
+  height: 22px;
+  width: 6px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgba(255,255,255,0.2);
+}
+.screw-gold { background: radial-gradient(circle, #fde047 30%, #ca8a04 90%); }
+.screw-red { background: radial-gradient(circle, #f87171 30%, #b91c1c 90%); }
+.screw-blue { background: radial-gradient(circle, #60a5fa 30%, #1d4ed8 90%); }
+.screw-green { background: radial-gradient(circle, #4ade80 30%, #15803d 90%); }
+.screw-purple { background: radial-gradient(circle, #c084fc 30%, #7e22ce 90%); }
+.screw-silver { background: radial-gradient(circle, #e2e8f0 30%, #64748b 90%); }
+.screw.selected {
+  transform: translate(-50%, -50%) scale(1.25) translateZ(30px);
+  box-shadow: 0 0 15px 4px var(--accent-gold);
+}
+/* Holes */
+.hole {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 65%, #333 100%);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 3px 6px #000;
+  border: 1px solid #444;
+  z-index: 10;
+}
+/* Bottom Booster Bar */
+.boosters-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 16px;
+  background: rgba(18, 21, 28, 0.9);
+  border-top: 1px solid #293245;
+  z-index: 20;
+}
+.booster-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  position: relative;
+}
+.booster-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--bg-card);
+  border: 1px solid #44516d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+.booster-btn:active .booster-icon-wrap {
+  transform: scale(0.92);
+}
+.booster-count {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  background: var(--accent-gold);
+  color: #000;
+  font-size: 11px;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-dark);
+}
+.booster-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+/* Ad Banner Area */
+#banner-ad-container {
+  width: 100%;
+  height: 50px;
+  background: #090b0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #1a202c;
+  font-size: 11px;
+  color: #64748b;
+  z-index: 20;
+}
+/* Overlays & Modals */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 10, 14, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  padding: 20px;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-box {
+  width: 100%;
+  max-width: 340px;
+  background: linear-gradient(145deg, #1f2637, #151a24);
+  border: 1px solid #374259;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transform: scale(0.9);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.modal-overlay.active .modal-box {
+  transform: scale(1);
+}
+.modal-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.modal-body {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffbe0b, #f59e0b);
+  border: none;
+  color: #000;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  margin-bottom: 10px;
+  transition: transform 0.1s;
+}
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: #2a3346;
+  border: 1px solid #3d4a66;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-primary:active, .btn-secondary:active {
+  transform: scale(0.96);
+}
+/* Level Select Grid */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+.level-node {
+  aspect-ratio: 1;
+  background: #262e40;
+  border: 1px solid #3c4966;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.level-node.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #181d29;
+}
+.level-node.completed {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+/* Canvas particle effect */
+#fx-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
 </style>
 </head>
 <body>
-<div id="game">
- <header class="top">
-  <button class="pause" id="pause" aria-label="रोकें">Ⅱ</button>
-  <div class="level" id="level">LEVEL 132</div>
-  <div class="topIcon">🛒</div>
-  <div class="star">44%</div>
- </header>
- <section class="bays">
-  <div class="bay"><div class="orb" style="--c:#bd6bf1;--d:#7a31bf"></div><div class="dots"><i class="dot"></i><i class="dot"></i></div></div>
-  <div class="bay blue"><div class="orb" style="--c:#6d8cff;--d:#3554d4"></div><div class="dots"><i class="dot"></i><i class="dot"></i></div></div>
-  <button class="bay add" id="addA">＋<span class="ad">AD</span></button>
-  <button class="bay add" id="addB">＋<span class="ad">AD</span></button>
- </section>
- <div class="queue" id="queue"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><button class="boost" id="shuffle">✕<span>3</span></button></div>
- <main class="playfield">
-  <div class="board">
-   <div class="greenTray" id="tray"></div>
-   <div class="cloud"></div><div class="track"></div>
-   <div class="arrow left"></div><div class="arrow right"></div>
-   <div class="crown p1" data-crown="0"><span class="socket s1"></span><span class="socket s2"></span><div class="orb gem g1" data-color="brown" style="--c:#b58a69;--d:#76503d"></div></div>
-   <div class="crown p2" data-crown="1"><div class="orb gem g1" data-color="blue" style="--c:#6c91ff;--d:#3855d4"></div><div class="orb gem g2" data-color="brown" style="--c:#b58a69;--d:#76503d"></div></div>
-   <div class="crown p3" data-crown="2"><div class="orb gem g1" data-color="blue" style="--c:#6c91ff;--d:#3855d4"></div><div class="orb gem g2" data-color="purple" style="--c:#ba65ed;--d:#7832bd"></div><div class="orb gem g3" data-color="orange" style="--c:#ffad50;--d:#c9671b"></div><span class="socket s1"></span></div>
-   <div class="crown p4" data-crown="3"><div class="orb gem g1" data-color="purple" style="--c:#ba65ed;--d:#7832bd"></div><div class="orb gem g2" data-color="orange" style="--c:#ffad50;--d:#c9671b"></div></div>
-   <div class="crown p5" data-crown="4"><div class="orb gem g1" data-color="purple" style="--c:#ba65ed;--d:#7832bd"></div><div class="orb gem g2" data-color="pink" style="--c:#ff6581;--d:#c52d4d"></div></div>
-   <div class="orb gem" style="position:absolute;left:30%;top:61%;--c:#b58a69;--d:#76503d" data-color="brown"></div>
-   <div class="orb gem" style="position:absolute;left:52%;top:61%;--c:#f8d34e;--d:#bd8b0b" data-color="yellow"></div>
-   <div class="orb gem" style="position:absolute;left:64%;top:61%;--c:#a967e9;--d:#7034ba" data-color="purple"></div>
-   <div class="orb gem" style="position:absolute;left:78%;top:61%;--c:#f8d34e;--d:#bd8b0b" data-color="yellow"></div>
+
+<div id="game-container">
+  <!-- Top Bar -->
+  <header class="header-bar">
+    <div class="header-left">
+      <button class="btn-icon" id="btn-pause" title="Pause">⏸</button>
+      <div class="coin-badge">🪙 <span id="coin-counter">0</span></div>
+    </div>
+    <div class="level-badge" id="level-title">Level 1</div>
+    <div class="header-right">
+      <button class="btn-icon" id="btn-levels" title="Levels">☰</button>
+      <button class="btn-icon" id="btn-sound" title="Sound">🔊</button>
+    </div>
+  </header>
+
+  <!-- Tray Slot Container -->
+  <div class="tray-container">
+    <div class="tray-header">
+      <span>SCREW BUFFER TRAY</span>
+      <span id="tray-occupancy">0 / 4</span>
+    </div>
+    <div class="tray-slots" id="tray-slot-row"></div>
   </div>
- </main>
- <div class="hint">रत्न चुनें और ऊपर खाली जगह में रखें • एक रंग के 3 रत्न मिलाएँ</div>
- <section class="tools">
-  <button class="tool" data-tool="drill" title="ड्रिल">🛠️<b id="drillCount">2</b></button>
-  <button class="tool" data-tool="hammer" title="हथौड़ा">🔨<b id="hammerCount">1</b></button>
-  <button class="tool" data-tool="brush" title="ब्रश">🧹<b id="brushCount">1</b></button>
- </section>
- <div class="toast" id="toast"></div>
- <div class="overlay" id="overlay"><div class="panel"><h2 id="panelTitle">गेम रुका हुआ है</h2><p id="panelText">जब चाहें खेल जारी रखें।</p><button class="action" id="resume">जारी रखें</button><button class="action" id="restart">फिर से शुरू</button></div></div>
+
+  <!-- Interactive 3D Puzzle Canvas -->
+  <main id="stage">
+    <canvas id="fx-canvas"></canvas>
+  </main>
+
+  <!-- Booster Controls -->
+  <footer class="boosters-bar">
+    <button class="booster-btn" id="btn-boost-undo">
+      <div class="booster-icon-wrap">↺<div class="booster-count" id="count-undo">3</div></div>
+      <span class="booster-label">Undo</span>
+    </button>
+    <button class="booster-btn" id="btn-boost-tray">
+      <div class="booster-icon-wrap">➕<div class="booster-count" id="count-tray">+1</div></div>
+      <span class="booster-label">Extra Hole</span>
+    </button>
+    <button class="booster-btn" id="btn-boost-hammer">
+      <div class="booster-icon-wrap">🔨<div class="booster-count" id="count-hammer">1</div></div>
+      <span class="booster-label">Hammer</span>
+    </button>
+    <button class="booster-btn" id="btn-boost-hint">
+      <div class="booster-icon-wrap">💡<div class="booster-count" id="count-hint">2</div></div>
+      <span class="booster-label">Hint</span>
+    </button>
+  </footer>
+
+  <!-- Mock Ad Slot -->
+  <div id="banner-ad-container">
+    <span>ADVERTISEMENT BANNER SLOT [DEMO MODE]</span>
+  </div>
+
+  <!-- Win Modal -->
+  <div class="modal-overlay" id="modal-victory">
+    <div class="modal-box">
+      <div class="modal-title" style="color:var(--accent-gold)">🎉 VICTORY!</div>
+      <div class="modal-body">Level Cleared! All plates unbolted cleanly.</div>
+      <div style="font-size:26px; margin-bottom: 16px;">⭐⭐⭐</div>
+      <button class="btn-primary" id="btn-next-lvl">NEXT LEVEL</button>
+      <button class="btn-secondary" id="btn-reward-ad-win">📺 2x COINS (WATCH AD)</button>
+    </div>
+  </div>
+
+  <!-- Lose Modal -->
+  <div class="modal-overlay" id="modal-gameover">
+    <div class="modal-box">
+      <div class="modal-title" style="color:var(--accent-red)">⚠️ TRAY FULL</div>
+      <div class="modal-body">No more room left in the buffer tray! Expand the tray or retry.</div>
+      <button class="btn-primary" id="btn-ad-free-tray">📺 UNLOCK SLOT (WATCH AD)</button>
+      <button class="btn-secondary" id="btn-retry-lvl">TRY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- Level Select Modal -->
+  <div class="modal-overlay" id="modal-levels">
+    <div class="modal-box">
+      <div class="modal-title">Select Level</div>
+      <div class="level-grid" id="level-grid-container"></div>
+      <button class="btn-secondary" id="btn-close-levels">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- Daily Bonus Modal -->
+  <div class="modal-overlay" id="modal-daily">
+    <div class="modal-box">
+      <div class="modal-title" style="color:var(--accent-gold)">🎁 DAILY BONUS</div>
+      <div class="modal-body">Welcome back! Claim today's bonus reward:</div>
+      <div style="font-size: 28px; font-weight:800; color:var(--accent-gold); margin-bottom:16px;">🪙 +250</div>
+      <button class="btn-primary" id="btn-claim-daily">CLAIM NOW</button>
+    </div>
+  </div>
+
+  <!-- Ad Simulator Modal -->
+  <div class="modal-overlay" id="modal-ad-sim">
+    <div class="modal-box">
+      <div class="modal-title">Rewarded Ad Playing</div>
+      <div class="modal-body" id="ad-sim-text">Simulating partner advertisement network...</div>
+      <div style="height:6px; background:#1b202c; border-radius:3px; overflow:hidden; margin-bottom:16px;">
+        <div id="ad-progress-bar" style="height:100%; width:0%; background:var(--accent-green); transition: width 3s linear;"></div>
+      </div>
+      <button class="btn-secondary" id="btn-ad-cancel">Cancel</button>
+    </div>
+  </div>
 </div>
+
 <script>
-(()=> {
- const colors={purple:['#ba65ed','#7832bd'],blue:['#6c91ff','#3855d4'],pink:['#ff6581','#c52d4d'],brown:['#b58a69','#76503d'],orange:['#ffad50','#c9671b'],yellow:['#f8d34e','#bd8b0b']};
- const tray=document.getElementById('tray'),queue=document.getElementById('queue'),toast=document.getElementById('toast');
- let pieces=[],moves=0,level=132,selected=null,tool=null,counts={drill:2,hammer:1,brush:1},paused=false;
- const initial=[['brown'],['blue','brown'],['blue','purple','orange'],['purple','orange'],['purple','pink'],['brown','yellow','purple','yellow']];
- function makeOrb(color,small=false){let el=document.createElement('div');el.className='orb'+(small?' small':'');el.style.setProperty('--c',colors[color][0]);el.style.setProperty('--d',colors[color][1]);el.dataset.color=color;return el}
- function say(msg){toast.textContent=msg;toast.style.display='block';clearTimeout(say.t);say.t=setTimeout(()=>toast.style.display='none',1700)}
- function renderTray(){tray.innerHTML='';for(let i=0;i<5;i++){let slot=document.createElement('div');slot.className='slot';if(pieces[i])slot.appendChild(makeOrb(pieces[i],true));slot.addEventListener('click',()=>{if(selected)placeSelected(i)});tray.appendChild(slot)}queue.innerHTML='';for(let i=0;i<5;i++){let d=document.createElement('i');d.className='dot';if(pieces[i]){d.style.background=colors[pieces[i]][0];d.style.borderColor=colors[pieces[i]][1]}queue.appendChild(d)}let b=document.createElement('button');b.className='boost';b.id='shuffle';b.innerHTML='✕<span>3</span>';b.onclick=shuffle;queue.appendChild(b)}
- function init(){pieces=[];moves=0;selected=null;document.querySelectorAll('.board>.gem').forEach((g,i)=>{g.style.display='grid';g.dataset.used='0'});document.querySelectorAll('.crown .gem').forEach(g=>{g.style.display='grid';g.dataset.used='0'});renderTray();document.getElementById('level').textContent='LEVEL '+level}
- function getGems(){return [...document.querySelectorAll('.board .gem')].filter(g=>g.style.display!=='none')}
- function placeSelected(index){if(index<0||index>4)return;if(pieces[index]){say('यह जगह पहले से भरी है');return}if(pieces.length>=5){lose();return}pieces[index]=selected.dataset.color;selected.style.display='none';selected=null;renderTray();moves++;let c=pieces.filter(Boolean);let countsBy={};c.forEach(x=>countsBy[x]=(countsBy[x]||0)+1);let match=Object.keys(countsBy).find(k=>countsBy[k]>=3);if(match){pieces=pieces.filter(x=>x!==match);say('शानदार! 3 एक जैसे रत्न मिले');renderTray()}if(getGems().length===0){level++;document.getElementById('panelTitle').textContent='स्तर पूरा!';document.getElementById('panelText').textContent='बहुत बढ़िया! अगला स्तर खेलने के लिए फिर से शुरू दबाएँ।';openPanel()}else if(pieces.filter(Boolean).length===5)lose()}
- document.querySelectorAll('.board .gem').forEach(g=>g.addEventListener('click',()=>{if(paused||g.style.display==='none')return;if(tool){useTool(g);return}if(selected)selected.classList.remove('selected');selected=g;g.classList.add('selected');let empty=pieces.findIndex(x=>!x);if(empty<0){say('ऊपर की जगह खाली नहीं है');return}placeSelected(empty)}));
- function lose(){document.getElementById('panelTitle').textContent='जगह भर गई!';document.getElementById('panelText').textContent='ट्रे भर गई है। फिर से कोशिश करें और तीन एक जैसे रत्न मिलाएँ।';openPanel()}
- function openPanel(){paused=true;document.getElementById('overlay').style.display='flex'}
- function closePanel(){paused=false;document.getElementById('overlay').style.display='none'}
- document.getElementById('pause').onclick=()=>{document.getElementById('panelTitle').textContent='गेम रुका हुआ है';document.getElementById('panelText').textContent='खेल जारी रखें या स्तर फिर से शुरू करें।';openPanel()};
- document.getElementById('resume').onclick=closePanel;document.getElementById('restart').onclick=()=>{init();closePanel()};
- document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{let t=b.dataset.tool;if(counts[t]<=0){say('यह टूल अभी उपलब्ध नहीं है');return}tool=tool===t?null:t;document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x.dataset.tool===tool));say(tool==='drill'?'ड्रिल: हटाने वाला रत्न चुनें':tool==='hammer'?'हथौड़ा: एक रत्न हटाएँ':'ब्रश: ट्रे खाली करें')});
- function useTool(g){if(!tool)return;let t=tool;counts[t]--;document.getElementById(t+'Count').textContent=counts[t];if(t==='brush'){pieces=[];renderTray();say('ट्रे साफ हो गई')}else{g.style.display='none';say(t==='drill'?'रत्न हटाया गया':'हथौड़े से रत्न हटाया गया')}tool=null;document.querySelectorAll('.tool').forEach(x=>x.classList.remove('active'))}
- function shuffle(){if(!pieces.length){say('ट्रे पहले से खाली है');return}pieces=[];renderTray();say('ट्रे के रत्न हटा दिए गए')}
- document.getElementById('addA').onclick=()=>say('विज्ञापन सुविधा डेमो में उपलब्ध नहीं है');document.getElementById('addB').onclick=()=>say('विज्ञापन सुविधा डेमो में उपलब्ध नहीं है');
- init();
-})();
+/* ==========================================================================
+   AUDIO SYNTHESIZER (ZERO EXTERNAL ASSETS)
+   ========================================================================== */
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+  }
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+    }
+  }
+  playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.2) {
+    if (this.muted) return;
+    this.init();
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + duration);
+    } catch(e) {}
+  }
+  unscrew() {
+    this.playTone(320, 'triangle', 0.15, 0.25);
+    setTimeout(() => this.playTone(540, 'sine', 0.1, 0.2), 60);
+  }
+  clink() {
+    this.playTone(880, 'sine', 0.08, 0.15);
+  }
+  boardFall() {
+    this.playTone(140, 'triangle', 0.4, 0.3);
+  }
+  win() {
+    [392, 523, 659, 784].forEach((f, i) => {
+      setTimeout(() => this.playTone(f, 'triangle', 0.25, 0.3), i * 120);
+    });
+  }
+  lose() {
+    [320, 280, 240, 180].forEach((f, i) => {
+      setTimeout(() => this.playTone(f, 'sawtooth', 0.2, 0.25), i * 100);
+    });
+  }
+}
+
+/* ==========================================================================
+   PARTICLE FX SYSTEM
+   ========================================================================== */
+class FXEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.particles = [];
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+    this.loop();
+  }
+  resize() {
+    this.canvas.width = this.canvas.parentElement.clientWidth;
+    this.canvas.height = this.canvas.parentElement.clientHeight;
+  }
+  spawnConfetti(x, y) {
+    const colors = ['#ffbe0b', '#06d6a0', '#118ab2', '#ef476f', '#ffffff'];
+    for(let i = 0; i < 35; i++) {
+      this.particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 8,
+        vy: (Math.random() - 0.5) * 8 - 3,
+        size: Math.random() * 6 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        life: 1,
+        decay: Math.random() * 0.02 + 0.015,
+        rot: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 10
+      });
+    }
+  }
+  loop() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.2; // Gravity
+      p.rot += p.vRot;
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        this.particles.splice(i, 1);
+        continue;
+      }
+      this.ctx.save();
+      this.ctx.translate(p.x, p.y);
+      this.ctx.rotate((p.rot * Math.PI) / 180);
+      this.ctx.fillStyle = p.color;
+      this.ctx.globalAlpha = p.life;
+      this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      this.ctx.restore();
+    }
+    requestAnimationFrame(() => this.loop());
+  }
+}
+
+/* ==========================================================================
+   LEVEL GENERATOR & DEFINITIONS (30 PLAYABLE LEVELS)
+   ========================================================================== */
+function buildLevelDatabase() {
+  const levels = [];
+  const materials = ['wood', 'metal', 'glass', 'stone'];
+  const colors = ['gold', 'red', 'blue', 'green', 'purple', 'silver'];
+
+  for (let i = 1; i <= 30; i++) {
+    const numBoards = Math.min(2 + Math.floor(i / 5), 6);
+    const colorSubset = colors.slice(0, Math.min(2 + Math.floor(i / 6), colors.length));
+    const boards = [];
+    const screws = [];
+
+    // Procedural Board Layout Generation
+    for (let b = 0; b < numBoards; b++) {
+      const mat = materials[b % materials.length];
+      const isHorizontal = (b % 2 === 0);
+      const width = isHorizontal ? 220 + (i * 2) % 60 : 60;
+      const height = isHorizontal ? 60 : 200 + (i * 3) % 60;
+      const left = 50 + (b * 28 + i * 7) % 160;
+      const top = 60 + (b * 45 + i * 11) % 240;
+      const boardId = `board_${i}_${b}`;
+      boards.push({ id: boardId, x: left, y: top, w: width, h: height, mat: mat });
+
+      // Generate Screws per Board
+      const screwCount = (i === 1) ? 2 : Math.min(2 + Math.floor(i / 10), 4);
+      for (let s = 0; s < screwCount; s++) {
+        const sx = left + (isHorizontal ? 30 + s * ((width - 60) / (screwCount - 1 || 1)) : width / 2);
+        const sy = top + (isHorizontal ? height / 2 : 30 + s * ((height - 60) / (screwCount - 1 || 1)));
+        screws.push({
+          id: `screw_${i}_${b}_${s}`,
+          boardId: boardId,
+          x: sx,
+          y: sy,
+          color: colorSubset[(b + s) % colorSubset.length]
+        });
+      }
+    }
+
+    levels.push({
+      levelNumber: i,
+      trayCapacity: (i < 4) ? 4 : (i < 15 ? 4 : 5),
+      boards: boards,
+      screws: screws
+    });
+  }
+  return levels;
+}
+
+/* ==========================================================================
+   GAME ENGINE & STATE MACHINE
+   ========================================================================== */
+class GameEngine {
+  constructor() {
+    this.audio = new SoundEngine();
+    this.fx = new FXEngine(document.getElementById('fx-canvas'));
+    this.levelDb = buildLevelDatabase();
+    
+    // Persistent Data
+    this.coins = parseInt(localStorage.getItem('un_coins') || '100', 10);
+    this.unlockedLevel = parseInt(localStorage.getItem('un_level') || '1', 10);
+    this.currentLevelIndex = 0;
+    this.inventory = {
+      undo: parseInt(localStorage.getItem('un_undo') || '3', 10),
+      hammer: parseInt(localStorage.getItem('un_hammer') || '1', 10),
+      tray: 0
+    };
+
+    // Active Level State
+    this.boards = [];
+    this.screws = [];
+    this.traySlots = [];
+    this.trayMax = 4;
+    this.moveHistory = [];
+    this.hammerMode = false;
+
+    this.initUI();
+    this.checkDailyReward();
+    this.loadLevel(this.unlockedLevel - 1);
+  }
+
+  save() {
+    localStorage.setItem('un_coins', this.coins);
+    localStorage.setItem('un_level', this.unlockedLevel);
+    localStorage.setItem('un_undo', this.inventory.undo);
+    localStorage.setItem('un_hammer', this.inventory.hammer);
+    document.getElementById('coin-counter').innerText = this.coins;
+    document.getElementById('count-undo').innerText = this.inventory.undo;
+    document.getElementById('count-hammer').innerText = this.inventory.hammer;
+  }
+
+  initUI() {
+    this.save();
+    document.getElementById('btn-sound').onclick = () => {
+      this.audio.muted = !this.audio.muted;
+      document.getElementById('btn-sound').innerText = this.audio.muted ? '🔇' : '🔊';
+    };
+    document.getElementById('btn-levels').onclick = () => this.showLevelModal();
+    document.getElementById('btn-close-levels').onclick = () => this.hideLevelModal();
+    document.getElementById('btn-next-lvl').onclick = () => {
+      document.getElementById('modal-victory').classList.remove('active');
+      this.loadLevel(this.currentLevelIndex + 1);
+    };
+    document.getElementById('btn-retry-lvl').onclick = () => {
+      document.getElementById('modal-gameover').classList.remove('active');
+      this.loadLevel(this.currentLevelIndex);
+    };
+    document.getElementById('btn-claim-daily').onclick = () => {
+      this.coins += 250;
+      this.save();
+      this.audio.win();
+      document.getElementById('modal-daily').classList.remove('active');
+    };
+    document.getElementById('btn-reward-ad-win').onclick = () => {
+      this.playRewardedAd(() => {
+        this.coins += 100;
+        this.save();
+        document.getElementById('modal-victory').classList.remove('active');
+        this.loadLevel(this.currentLevelIndex + 1);
+      });
+    };
+    document.getElementById('btn-ad-free-tray').onclick = () => {
+      this.playRewardedAd(() => {
+        document.getElementById('modal-gameover').classList.remove('active');
+        this.addTraySlot();
+      });
+    };
+    // Boosters
+    document.getElementById('btn-boost-undo').onclick = () => this.useUndoBooster();
+    document.getElementById('btn-boost-tray').onclick = () => this.addTraySlot();
+    document.getElementById('btn-boost-hammer').onclick = () => this.toggleHammerBooster();
+  }
+
+  checkDailyReward() {
+    const lastDaily = localStorage.getItem('un_last_daily');
+    const today = new Date().toDateString();
+    if (lastDaily !== today) {
+      localStorage.setItem('un_last_daily', today);
+      document.getElementById('modal-daily').classList.add('active');
+    }
+  }
+
+  loadLevel(index) {
+    if (index >= this.levelDb.length) index = 0;
+    this.currentLevelIndex = index;
+    const lvl = this.levelDb[index];
+
+    document.getElementById('level-title').innerText = `Level ${lvl.levelNumber}`;
+    this.trayMax = lvl.trayCapacity + this.inventory.tray;
+    this.traySlots = new Array(this.trayMax).fill(null);
+    this.moveHistory = [];
+    this.hammerMode = false;
+
+    this.renderTray();
+    this.buildPuzzleStage(lvl);
+  }
+
+  renderTray() {
+    const row = document.getElementById('tray-slot-row');
+    row.innerHTML = '';
+    for (let i = 0; i < this.trayMax; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'tray-slot';
+      if (this.traySlots[i]) {
+        const sc = this.traySlots[i];
+        const cap = document.createElement('div');
+        cap.className = `screw-cap screw-${sc.color}`;
+        slot.appendChild(cap);
+      }
+      row.appendChild(slot);
+    }
+    const filled = this.traySlots.filter(s => s !== null).length;
+    document.getElementById('tray-occupancy').innerText = `${filled} / ${this.trayMax}`;
+  }
+
+  buildPuzzleStage(levelData) {
+    const stage = document.getElementById('stage');
+    // Clear old elements (keep particle canvas)
+    Array.from(stage.children).forEach(child => {
+      if (child.id !== 'fx-canvas') stage.removeChild(child);
+    });
+
+    this.boards = JSON.parse(JSON.stringify(levelData.boards));
+    this.screws = JSON.parse(JSON.stringify(levelData.screws));
+
+    // Render Boards
+    this.boards.forEach(b => {
+      const el = document.createElement('div');
+      el.id = b.id;
+      el.className = `interactive-board board-${b.mat}`;
+      el.style.width = `${b.w}px`;
+      el.style.height = `${b.h}px`;
+      el.style.left = `${b.x}px`;
+      el.style.top = `${b.y}px`;
+      stage.appendChild(el);
+    });
+
+    // Render Holes and Screws
+    this.screws.forEach(s => {
+      // Under-hole
+      const hole = document.createElement('div');
+      hole.className = 'hole';
+      hole.style.left = `${s.x}px`;
+      hole.style.top = `${s.y}px`;
+      stage.appendChild(hole);
+
+      // Screw
+      const el = document.createElement('div');
+      el.id = s.id;
+      el.className = 'screw';
+      el.style.left = `${s.x}px`;
+      el.style.top = `${s.y}px`;
+      
+      const cap = document.createElement('div');
+      cap.className = `screw-cap screw-${s.color}`;
+      el.appendChild(cap);
+
+      el.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        this.handleScrewClick(s);
+      });
+      stage.appendChild(el);
+    });
+  }
+
+  handleScrewClick(screw) {
+    if (this.hammerMode) {
+      this.executeHammer(screw);
+      return;
+    }
+
+    // Check empty tray slot
+    const emptyIndex = this.traySlots.findIndex(s => s === null);
+    if (emptyIndex === -1) {
+      this.audio.lose();
+      document.getElementById('modal-gameover').classList.add('active');
+      return;
+    }
+
+    // Unscrew Action
+    this.audio.unscrew();
+    const screwEl = document.getElementById(screw.id);
+    if (!screwEl) return;
+
+    // Record for Undo
+    this.moveHistory.push({
+      screw: Object.assign({}, screw),
+      slotIndex: emptyIndex
+    });
+
+    // Animate unscrewing
+    screwEl.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(360deg)';
+    screwEl.style.opacity = '0';
+    
+    setTimeout(() => {
+      if (screwEl.parentNode) screwEl.parentNode.removeChild(screwEl);
+    }, 280);
+
+    // Place into tray
+    this.traySlots[emptyIndex] = screw;
+    this.screws = this.screws.filter(s => s.id !== screw.id);
+    this.renderTray();
+
+    // Check Board Physics
+    this.checkBoardFalling();
+
+    // Check Fail condition if tray is now completely full
+    if (this.screws.length > 0 && this.traySlots.filter(s => s !== null).length >= this.trayMax) {
+      setTimeout(() => {
+        if (this.screws.length > 0) {
+          this.audio.lose();
+          document.getElementById('modal-gameover').classList.add('active');
+        }
+      }, 600);
+    }
+  }
+
+  checkBoardFalling() {
+    this.boards.forEach(b => {
+      if (b.fallen) return;
+      // Remaining screws attached to this board
+      const remaining = this.screws.filter(s => s.boardId === b.id);
+      if (remaining.length === 0) {
+        b.fallen = true;
+        this.triggerBoardPhysicsFall(b);
+      }
+    });
+
+    // Check Win
+    const activeBoards = this.boards.filter(b => !b.fallen);
+    if (activeBoards.length === 0) {
+      setTimeout(() => this.triggerVictory(), 700);
+    }
+  }
+
+  triggerBoardPhysicsFall(board) {
+    const el = document.getElementById(board.id);
+    if (!el) return;
+    this.audio.boardFall();
+    
+    const randomRot = (Math.random() - 0.5) * 60;
+    el.style.transform = `translate3d(0, 480px, 100px) rotate(${randomRot}deg)`;
+    el.style.opacity = '0';
+
+    this.fx.spawnConfetti(board.x + board.w / 2, board.y + board.h / 2);
+
+    setTimeout(() => {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 600);
+  }
+
+  triggerVictory() {
+    this.audio.win();
+    this.fx.spawnConfetti(window.innerWidth / 2, window.innerHeight / 2);
+    this.coins += 50;
+    if (this.unlockedLevel <= this.currentLevelIndex + 1) {
+      this.unlockedLevel = Math.min(this.currentLevelIndex + 2, this.levelDb.length);
+    }
+    this.save();
+    document.getElementById('modal-victory').classList.add('active');
+  }
+
+  /* Boosters */
+  useUndoBooster() {
+    if (this.inventory.undo <= 0 || this.moveHistory.length === 0) return;
+    this.inventory.undo--;
+    this.save();
+
+    const lastMove = this.moveHistory.pop();
+    this.traySlots[lastMove.slotIndex] = null;
+    this.screws.push(lastMove.screw);
+    this.renderTray();
+
+    // Recreate element
+    const stage = document.getElementById('stage');
+    const el = document.createElement('div');
+    el.id = lastMove.screw.id;
+    el.className = 'screw';
+    el.style.left = `${lastMove.screw.x}px`;
+    el.style.top = `${lastMove.screw.y}px`;
+    const cap = document.createElement('div');
+    cap.className = `screw-cap screw-${lastMove.screw.color}`;
+    el.appendChild(cap);
+    el.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      this.handleScrewClick(lastMove.screw);
+    });
+    stage.appendChild(el);
+    this.audio.clink();
+  }
+
+  addTraySlot() {
+    this.trayMax++;
+    this.traySlots.push(null);
+    this.renderTray();
+    this.audio.clink();
+  }
+
+  toggleHammerBooster() {
+    if (this.inventory.hammer <= 0) return;
+    this.hammerMode = !this.hammerMode;
+    const btn = document.getElementById('btn-boost-hammer');
+    btn.style.filter = this.hammerMode ? 'drop-shadow(0 0 8px var(--accent-red))' : 'none';
+  }
+
+  executeHammer(screw) {
+    this.inventory.hammer--;
+    this.hammerMode = false;
+    document.getElementById('btn-boost-hammer').style.filter = 'none';
+    this.save();
+
+    this.audio.boardFall();
+    const screwEl = document.getElementById(screw.id);
+    if (screwEl && screwEl.parentNode) screwEl.parentNode.removeChild(screwEl);
+    this.fx.spawnConfetti(screw.x, screw.y);
+    this.screws = this.screws.filter(s => s.id !== screw.id);
+    this.checkBoardFalling();
+  }
+
+  /* Level Select */
+  showLevelModal() {
+    const grid = document.getElementById('level-grid-container');
+    grid.innerHTML = '';
+    for (let i = 1; i <= this.levelDb.length; i++) {
+      const node = document.createElement('div');
+      node.className = `level-node ${i > this.unlockedLevel ? 'locked' : ''} ${i < this.unlockedLevel ? 'completed' : ''}`;
+      node.innerText = i;
+      if (i <= this.unlockedLevel) {
+        node.onclick = () => {
+          this.loadLevel(i - 1);
+          this.hideLevelModal();
+        };
+      }
+      grid.appendChild(node);
+    }
+    document.getElementById('modal-levels').classList.add('active');
+  }
+
+  hideLevelModal() {
+    document.getElementById('modal-levels').classList.remove('active');
+  }
+
+  /* Ad Integration System Placeholder */
+  playRewardedAd(onReward) {
+    const modal = document.getElementById('modal-ad-sim');
+    const bar = document.getElementById('ad-progress-bar');
+    modal.classList.add('active');
+    bar.style.width = '0%';
+
+    setTimeout(() => bar.style.width = '100%', 50);
+
+    const timer = setTimeout(() => {
+      modal.classList.remove('active');
+      onReward();
+    }, 3100);
+
+    document.getElementById('btn-ad-cancel').onclick = () => {
+      clearTimeout(timer);
+      modal.classList.remove('active');
+    };
+  }
+}
+
+// Start Game on DOM load
+window.addEventListener('DOMContentLoaded', () => {
+  window.game = new GameEngine();
+});
 </script>
-</body></html>
+</body>
+</html>
