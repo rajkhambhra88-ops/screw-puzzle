@@ -4,487 +4,679 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#050520">
-<title>3D Cube Runner - Clean Look</title>
+<title>3D Cube Runner - Clean</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{
-  font-family:'Segoe UI',Arial,sans-serif;
+
+html,body{
+  width:100%;height:100%;
+  overflow:hidden;
   background:#050520;
-  overflow:hidden;height:100vh;width:100vw;
-  display:flex;justify-content:center;align-items:center;
-  touch-action:none;user-select:none;
+  font-family:'Segoe UI',Arial,sans-serif;
+  user-select:none;
+  touch-action:none;
 }
 
-/* ===== SCENE (साफ़ 3D स्पेस) ===== */
-#scene{
-  position:relative;width:100%;height:100%;
+/* ============================================
+   गेम कंटेनर - पूरी स्क्रीन के अंदर फिट
+   ============================================ */
+#game{
+  position:fixed;
+  inset:0;
   overflow:hidden;
   background:
-    radial-gradient(ellipse at 50% 35%, #1a1a5e 0%, #0a0a2e 40%, #050520 100%);
+    radial-gradient(ellipse 80% 50% at 50% 0%, #1a1a5e 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, #2a1a5e 0%, #050520 70%);
 }
 
-/* तारे - हल्के, पीछे */
+/* तारे */
 .stars{
   position:absolute;inset:0;
   background-image:
-    radial-gradient(1.5px 1.5px at 15% 20%, #fff, transparent),
-    radial-gradient(1px 1px at 35% 45%, #cdf, transparent),
-    radial-gradient(1.5px 1.5px at 55% 15%, #fff, transparent),
-    radial-gradient(1px 1px at 75% 55%, #fcd, transparent),
-    radial-gradient(1.5px 1.5px at 88% 25%, #fff, transparent),
-    radial-gradient(1px 1px at 25% 75%, #fff, transparent),
-    radial-gradient(1px 1px at 65% 85%, #cff, transparent),
-    radial-gradient(1.5px 1.5px at 92% 72%, #fff, transparent);
+    radial-gradient(1.5px 1.5px at 10% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 25% 35%, #cdf, transparent),
+    radial-gradient(1.5px 1.5px at 45% 10%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 25%, #fcd, transparent),
+    radial-gradient(1.5px 1.5px at 85% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 15% 55%, #cff, transparent),
+    radial-gradient(1px 1px at 90% 45%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 35% 70%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 80%, #cdf, transparent),
+    radial-gradient(1.5px 1.5px at 82% 65%, #fff, transparent);
   background-size:100% 100%;
   animation:twinkle 3s ease-in-out infinite alternate;
-  opacity:.85;
   pointer-events:none;
 }
 @keyframes twinkle{from{opacity:.5}to{opacity:1}}
 
-/* हॉरिज़ॉन्ट ग्लो लाइन (डेप्थ) */
-.horizon{
-  position:absolute;left:0;right:0;top:38%;
-  height:3px;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(0,240,255,0) 10%,
-    rgba(0,240,255,.9) 50%,
-    rgba(0,240,255,0) 90%,
-    transparent 100%);
-  box-shadow:0 0 30px rgba(0,240,255,.8), 0 0 60px rgba(0,240,255,.4);
-  z-index:2;
+/* ============================================
+   रोड प्लेट - स्पष्ट, सुंदर, फिक्स्ड साइज़
+   ============================================ */
+#road{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(340px, 82vw);
+  height:72vh;
+  background:linear-gradient(180deg,
+    rgba(20,20,60,.6) 0%,
+    rgba(25,25,70,.85) 20%,
+    #1a1a45 50%,
+    #22225a 100%);
+  border-left:3px solid #00d8ee;
+  border-right:3px solid #00d8ee;
+  border-bottom:none;
+  box-shadow:
+    inset 0 0 30px rgba(0,200,255,.15),
+    inset 0 -20px 40px rgba(0,200,255,.1),
+    0 0 40px rgba(0,200,255,.35);
+  z-index:5;
+  overflow:hidden;
+}
+
+/* ऊपर की ओर फेड (होरिज़ॉन्ट इफेक्ट) */
+#road::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:80px;
+  background:linear-gradient(180deg,#050520 0%,rgba(5,5,32,.7) 40%,transparent 100%);
+  z-index:10;
   pointer-events:none;
 }
 
-/* ===== रोड (सीधी, साफ़, धुंधली नहीं) ===== */
-#roadWrap{
-  position:absolute;left:50%;top:38%;bottom:0;
-  width:min(360px, 78vw);
-  transform:translateX(-50%);
-  overflow:hidden;
+/* लेन लाइनें - साफ़, स्पष्ट */
+.lane{
+  position:absolute;
+  top:0;bottom:0;
+  width:2px;
+  background:repeating-linear-gradient(180deg,
+    #ffe500 0px,
+    #ffe500 18px,
+    transparent 18px,
+    transparent 36px);
+  box-shadow:0 0 4px rgba(255,229,0,.8);
+  animation:moveLine .8s linear infinite;
   z-index:3;
 }
-
-/* रोड बॉडी - ग्रेडिएंट, कोई blur नहीं */
-#road{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,
-    #151538 0%,
-    #1a1a44 30%,
-    #20204e 100%);
-  border-left:3px solid #00d8ee;
-  border-right:3px solid #00d8ee;
-  box-shadow:
-    inset 0 0 25px rgba(0,200,255,.2),
-    0 0 25px rgba(0,200,255,.35);
-  /* स्पष्ट किनारे */
-  image-rendering:crisp-edges;
-}
-
-/* लेन डिवाइडर - दो लाइनें (3 lanes) */
-.lane-line{
-  position:absolute;top:0;bottom:0;
-  width:3px;
-  background:repeating-linear-gradient(180deg,
-    #ffe500 0, #ffe500 20px,
-    transparent 20px, transparent 40px);
-  animation:roadMove 0.7s linear infinite;
-  box-shadow:0 0 6px rgba(255,229,0,.7);
-}
-.lane-line.l1{left:33.33%;transform:translateX(-50%);}
-.lane-line.l2{left:66.66%;transform:translateX(-50%);}
-
-@keyframes roadMove{
+.lane-1{left:33.33%;}
+.lane-2{left:66.66%;}
+@keyframes moveLine{
   from{background-position-y:0}
-  to{background-position-y:40px}
+  to{background-position-y:36px}
 }
 
-/* रोड पर हल्की ग्रिड (डेप्थ के लिए) */
+/* साइड एज ग्लो */
 #road::after{
   content:'';
   position:absolute;inset:0;
-  background-image:
-    repeating-linear-gradient(180deg,
-      rgba(0,240,255,.06) 0px,
-      rgba(0,240,255,.06) 1px,
-      transparent 1px,
-      transparent 60px);
+  background:
+    linear-gradient(90deg,rgba(0,216,238,.25) 0%,transparent 8%,transparent 92%,rgba(0,216,238,.25) 100%);
   pointer-events:none;
-}
-
-/* रोड के किनारे ग्लो */
-#roadWrap::before,#roadWrap::after{
-  content:'';position:absolute;top:0;bottom:0;width:8px;
-  background:linear-gradient(180deg,transparent,rgba(0,240,255,.6),rgba(0,240,255,.9));
-  filter:blur(4px);
   z-index:2;
 }
-#roadWrap::before{left:-4px;}
-#roadWrap::after{right:-4px;}
 
-/* ===== प्लेयर क्यूब (स्पष्ट) ===== */
+/* ============================================
+   प्लेयर - स्पष्ट, सुंदर क्यूब
+   ============================================ */
 #player{
-  position:absolute;left:50%;bottom:130px;
-  width:60px;height:60px;
+  position:absolute;
+  left:50%;
+  bottom:18vh;
+  width:54px;
+  height:54px;
   transform:translateX(-50%);
+  z-index:20;
   transform-style:preserve-3d;
   animation:playerFloat 1.4s ease-in-out infinite;
-  z-index:20;
 }
 @keyframes playerFloat{
   0%,100%{transform:translateX(-50%) translateY(0)}
   50%{transform:translateX(-50%) translateY(-6px)}
 }
 
-.cube{
-  position:absolute;width:60px;height:60px;
+.player-cube{
+  position:absolute;
+  width:54px;
+  height:54px;
   transform-style:preserve-3d;
-  animation:cubeRotate 4s linear infinite;
+  animation:cubeRotate 3.5s linear infinite;
 }
 @keyframes cubeRotate{
-  from{transform:rotateX(-22deg) rotateY(0)}
-  to{transform:rotateX(-22deg) rotateY(360deg)}
+  from{transform:rotateX(-25deg) rotateY(0)}
+  to{transform:rotateX(-25deg) rotateY(360deg)}
 }
 
-.face{
-  position:absolute;width:60px;height:60px;
-  border:2px solid #7fffff;
-  /* स्पष्टता के लिए */
+.pf{
+  position:absolute;
+  width:54px;
+  height:54px;
+  border:2px solid rgba(180,255,255,.9);
+  border-radius:6px;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
-  image-rendering:crisp-edges;
+  box-shadow:inset 0 0 20px rgba(255,255,255,.4);
 }
-.front {transform:translateZ(30px);           background:linear-gradient(135deg,#00e8ff,#0080ff);}
-.back  {transform:rotateY(180deg) translateZ(30px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
-.right {transform:rotateY(90deg)  translateZ(30px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
-.left  {transform:rotateY(-90deg) translateZ(30px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
-.top   {transform:rotateX(90deg)  translateZ(30px); background:linear-gradient(135deg,#7fffff,#00b0ff);}
-.bottom{transform:rotateX(-90deg) translateZ(30px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
+.pf.front {transform:translateZ(27px);           background:linear-gradient(135deg,#00e8ff,#0080ff);}
+.pf.back  {transform:rotateY(180deg) translateZ(27px); background:linear-gradient(135deg,#00c0dd,#0060cc);}
+.pf.right {transform:rotateY(90deg)  translateZ(27px); background:linear-gradient(135deg,#00d0ee,#0070dd);}
+.pf.left  {transform:rotateY(-90deg) translateZ(27px); background:linear-gradient(135deg,#00e0ff,#0090ee);}
+.pf.top   {transform:rotateX(90deg)  translateZ(27px); background:linear-gradient(135deg,#aaffff,#00b0ff);}
+.pf.bottom{transform:rotateX(-90deg) translateZ(27px); background:linear-gradient(135deg,#00a0bb,#0050bb);}
 
-/* प्लेयर की ज़मीन पर छाया - स्पष्ट */
+/* प्लेयर छाया (ज़मीन पर) */
 #player::after{
   content:'';
   position:absolute;
-  bottom:-38px;left:50%;
+  bottom:-35px;
+  left:50%;
   transform:translateX(-50%);
-  width:70px;height:16px;
-  background:radial-gradient(ellipse,rgba(0,240,255,.85),rgba(0,240,255,0) 70%);
+  width:70px;
+  height:14px;
+  background:radial-gradient(ellipse,rgba(0,240,255,.9),rgba(0,240,255,0) 70%);
   border-radius:50%;
   z-index:-1;
+  filter:blur(2px);
 }
 
-/* Shield effect */
-#player.shielded .face{
+/* Shield */
+#player.shielded .pf{
   border-color:#00ff88;
-  box-shadow:0 0 12px #00ff88,inset 0 0 10px rgba(0,255,136,.5);
+  box-shadow:inset 0 0 20px rgba(0,255,136,.6),0 0 15px #00ff88;
 }
 
-/* ===== ऑब्सटैकल (स्पष्ट 3D) ===== */
+/* ============================================
+   ऑब्सटैकल - स्पष्ट, सुंदर 3D क्यूब
+   ============================================ */
 .obstacle{
   position:absolute;
-  width:48px;height:48px;
-  transform-style:preserve-3d;
-  animation:obsSpin 2s linear infinite;
+  width:46px;
+  height:46px;
+  top:-60px;
   z-index:15;
+  transform-style:preserve-3d;
+  animation:obsSpin 1.8s linear infinite;
 }
 @keyframes obsSpin{
-  from{transform:rotateX(-15deg) rotateY(0)}
-  to{transform:rotateX(-15deg) rotateY(360deg)}
+  from{transform:rotateX(-20deg) rotateY(0)}
+  to{transform:rotateX(-20deg) rotateY(360deg)}
 }
-.obstacle .face{
-  width:48px;height:48px;
-  border:2px solid #ffcc44;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
+.obstacle .pf{
+  width:46px;
+  height:46px;
+  border:2px solid rgba(255,220,100,.9);
+  box-shadow:inset 0 0 15px rgba(255,255,255,.35);
 }
-.obstacle .front {transform:translateZ(24px);           background:linear-gradient(135deg,#ff2f6b,#c4003a);}
-.obstacle .back  {transform:rotateY(180deg) translateZ(24px); background:linear-gradient(135deg,#e0004a,#90002a);}
-.obstacle .right {transform:rotateY(90deg)  translateZ(24px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
-.obstacle .left  {transform:rotateY(-90deg) translateZ(24px); background:linear-gradient(135deg,#ff3060,#bb0044);}
-.obstacle .top   {transform:rotateX(90deg)  translateZ(24px); background:linear-gradient(135deg,#ff5588,#dd0066);}
-.obstacle .bottom{transform:rotateX(-90deg) translateZ(24px); background:linear-gradient(135deg,#cc0044,#880033);}
+.obstacle .pf.front {transform:translateZ(23px);           background:linear-gradient(135deg,#ff2f6b,#c4003a);}
+.obstacle .pf.back  {transform:rotateY(180deg) translateZ(23px); background:linear-gradient(135deg,#e0004a,#90002a);}
+.obstacle .pf.right {transform:rotateY(90deg)  translateZ(23px); background:linear-gradient(135deg,#ff1f5b,#aa003a);}
+.obstacle .pf.left  {transform:rotateY(-90deg) translateZ(23px); background:linear-gradient(135deg,#ff3060,#bb0044);}
+.obstacle .pf.top   {transform:rotateX(90deg)  translateZ(23px); background:linear-gradient(135deg,#ff6f99,#dd0066);}
+.obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(23px); background:linear-gradient(135deg,#cc0044,#880033);}
 
-/* Coin (स्पष्ट) */
+/* ============================================
+   कॉइन - स्पष्ट, चमकीला
+   ============================================ */
 .coin{
   position:absolute;
-  width:34px;height:34px;
+  width:30px;
+  height:30px;
   border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#ffffaa,#ffd000 45%,#b07800 100%);
-  box-shadow:0 0 12px #ffd000,0 0 24px rgba(255,208,0,.5);
-  animation:coinSpin .8s linear infinite;
+  top:-50px;
   z-index:14;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:18px;color:#8a5b00;
+  background:radial-gradient(circle at 35% 30%,#fff8b0 0%,#ffd000 40%,#b07800 100%);
+  border:2px solid #fff5a0;
+  box-shadow:
+    0 0 12px #ffd000,
+    0 0 22px rgba(255,208,0,.5),
+    inset 0 0 6px rgba(255,255,255,.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:16px;
+  color:#8a5b00;
   text-shadow:0 1px 0 #fff3a0;
+  animation:coinSpin .9s linear infinite;
 }
 @keyframes coinSpin{
-  from{transform:rotateY(0)}
-  to{transform:rotateY(360deg)}
+  from{transform:rotateY(0) scale(1)}
+  to{transform:rotateY(360deg) scale(1)}
 }
 
-/* Power-up */
+/* ============================================
+   पावर-अप - स्पष्ट गोल
+   ============================================ */
 .powerup{
   position:absolute;
-  width:42px;height:42px;
+  width:38px;
+  height:38px;
   border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;z-index:14;
+  top:-50px;
+  z-index:14;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  border:2px solid rgba(255,255,255,.8);
   animation:powFloat 1s ease-in-out infinite;
 }
 @keyframes powFloat{
   0%,100%{transform:scale(1)}
-  50%{transform:scale(1.12)}
+  50%{transform:scale(1.15)}
 }
-.powerup.shield{background:radial-gradient(circle,#00ff88,#006622);box-shadow:0 0 18px #00ff88;}
-.powerup.magnet{background:radial-gradient(circle,#ff40ff,#770077);box-shadow:0 0 18px #ff40ff;}
-.powerup.slow  {background:radial-gradient(circle,#40aaff,#003377);box-shadow:0 0 18px #40aaff;}
-.powerup.double{background:radial-gradient(circle,#ffaa00,#884400);box-shadow:0 0 18px #ffaa00;}
+.powerup.shield{background:radial-gradient(circle,#00ff88,#008844);box-shadow:0 0 16px #00ff88,inset 0 0 8px rgba(255,255,255,.4);}
+.powerup.magnet{background:radial-gradient(circle,#ff40ff,#880088);box-shadow:0 0 16px #ff40ff,inset 0 0 8px rgba(255,255,255,.4);}
+.powerup.slow  {background:radial-gradient(circle,#40aaff,#004488);box-shadow:0 0 16px #40aaff,inset 0 0 8px rgba(255,255,255,.4);}
+.powerup.double{background:radial-gradient(circle,#ffaa00,#885500);box-shadow:0 0 16px #ffaa00,inset 0 0 8px rgba(255,255,255,.4);}
 
-/* ===== HUD ===== */
+/* ============================================
+   HUD - ऊपर स्कोर/कॉइन/बेस्ट
+   ============================================ */
 #hud{
-  position:absolute;top:0;left:0;right:0;
-  padding:12px 16px;
-  display:flex;justify-content:space-between;align-items:flex-start;
-  gap:8px;z-index:100;pointer-events:none;flex-wrap:wrap;
+  position:absolute;
+  top:0;left:0;right:0;
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  z-index:100;
+  pointer-events:none;
 }
 .score-box{
   background:rgba(5,5,30,.85);
   border:2px solid #00d8ee;
   border-radius:12px;
-  padding:6px 14px;
-  color:#00e8ff;font-size:16px;font-weight:bold;
-  box-shadow:0 0 15px rgba(0,216,238,.45);
-  text-align:center;min-width:60px;
+  padding:6px 12px;
+  color:#00e8ff;
+  font-size:15px;
+  font-weight:bold;
+  box-shadow:0 0 12px rgba(0,216,238,.5);
+  text-align:center;
+  min-width:58px;
+  backdrop-filter:blur(4px);
 }
-.score-box .label{font-size:9px;color:#88ccff;display:block;letter-spacing:1px;font-weight:600;}
-#coinBox{border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 15px rgba(255,204,0,.45);}
+.score-box .label{
+  font-size:9px;
+  color:#88ccff;
+  display:block;
+  letter-spacing:1px;
+  font-weight:600;
+}
+#coinBox{border-color:#ffd000;color:#ffd000;box-shadow:0 0 12px rgba(255,208,0,.5);}
 #coinBox .label{color:#ffe088;}
-#highScore{border-color:#ffd000;color:#ffe000;box-shadow:0 0 15px rgba(255,208,0,.45);}
-#highScore .label{color:#ffe088;}
+#highScore{border-color:#ff40ff;color:#ff88ff;box-shadow:0 0 12px rgba(255,64,255,.5);}
+#highScore .label{color:#ffaaff;}
 
-/* Sound toggle */
+/* साउंड बटन */
 #soundToggle{
-  position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  width:42px;height:42px;border-radius:50%;
+  position:absolute;
+  top:12px;left:50%;
+  transform:translateX(-50%);
+  width:40px;height:40px;
+  border-radius:50%;
   background:rgba(5,5,30,.85);
   border:2px solid #00d8ee;
-  color:#00e8ff;font-size:19px;
+  color:#00e8ff;
+  font-size:18px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:150;
-  box-shadow:0 0 12px rgba(0,216,238,.35);
+  cursor:pointer;
+  z-index:150;
+  box-shadow:0 0 10px rgba(0,216,238,.4);
 }
 #soundToggle.muted{border-color:#555;color:#666;box-shadow:none;}
 
-/* Power-up bar */
+/* पावर-अप बार */
 #powerupBar{
-  position:absolute;top:82px;left:50%;transform:translateX(-50%);
-  display:flex;gap:8px;z-index:100;pointer-events:none;flex-wrap:wrap;justify-content:center;
+  position:absolute;
+  top:78px;left:50%;
+  transform:translateX(-50%);
+  display:flex;gap:6px;
+  z-index:100;
+  pointer-events:none;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:90%;
 }
 .pu-indicator{
   background:rgba(5,5,30,.9);
   border:2px solid currentColor;
   border-radius:20px;
-  padding:3px 10px;font-size:12px;font-weight:bold;
-  display:flex;align-items:center;gap:5px;
+  padding:3px 10px;
+  font-size:11px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:4px;
   animation:pulse .8s ease-in-out infinite alternate;
 }
 @keyframes pulse{from{opacity:.75}to{opacity:1}}
 
-/* Daily challenge */
+/* डेली चैलेंज */
 #dailyChallenge{
-  position:absolute;top:120px;left:50%;transform:translateX(-50%);
+  position:absolute;
+  top:112px;left:50%;
+  transform:translateX(-50%);
   background:rgba(120,0,120,.35);
-  border:2px solid #ff40ff;border-radius:10px;
-  padding:6px 14px;color:#ffaaff;font-size:12px;font-weight:bold;
-  z-index:100;text-align:center;
-  box-shadow:0 0 15px rgba(255,64,255,.4);
-  max-width:90%;
+  border:2px solid #ff40ff;
+  border-radius:10px;
+  padding:5px 12px;
+  color:#ffaaff;
+  font-size:11px;
+  font-weight:bold;
+  z-index:100;
+  text-align:center;
+  box-shadow:0 0 12px rgba(255,64,255,.4);
+  max-width:92%;
 }
 
-/* Controls */
+/* ============================================
+   कंट्रोल बटन - स्क्रीन के अंदर
+   ============================================ */
 #controls{
-  position:absolute;bottom:18px;left:0;right:0;
-  display:flex;justify-content:space-between;
-  padding:0 18px;z-index:100;pointer-events:none;
+  position:absolute;
+  bottom:16px;
+  left:0;right:0;
+  display:flex;
+  justify-content:space-between;
+  padding:0 16px;
+  z-index:100;
+  pointer-events:none;
 }
 .ctrl-btn{
-  width:76px;height:76px;border-radius:50%;
-  background:rgba(0,216,238,.15);
+  width:72px;height:72px;
+  border-radius:50%;
+  background:rgba(0,216,238,.18);
   border:3px solid #00d8ee;
-  color:#00e8ff;font-size:34px;
+  color:#00e8ff;
+  font-size:30px;
   display:flex;align-items:center;justify-content:center;
-  pointer-events:auto;cursor:pointer;
-  box-shadow:0 0 20px rgba(0,216,238,.4);
+  pointer-events:auto;
+  cursor:pointer;
+  box-shadow:0 0 20px rgba(0,216,238,.45);
   transition:transform .1s,background .1s;
+  backdrop-filter:blur(4px);
 }
 .ctrl-btn:active{
-  background:rgba(0,216,238,.4);
+  background:rgba(0,216,238,.45);
   transform:scale(.9);
-  box-shadow:0 0 35px rgba(0,216,238,.8);
+  box-shadow:0 0 30px rgba(0,216,238,.85);
 }
 
-/* Screens */
+/* ============================================
+   स्क्रीन्स (स्टार्ट, गेम ओवर, लीडरबोर्ड)
+   ============================================ */
 .screen{
-  position:absolute;inset:0;
+  position:absolute;
+  inset:0;
   background:rgba(3,3,20,.94);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  z-index:200;padding:20px;text-align:center;
-  transition:opacity .35s;overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:200;
+  padding:20px;
+  text-align:center;
+  overflow-y:auto;
+  transition:opacity .35s;
+  backdrop-filter:blur(6px);
 }
 .screen.hidden{opacity:0;pointer-events:none;display:none;}
 .screen h1{
-  font-size:38px;color:#00e8ff;
+  font-size:34px;
+  color:#00e8ff;
   text-shadow:0 0 12px #00d8ee,0 0 24px #0080ff;
-  margin-bottom:8px;letter-spacing:2px;
+  margin-bottom:8px;
+  letter-spacing:2px;
 }
-.screen h2{font-size:18px;color:#ffd000;margin-bottom:18px;text-shadow:0 0 10px #ffd000;}
-.screen p{color:#aaccff;font-size:14px;line-height:1.7;margin-bottom:14px;max-width:360px;}
+.screen h2{
+  font-size:16px;
+  color:#ffd000;
+  margin-bottom:16px;
+  text-shadow:0 0 10px #ffd000;
+  letter-spacing:2px;
+}
+.screen p{
+  color:#aaccff;
+  font-size:14px;
+  line-height:1.7;
+  margin-bottom:14px;
+  max-width:340px;
+}
 .btn{
-  padding:13px 38px;font-size:18px;font-weight:bold;
+  padding:13px 38px;
+  font-size:17px;
+  font-weight:bold;
   color:#001133;
   background:linear-gradient(135deg,#00e8ff,#00a0ff);
-  border:none;border-radius:12px;cursor:pointer;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
   box-shadow:0 0 22px rgba(0,216,238,.55);
-  letter-spacing:1.5px;transition:transform .15s;
+  letter-spacing:1.5px;
+  transition:transform .15s;
   margin-top:8px;
 }
 .btn:active{transform:scale(.95);}
 .btn.secondary{
   background:linear-gradient(135deg,#ff2f6b,#c4003a);
-  color:#fff;box-shadow:0 0 22px rgba(255,47,107,.55);
-  font-size:14px;padding:10px 28px;margin-top:10px;
+  color:#fff;
+  box-shadow:0 0 22px rgba(255,47,107,.55);
+  font-size:14px;
+  padding:10px 28px;
+  margin-top:10px;
 }
 .btn.tertiary{
   background:linear-gradient(135deg,#ff40ff,#8800cc);
-  color:#fff;box-shadow:0 0 22px rgba(255,64,255,.55);
-  font-size:14px;padding:10px 28px;margin-top:10px;
+  color:#fff;
+  box-shadow:0 0 22px rgba(255,64,255,.55);
+  font-size:14px;
+  padding:10px 28px;
+  margin-top:10px;
 }
 .final-score{
-  font-size:52px;color:#ffd000;
+  font-size:52px;
+  color:#ffd000;
   text-shadow:0 0 22px #ffd000;
-  margin:6px 0;font-weight:bold;
+  margin:6px 0;
+  font-weight:bold;
 }
 .new-record{
-  color:#ff40ff;font-size:16px;font-weight:bold;
+  color:#ff40ff;
+  font-size:16px;
+  font-weight:bold;
   text-shadow:0 0 12px #ff40ff;
   animation:pulse .8s ease-in-out infinite alternate;
   margin-bottom:8px;
 }
 
-/* Leaderboard */
-.leaderboard{width:100%;max-width:340px;margin:12px 0;max-height:240px;overflow-y:auto;}
+/* लीडरबोर्ड */
+.leaderboard{
+  width:100%;
+  max-width:340px;
+  margin:12px 0;
+  max-height:240px;
+  overflow-y:auto;
+}
 .lb-row{
-  display:flex;justify-content:space-between;
-  padding:8px 12px;background:rgba(0,216,238,.06);
-  border-radius:8px;margin-bottom:5px;font-size:14px;color:#aaccff;
+  display:flex;
+  justify-content:space-between;
+  padding:8px 12px;
+  background:rgba(0,216,238,.06);
+  border-radius:8px;
+  margin-bottom:5px;
+  font-size:13px;
+  color:#aaccff;
   border-left:3px solid #00d8ee;
 }
 .lb-row.top1{border-left-color:#ffd000;background:rgba(255,208,0,.12);color:#ffe000;}
 .lb-row.top2{border-left-color:#c0c0c0;background:rgba(192,192,192,.10);color:#e0e0e0;}
 .lb-row.top3{border-left-color:#cd7f32;background:rgba(205,127,50,.10);color:#e0a060;}
 .lb-row.you{border-left-color:#ff40ff;background:rgba(255,64,255,.12);color:#ffaaff;}
-.lb-rank{font-weight:bold;min-width:28px;}
+.lb-rank{font-weight:bold;min-width:26px;}
 .lb-name{flex:1;margin:0 8px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .lb-score{font-weight:bold;color:#00e8ff;}
 
-/* Name input */
 .name-input{
-  padding:10px 18px;border:2px solid #00d8ee;
-  border-radius:10px;background:rgba(0,0,0,.55);
-  color:#00e8ff;font-size:15px;text-align:center;
-  outline:none;width:240px;margin:8px 0;
+  padding:10px 18px;
+  border:2px solid #00d8ee;
+  border-radius:10px;
+  background:rgba(0,0,0,.55);
+  color:#00e8ff;
+  font-size:14px;
+  text-align:center;
+  outline:none;
+  width:230px;
+  margin:8px 0;
 }
 .name-input::placeholder{color:#4488aa;}
 
-/* Tabs */
 .tabs{display:flex;gap:8px;margin-bottom:12px;}
 .tab{
-  padding:7px 18px;background:rgba(0,0,0,.4);
-  border:2px solid #333;color:#666;border-radius:8px;
-  cursor:pointer;font-size:13px;font-weight:bold;transition:all .2s;
+  padding:7px 16px;
+  background:rgba(0,0,0,.4);
+  border:2px solid #333;
+  color:#666;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:bold;
+  transition:all .2s;
 }
 .tab.active{
-  border-color:#00d8ee;color:#00e8ff;
+  border-color:#00d8ee;
+  color:#00e8ff;
   background:rgba(0,216,238,.15);
-  box-shadow:0 0 12px rgba(0,216,238,.4);
+  box-shadow:0 0 10px rgba(0,216,238,.4);
 }
 
-/* Ads */
+/* विज्ञापन */
 #adBanner{
-  position:absolute;bottom:0;left:0;right:0;height:56px;
-  background:rgba(0,0,0,.75);border-top:1px solid #222;
-  display:none;justify-content:center;align-items:center;
-  color:#555;font-size:11px;z-index:150;letter-spacing:2px;
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:52px;
+  background:rgba(0,0,0,.75);
+  border-top:1px solid #222;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  color:#555;
+  font-size:11px;
+  z-index:150;
+  letter-spacing:2px;
 }
 #adBanner.active{display:flex;}
+
 #adInterstitial{
-  position:absolute;inset:0;background:rgba(0,0,0,.96);
-  display:none;flex-direction:column;justify-content:center;
-  align-items:center;z-index:300;color:#fff;text-align:center;
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.96);
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:300;
+  color:#fff;
+  text-align:center;
+  padding:20px;
 }
 #adInterstitial.active{display:flex;}
 #adInterstitial .ad-box{
-  width:290px;height:380px;
+  width:min(290px,85vw);
+  height:min(380px,60vh);
   background:linear-gradient(135deg,#12122e,#222250);
-  border:2px dashed #333;border-radius:12px;
-  display:flex;flex-direction:column;justify-content:center;
-  align-items:center;color:#555;margin-bottom:16px;padding:16px;
+  border:2px dashed #333;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:#555;
+  margin-bottom:16px;
+  padding:16px;
 }
 .skip-btn{
-  padding:9px 22px;background:transparent;
-  border:2px solid #00d8ee;color:#00e8ff;
-  border-radius:8px;cursor:pointer;font-size:13px;letter-spacing:1px;
+  padding:9px 22px;
+  background:transparent;
+  border:2px solid #00d8ee;
+  color:#00e8ff;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  letter-spacing:1px;
 }
 
 #flash{
-  position:absolute;inset:0;background:#ff2f6b;
-  opacity:0;pointer-events:none;z-index:90;transition:opacity .15s;
+  position:absolute;
+  inset:0;
+  background:#ff2f6b;
+  opacity:0;
+  pointer-events:none;
+  z-index:90;
+  transition:opacity .15s;
 }
 #flash.active{opacity:.45;}
 
-/* ===== Mobile ===== */
-@media(max-width:500px){
-  .screen h1{font-size:28px;}
-  .ctrl-btn{width:68px;height:68px;font-size:28px;}
-  .score-box{font-size:14px;padding:5px 10px;min-width:50px;}
+/* ============================================
+   मोबाइल रिस्पॉन्सिव
+   ============================================ */
+@media(max-width:420px){
+  .screen h1{font-size:26px;}
+  .ctrl-btn{width:64px;height:64px;font-size:26px;}
+  .score-box{font-size:13px;padding:5px 10px;min-width:50px;}
   .score-box .label{font-size:8px;}
-  #player{width:50px;height:50px;bottom:110px;}
-  .face{width:50px;height:50px;}
-  .front {transform:translateZ(25px);}
-  .back  {transform:rotateY(180deg) translateZ(25px);}
-  .right {transform:rotateY(90deg)  translateZ(25px);}
-  .left  {transform:rotateY(-90deg) translateZ(25px);}
-  .top   {transform:rotateX(90deg)  translateZ(25px);}
-  .bottom{transform:rotateX(-90deg) translateZ(25px);}
-  #roadWrap{width:88vw;}
-  #player::after{bottom:-30px;width:58px;height:12px;}
+  #player{width:46px;height:46px;bottom:16vh;}
+  .player-cube,.pf{width:46px;height:46px;}
+  .pf.front {transform:translateZ(23px);}
+  .pf.back  {transform:rotateY(180deg) translateZ(23px);}
+  .pf.right {transform:rotateY(90deg)  translateZ(23px);}
+  .pf.left  {transform:rotateY(-90deg) translateZ(23px);}
+  .pf.top   {transform:rotateX(90deg)  translateZ(23px);}
+  .pf.bottom{transform:rotateX(-90deg) translateZ(23px);}
+  .obstacle{width:42px;height:42px;}
+  .obstacle .pf{width:42px;height:42px;}
+  .obstacle .pf.front {transform:translateZ(21px);}
+  .obstacle .pf.back  {transform:rotateY(180deg) translateZ(21px);}
+  .obstacle .pf.right {transform:rotateY(90deg)  translateZ(21px);}
+  .obstacle .pf.left  {transform:rotateY(-90deg) translateZ(21px);}
+  .obstacle .pf.top   {transform:rotateX(90deg)  translateZ(21px);}
+  .obstacle .pf.bottom{transform:rotateX(-90deg) translateZ(21px);}
+}
+
+/* लैंडस्केप */
+@media(orientation:landscape) and (max-height:500px){
+  #road{height:80vh;width:min(280px,55vw);}
+  .ctrl-btn{width:60px;height:60px;font-size:24px;}
+  #player{bottom:20vh;}
 }
 </style>
 </head>
 <body>
 
-<div id="scene">
+<div id="game">
   <div class="stars"></div>
-  <div class="horizon"></div>
 
-  <div id="roadWrap">
-    <div id="road">
-      <div class="lane-line l1"></div>
-      <div class="lane-line l2"></div>
-    </div>
+  <!-- रोड प्लेट -->
+  <div id="road">
+    <div class="lane lane-1"></div>
+    <div class="lane lane-2"></div>
   </div>
 
+  <!-- प्लेयर -->
   <div id="player">
-    <div class="cube">
-      <div class="face front"></div><div class="face back"></div>
-      <div class="face right"></div><div class="face left"></div>
-      <div class="face top"></div><div class="face bottom"></div>
+    <div class="player-cube">
+      <div class="pf front"></div>
+      <div class="pf back"></div>
+      <div class="pf right"></div>
+      <div class="pf left"></div>
+      <div class="pf top"></div>
+      <div class="pf bottom"></div>
     </div>
   </div>
 
   <div id="flash"></div>
 
+  <!-- HUD -->
   <div id="hud">
     <div class="score-box"><span class="label">SCORE</span><span id="score">0</span></div>
     <div class="score-box" id="coinBox"><span class="label">COINS</span><span id="coins">0</span></div>
@@ -495,19 +687,22 @@ body{
   <div id="dailyChallenge"></div>
   <div id="soundToggle">🔊</div>
 
+  <!-- कंट्रोल -->
   <div id="controls">
     <div class="ctrl-btn" id="btnLeft">◀</div>
     <div class="ctrl-btn" id="btnRight">▶</div>
   </div>
 
+  <!-- स्टार्ट स्क्रीन -->
   <div class="screen" id="startScreen">
     <h1>3D CUBE RUNNER</h1>
-    <h2>✦ CLEAN LOOK EDITION ✦</h2>
+    <h2>✦ ULTIMATE EDITION ✦</h2>
     <p>🪙 कोइन इकट्ठा करें<br>⚡ पावर-अप उठाएँ<br>💀 बाधाओं से बचें</p>
     <button class="btn" id="btnStart">START GAME</button>
     <button class="btn tertiary" id="btnLeaderboard">🏆 LEADERBOARD</button>
   </div>
 
+  <!-- गेम ओवर स्क्रीन -->
   <div class="screen hidden" id="gameOverScreen">
     <h1 style="color:#ff2f6b;text-shadow:0 0 14px #ff2f6b;">GAME OVER</h1>
     <div class="final-score" id="finalScore">0</div>
@@ -518,8 +713,9 @@ body{
     <button class="btn secondary" id="btnHome">HOME</button>
   </div>
 
+  <!-- लीडरबोर्ड स्क्रीन -->
   <div class="screen hidden" id="leaderboardScreen">
-    <h1 style="font-size:26px;">🏆 LEADERBOARD</h1>
+    <h1 style="font-size:24px;">🏆 LEADERBOARD</h1>
     <div class="tabs">
       <div class="tab active" data-tab="global">🌍 Global</div>
       <div class="tab" data-tab="local">📱 Local</div>
@@ -531,32 +727,69 @@ body{
     <button class="btn secondary" id="btnLbBack">BACK</button>
   </div>
 
+  <!-- विज्ञापन -->
   <div id="adBanner">📢 AD BANNER</div>
   <div id="adInterstitial">
     <div class="ad-box">
       <div style="font-size:40px;">📱</div>
       <div style="margin-top:12px;color:#888;">INTERSTITIAL AD</div>
-      <small style="color:#444;margin-top:12px;font-size:11px;">AdMob / AdSense / Unity Ads यहाँ लगाएँ</small>
+      <small style="color:#444;margin-top:12px;font-size:11px;">AdMob / AdSense / Unity Ads</small>
     </div>
     <button class="skip-btn" id="skipAd">SKIP AD ▶</button>
   </div>
 </div>
 
 <script>
-/* =====================================================
-   यहाँ वही पूरा JavaScript गेम लॉजिक डालें
-   जो पिछले वर्ज़न में था — कॉइन, पावरअप, फायरबेस,
-   लीडरबोर्ड, डेली चैलेंज, साउंड, आदि।
+(function(){
+'use strict';
 
-   नोट: सिर्फ DOM स्ट्रक्चर बदला है। कोड में जहाँ भी
-   #track या .road का रेफरेंस हो, उसे #roadWrap से
-   बदल दें।
+// ============ DOM ============
+const $=id=>document.getElementById(id);
+const game=$('game'),road=$('road'),player=$('player');
+const scoreEl=$('score'),coinsEl=$('coins'),bestEl=$('best');
+const startScreen=$('startScreen'),gameOverScreen=$('gameOverScreen'),leaderboardScreen=$('leaderboardScreen');
+const finalScoreEl=$('finalScore'),finalCoinsEl=$('finalCoins'),newRecordEl=$('newRecord');
+const flash=$('flash'),adBanner=$('adBanner'),adInterstitial=$('adInterstitial');
+const soundToggle=$('soundToggle'),powerupBar=$('powerupBar'),dailyChallengeEl=$('dailyChallenge');
+const leaderboardList=$('leaderboardList'),playerNameInput=$('playerName');
 
-   उदाहरण:
-   - document.getElementById('track')  ➜  document.getElementById('roadWrap')
-   - ऑब्सटैकल/कॉइन/पावरअप अब #roadWrap के अंदर
-     append होंगे (पहले #track में होते थे)
-   ===================================================== */
-</script>
-</body>
-</html>
+// ============ FIREBASE (ऑप्शनल) ============
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT"
+};
+const USE_FIREBASE = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
+let firebaseDB = null;
+
+if (USE_FIREBASE) {
+  const s1=document.createElement('script');
+  s1.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
+  const s2=document.createElement('script');
+  s2.src='https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js';
+  s1.onload=()=>document.head.appendChild(s2);
+  s2.onload=()=>{
+    try{
+      firebase.initializeApp(FIREBASE_CONFIG);
+      firebaseDB=firebase.database();
+      console.log('🔥 Firebase ready');
+    }catch(e){console.warn('Firebase:',e);}
+  };
+  document.head.appendChild(s1);
+}
+
+// ============ साउंड ============
+const Sound=(()=>{
+  let ctx=null;
+  let muted=localStorage.getItem('crMuted')==='true';
+  function init(){
+    if(!ctx){try{ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    if(ctx&&ctx.state==='suspended')ctx.resume();
+  }
+  function beep(freq,dur,type='sine',vol=0.15){
+    if(muted||!ctx)return;
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type;
+    o.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(vol,ctx.currentTime);
+    g.gain.exponentialRampToValue
