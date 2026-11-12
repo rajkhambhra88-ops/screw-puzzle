@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>UNSCREW NUTS 3D</title>
+  <title>UNSCREW NUTS 3D - Color Boxes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1e2c; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; touch-action: pan-y pinch-zoom; }
@@ -29,13 +29,11 @@
     .screen h2 { font-size: 24px; margin-bottom: 20px; color: #cbd5e1; }
     .screen p { color: #94a3b8; margin-bottom: 20px; font-size: 15px; line-height: 1.6; }
     .btn-group { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 280px; }
-    .btn-group.row { flex-direction: row; justify-content: center; gap: 12px; }
     .level-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; max-width: 340px; max-height: 50vh; overflow-y: auto; padding: 8px; margin-bottom: 20px; }
     .level-btn { aspect-ratio: 1; border-radius: 16px; background: linear-gradient(180deg, #2d3748, #1a202c); border: 2px solid #4a5568; color: #a0aec0; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; position: relative; }
     .level-btn.completed { background: linear-gradient(180deg, #48bb78, #2f855a); border-color: #68d391; color: white; box-shadow: 0 0 12px rgba(72,187,120,0.3); }
     .level-btn.current { border-color: #f6d365; box-shadow: 0 0 16px rgba(246,211,101,0.5); transform: scale(1.05); }
     .level-btn.locked { opacity: 0.4; cursor: not-allowed; }
-    .level-btn:active:not(.locked) { transform: scale(0.92); }
     #toolbar { position: absolute; bottom: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 20; pointer-events: none; }
     #toolbar > * { pointer-events: auto; }
     .tool-btn { width: 52px; height: 52px; border-radius: 16px; background: rgba(20,24,35,0.85); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.12); color: white; font-size: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
@@ -49,8 +47,6 @@
     ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
     @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     .screen:not(.hidden) { animation: popIn 0.25s ease-out; }
-    @keyframes pulseGold { 0%,100% { box-shadow: 0 0 12px rgba(246,211,101,0.3); } 50% { box-shadow: 0 0 24px rgba(246,211,101,0.7); } }
-    .pulse-gold { animation: pulseGold 1.5s infinite; }
   </style>
 </head>
 <body>
@@ -64,7 +60,7 @@
         <span class="hud-item"><span class="hud-icon">⭐</span><span id="star-display">0</span></span>
       </div>
       <div class="hud-right">
-        <span class="hud-item" id="level-display">Lv 1</span>
+        <span class="hud-item" id="level-display">Round 1</span>
         <button class="btn small secondary" id="pause-btn" style="padding:8px 14px;font-size:16px;">⏸</button>
       </div>
     </div>
@@ -72,9 +68,9 @@
     <div id="toolbar">
       <button class="tool-btn" id="hint-btn" title="Hint"><span>💡</span><span class="badge" id="hint-cost">0</span></button>
       <button class="tool-btn" id="undo-btn" title="Undo"><span>↩️</span><span class="badge" id="undo-cost">0</span></button>
-      <button class="tool-btn" id="extra-tray-btn" title="Extra Box"><span>➕</span><span class="badge" id="extra-cost">0</span></button>
       <button class="tool-btn" id="hammer-btn" title="Hammer"><span>🔨</span><span class="badge" id="hammer-cost">0</span></button>
       <button class="tool-btn" id="drill-btn" title="Drill"><span>🔩</span><span class="badge" id="drill-cost">0</span></button>
+      <button class="tool-btn" id="reset-btn" title="Restart Round"><span>🔄</span></button>
     </div>
 
     <div id="ad-banner">📢 Ad Placeholder — Banner Ad Slot (320x50)</div>
@@ -83,10 +79,9 @@
   <!-- HOME -->
   <div class="screen" id="home-screen">
     <h1>UNSCREW NUTS 3D</h1>
-    <p style="color:#94a3b8; margin-bottom:28px;">Tap screws to remove them.<br>Fill the box — it resets when full!</p>
+    <p style="color:#94a3b8; margin-bottom:28px;">Match colors to boxes.<br>Boxes reset when full. Play unlimited rounds!</p>
     <div class="btn-group">
       <button class="btn" id="play-btn">▶ PLAY</button>
-      <button class="btn secondary" id="levels-btn">📋 LEVELS</button>
       <button class="btn secondary" id="shop-btn">🛒 SHOP</button>
       <button class="btn secondary" id="daily-btn" style="position:relative;">🎁 DAILY REWARD <span id="daily-badge" style="position:absolute;top:-4px;right:-4px;background:#e53e3e;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;">!</span></button>
     </div>
@@ -95,19 +90,12 @@
     </div>
   </div>
 
-  <div class="screen hidden" id="level-screen">
-    <h2>Select Level</h2>
-    <div class="level-grid" id="level-grid"></div>
-    <button class="btn secondary" id="back-from-levels">← Back</button>
-  </div>
-
   <div class="screen hidden" id="shop-screen">
     <h2>Shop</h2>
     <p>Coins: <span id="shop-coins">0</span> 🪙</p>
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;">
       <button class="btn gold" id="buy-hint">💡 Hint — 50 🪙</button>
       <button class="btn gold" id="buy-undo">↩️ Undo — 30 🪙</button>
-      <button class="btn gold" id="buy-extra-tray">➕ Extra Box — 100 🪙</button>
       <button class="btn gold" id="buy-hammer">🔨 Hammer — 75 🪙</button>
       <button class="btn gold" id="buy-drill">🔩 Drill — 120 🪙</button>
       <button class="btn secondary" id="buy-coins-ad">📺 Watch Ad → +100 🪙</button>
@@ -119,8 +107,7 @@
     <h2>Paused</h2>
     <div class="btn-group">
       <button class="btn" id="resume-btn">▶ Resume</button>
-      <button class="btn secondary" id="restart-btn">🔄 Restart</button>
-      <button class="btn secondary" id="settings-pause-btn">⚙️ Settings</button>
+      <button class="btn secondary" id="restart-btn">🔄 Restart Round</button>
       <button class="btn danger" id="quit-btn">🚪 Quit to Menu</button>
     </div>
   </div>
@@ -133,10 +120,6 @@
         <button class="btn small secondary" id="toggle-sound">ON</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;color:#cbd5e1;font-size:16px;">
-        <span>🎵 Music</span>
-        <button class="btn small secondary" id="toggle-music">ON</button>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;color:#cbd5e1;font-size:16px;">
         <span>📳 Vibration</span>
         <button class="btn small secondary" id="toggle-vibration">ON</button>
       </div>
@@ -144,25 +127,15 @@
     <button class="btn secondary" id="back-from-settings">← Back</button>
   </div>
 
+  <!-- VICTORY / REWARD SCREEN -->
   <div class="screen hidden" id="victory-screen">
-    <h2 style="font-size:32px;color:#f6d365;">🎉 Level Complete!</h2>
+    <h2 style="font-size:32px;color:#f6d365;">🎉 Round Complete!</h2>
     <div style="font-size:48px;margin:16px 0;" id="victory-stars">⭐⭐⭐</div>
     <p>Coins earned: <span id="victory-coins" style="color:#f6d365;font-weight:700;">+50</span></p>
     <div class="btn-group" style="margin-top:20px;">
-      <button class="btn gold" id="next-level-btn">▶ Next Level</button>
-      <button class="btn secondary" id="replay-btn">🔄 Replay</button>
+      <button class="btn gold" id="next-level-btn">▶ Next Round</button>
       <button class="btn secondary" id="victory-ad-btn">📺 Watch Ad → +100 🪙</button>
       <button class="btn danger" id="victory-menu-btn">🏠 Menu</button>
-    </div>
-  </div>
-
-  <div class="screen hidden" id="gameover-screen">
-    <h2 style="color:#f56565;">😵 Game Over</h2>
-    <p>All boxes are full!</p>
-    <div class="btn-group" style="margin-top:20px;">
-      <button class="btn" id="retry-btn">🔄 Try Again</button>
-      <button class="btn gold" id="extra-life-ad-btn">📺 Watch Ad → Extra Box</button>
-      <button class="btn secondary" id="gameover-menu-btn">🏠 Menu</button>
     </div>
   </div>
 
@@ -171,9 +144,7 @@
 
 <script>
 /* ============================================================
-   UNSCREW NUTS 3D — Complete Game with BOX TRAY SYSTEM
-   New: Tray = visible 3D box. When full, nuts vanish & new box
-   slides in automatically. Player gets N boxes per level.
+   UNSCREW NUTS 3D - UNLIMITED ROUNDS WITH COLOR BOXES
    ============================================================ */
 
 (function() {
@@ -183,36 +154,42 @@
 // 1. CONFIGURATION
 // ============================================================
 const CONFIG = {
-  TOTAL_LEVELS: 30,
   BASE_COINS_PER_LEVEL: 50,
   STAR_BONUS: 25,
-  SCREW_COLORS: ['#e53e3e', '#3182ce', '#38a169', '#d69e2e', '#805ad5', '#dd6b20', '#319795', '#ed64a6'],
   SCREW_RADIUS: 14,
-  HOLE_RADIUS: 16,
   BOARD_COLORS: ['#8B5A2B', '#A0522D', '#6B4226', '#B8860B', '#5C4033'],
   METAL_COLORS: ['#6B7280', '#4B5563', '#9CA3AF', '#78716C'],
   GRAVITY: 1200,
-  // TRAY BOX system
-  BOX_SLOT_W: 26,      // width of a single nut slot in the box
-  BOX_H: 34,           // height of the box
-  BOX_Y_OFFSET: 78,    // distance from bottom of canvas
+  BOX_SLOT_W: 26,
+  BOX_H: 34,
+  BOX_Y_OFFSET: 78,
   BOX_FILL_ANIM_MS: 350,
   BOX_RESET_ANIM_MS: 500,
+  // Master color palette for boxes (matches nuts)
+  COLOR_PALETTE: [
+    { id: 'red', hex: '#e53e3e', name: 'Red' },
+    { id: 'blue', hex: '#3182ce', name: 'Blue' },
+    { id: 'green', hex: '#38a169', name: 'Green' },
+    { id: 'yellow', hex: '#d69e2e', name: 'Yellow' },
+    { id: 'purple', hex: '#805ad5', name: 'Purple' },
+    { id: 'orange', hex: '#dd6b20', name: 'Orange' }
+  ]
 };
 
 // ============================================================
-// 2. LEVEL DATA (same generator, with box count)
+// 2. DYNAMIC LEVEL GENERATOR (Unlimited)
 // ============================================================
 function generateLevel(levelNum) {
   const boards = [];
   const screws = [];
-  const boxCapacity = Math.min(3 + Math.floor(levelNum / 5), 7);   // nuts per box
-  const maxBoxes = Math.max(2, 4 - Math.floor(levelNum / 10));       // how many boxes before game over
 
-  const boardCount = Math.min(1 + Math.floor(levelNum / 3), 6);
-  const isMetal = levelNum > 15;
-  const isColorMatch = levelNum > 20;
-  const isAdvanced = levelNum > 25;
+  // Difficulty scaling
+  const boardCount = Math.min(1 + Math.floor(levelNum / 2), 8); // Max 8 boards
+  const colorCount = Math.min(2 + Math.floor(levelNum / 3), 6); // Max 6 colors
+  const boxCapacity = Math.min(3 + Math.floor(levelNum / 4), 6); // Nuts per color box
+  
+  // Get active colors for this level
+  const activeColors = CONFIG.COLOR_PALETTE.slice(0, colorCount);
 
   const cols = Math.ceil(Math.sqrt(boardCount));
   const rows = Math.ceil(boardCount / cols);
@@ -226,13 +203,13 @@ function generateLevel(levelNum) {
     const bh = Math.min(cellH * 0.85, 130);
     const bx = 30 + col * cellW + (cellW - bw) / 2;
     const by = 70 + row * cellH + (cellH - bh) / 2;
-    const isMetalBoard = isMetal && (i % 2 === 0);
+    const isMetal = levelNum > 10 && (i % 2 === 0);
     const colorIdx = (levelNum + i) % CONFIG.BOARD_COLORS.length;
     
     boards.push({
       id: i, x: bx, y: by, w: bw, h: bh,
-      type: isMetalBoard ? 'metal' : 'wood',
-      color: isMetalBoard ? CONFIG.METAL_COLORS[i % CONFIG.METAL_COLORS.length] : CONFIG.BOARD_COLORS[colorIdx],
+      type: isMetal ? 'metal' : 'wood',
+      color: isMetal ? CONFIG.METAL_COLORS[i % CONFIG.METAL_COLORS.length] : CONFIG.BOARD_COLORS[colorIdx],
       removed: false, fallY: 0, fallVel: 0, rotation: 0
     });
 
@@ -244,84 +221,75 @@ function generateLevel(levelNum) {
       { x: bx + bw - margin, y: by + bh - margin },
     ];
     if (bw > 80 && bh > 80) corners.push({ x: bx + bw/2, y: by + bh/2 });
-    if (levelNum > 10) {
+    if (levelNum > 5) {
       corners.push({ x: bx + bw/2, y: by + margin });
       corners.push({ x: bx + bw/2, y: by + bh - margin });
     }
 
-    const screwCount = Math.min(corners.length, 3 + Math.floor(levelNum / 4));
+    const screwCount = Math.min(corners.length, 3 + Math.floor(levelNum / 3));
     for (let s = 0; s < screwCount; s++) {
       const c = corners[s];
-      const color = isColorMatch 
-        ? CONFIG.SCREW_COLORS[(i + s) % 4]
-        : CONFIG.SCREW_COLORS[(i + s + levelNum) % CONFIG.SCREW_COLORS.length];
+      // Assign a random color from active colors
+      const chosenColor = activeColors[(i + s + levelNum) % activeColors.length];
       screws.push({
         id: boards.length * 10 + s,
-        x: c.x, y: c.y, boardId: i, color: color,
+        x: c.x, y: c.y, boardId: i, color: chosenColor.hex, colorId: chosenColor.id,
         removed: false, removing: false, removeProgress: 0,
-        locked: (isAdvanced && s === 0 && i === 0),
+        locked: (levelNum > 15 && s === 0 && i === 0),
         scale: 1
       });
     }
   }
 
+  // Ensure at least some screws
   if (screws.length === 0) {
-    screws.push({ id: 0, x: 200, y: 300, boardId: 0, color: '#e53e3e', removed: false, removing: false, removeProgress: 0, locked: false, scale: 1 });
+    screws.push({ id: 0, x: 200, y: 300, boardId: 0, color: '#e53e3e', colorId: 'red', removed: false, removing: false, removeProgress: 0, locked: false, scale: 1 });
   }
+
+  // Prepare Boxes data: one box per active color
+  const boxes = activeColors.map(c => ({
+    colorId: c.id,
+    colorHex: c.hex,
+    capacity: boxCapacity,
+    currentNuts: [], // stores screw ids
+    isResetting: false,
+    resetProgress: 0,
+    incomingAnim: null,
+  }));
 
   return {
     level: levelNum,
     boards,
     screws,
-    boxCapacity,          // how many nuts per box
-    maxBoxes,             // boxes allowed before game over
-    boxesUsed: 0,         // current box index (0-based)
-    currentBox: [],       // nut ids currently in visible box
-    boxResetting: false,  // animation flag
-    boxResetProgress: 0,
-    boxIncoming: null,    // for slide-in animation
+    boxes,
     moves: 0,
     requiredScrews: screws.length,
     removedScrews: 0,
-    stars: 0,
-    coinsEarned: 0,
     completed: false,
-    failed: false,
     startTime: Date.now(),
     hintUsed: false,
     undoStack: [],
-    isMetal, isColorMatch, isAdvanced,
-    totalNutsInAllBoxes: 0,
   };
 }
-
-const LEVEL_DATA = [];
-for (let i = 1; i <= CONFIG.TOTAL_LEVELS; i++) LEVEL_DATA.push(generateLevel(i));
 
 // ============================================================
 // 3. STATE & PERSISTENCE
 // ============================================================
-const STORAGE_KEY = 'unscrew_nuts_3d_save_v2';
+const STORAGE_KEY = 'unscrew_nuts_3d_unlimited_save';
 
 let gameState = {
   currentLevel: 1,
-  unlockedLevels: 1,
-  completedLevels: {},
   coins: 100,
   totalStars: 0,
   soundOn: true,
-  musicOn: true,
   vibrationOn: true,
-  dailyRewardClaimed: false,
   lastDailyDate: '',
-  boosters: { hint: 1, undo: 1, extraTray: 1, hammer: 1, drill: 1 },
+  boosters: { hint: 1, undo: 1, hammer: 1, drill: 1 },
   levelState: null,
   animFrame: null,
   paused: false,
-  extraBoxesBonus: 0,
   hintsRemaining: 1,
   undosRemaining: 1,
-  extraTraysRemaining: 1,
   hammersRemaining: 1,
   drillsRemaining: 1,
   particles: [],
@@ -329,9 +297,6 @@ let gameState = {
   ctx: null,
   touchStart: null,
   touchMoved: false,
-  // Box visuals
-  boxShakeOffset: 0,
-  boxShakeVel: 0,
 };
 
 function loadState() {
@@ -340,9 +305,7 @@ function loadState() {
     if (saved) {
       const data = JSON.parse(saved);
       Object.assign(gameState, data);
-      if (!gameState.boosters) gameState.boosters = { hint: 1, undo: 1, extraTray: 1, hammer: 1, drill: 1 };
-      if (gameState.unlockedLevels < 1) gameState.unlockedLevels = 1;
-      if (!gameState.completedLevels) gameState.completedLevels = {};
+      if (!gameState.boosters) gameState.boosters = { hint: 1, undo: 1, hammer: 1, drill: 1 };
     }
   } catch (e) { console.warn('Save load failed', e); }
 }
@@ -351,14 +314,10 @@ function saveState() {
   try {
     const data = {
       currentLevel: gameState.currentLevel,
-      unlockedLevels: gameState.unlockedLevels,
-      completedLevels: gameState.completedLevels,
       coins: gameState.coins,
       totalStars: gameState.totalStars,
       soundOn: gameState.soundOn,
-      musicOn: gameState.musicOn,
       vibrationOn: gameState.vibrationOn,
-      dailyRewardClaimed: gameState.dailyRewardClaimed,
       lastDailyDate: gameState.lastDailyDate,
       boosters: gameState.boosters,
     };
@@ -434,44 +393,47 @@ function drawScrew(x, y, color, scale, rotation, isLocked) {
   ctx.rotate(rotation);
   ctx.scale(scale, scale);
   const r = CONFIG.SCREW_RADIUS;
-  // shadow
+  
+  // Shadow
   ctx.beginPath(); ctx.arc(2, 3, r + 2, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill();
-  // body
+  
+  // Body
   const grad = ctx.createRadialGradient(-3, -3, r*0.2, 0, 0, r);
   grad.addColorStop(0, '#fff'); grad.addColorStop(0.3, color); grad.addColorStop(1, shadeColor(color, -40));
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
   ctx.strokeStyle = shadeColor(color, -60); ctx.lineWidth = 1.5; ctx.stroke();
-  // cross
+  
+  // Cross
   ctx.beginPath(); ctx.moveTo(-r*0.5, 0); ctx.lineTo(r*0.5, 0);
   ctx.moveTo(0, -r*0.5); ctx.lineTo(0, r*0.5);
   ctx.strokeStyle = shadeColor(color, -70); ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
-  // highlight
+  
+  // Highlight
   ctx.beginPath(); ctx.arc(-r*0.25, -r*0.25, r*0.25, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
+  
   if (isLocked) {
     ctx.beginPath(); ctx.arc(0, 0, r*0.7, 0, Math.PI*2); ctx.strokeStyle = '#f6d365'; ctx.lineWidth = 2; ctx.setLineDash([3,2]); ctx.stroke(); ctx.setLineDash([]);
   }
   ctx.restore();
 }
 
-// Draw a nut inside the box (smaller, sitting in slot)
 function drawNutInBox(cx, cy, color, scale, glow) {
   ctx.save();
   ctx.translate(cx, cy);
   ctx.scale(scale, scale);
   const r = 10;
-  // glow if just added
+  
   if (glow > 0) {
     ctx.beginPath(); ctx.arc(0, 0, r + 6 * glow, 0, Math.PI*2);
     ctx.fillStyle = `rgba(246,211,101,${0.4 * glow})`; ctx.fill();
   }
-  // shadow
   ctx.beginPath(); ctx.arc(1, 2, r + 1, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
-  // nut body
+  
   const grad = ctx.createRadialGradient(-2, -2, r*0.2, 0, 0, r);
   grad.addColorStop(0, '#fff'); grad.addColorStop(0.3, color); grad.addColorStop(1, shadeColor(color, -50));
   ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
   ctx.strokeStyle = shadeColor(color, -70); ctx.lineWidth = 1; ctx.stroke();
-  // hex nut inner
+  
   ctx.beginPath();
   for (let i = 0; i < 6; i++) {
     const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
@@ -479,9 +441,7 @@ function drawNutInBox(cx, cy, color, scale, glow) {
     const py = Math.sin(a) * r * 0.55;
     if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
-  ctx.closePath();
-  ctx.strokeStyle = shadeColor(color, -50); ctx.lineWidth = 1.2; ctx.stroke();
-  // highlight
+  ctx.closePath(); ctx.strokeStyle = shadeColor(color, -50); ctx.lineWidth = 1.2; ctx.stroke();
   ctx.beginPath(); ctx.arc(-r*0.3, -r*0.3, r*0.2, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
   ctx.restore();
 }
@@ -489,6 +449,7 @@ function drawNutInBox(cx, cy, color, scale, glow) {
 function drawBoard(board) {
   const { x, y, w, h, color, type, removed, fallY, rotation } = board;
   if (removed && fallY > 600) return;
+  
   ctx.save();
   const cx = x + w/2, cy = y + h/2;
   ctx.translate(cx, cy + (fallY || 0));
@@ -529,177 +490,118 @@ function drawBoard(board) {
 }
 
 // ============================================================
-// 7. THE BOX TRAY — 3D wooden crate with nuts
+// 7. COLOR BOXES TRAY SYSTEM
 // ============================================================
-function getBoxLayout() {
+function drawColorBoxes(dt) {
   const ls = gameState.levelState;
-  if (!ls) return null;
-  const capacity = ls.boxCapacity;
-  const slotW = CONFIG.BOX_SLOT_W;
-  const boxW = Math.max(110, capacity * slotW + 24);
+  if (!ls || !ls.boxes) return;
+  
+  const numBoxes = ls.boxes.length;
+  if (numBoxes === 0) return;
+
+  const totalWidth = logicalWidth - 20;
+  const boxW = (totalWidth / numBoxes) - 6; // 6px gap
   const boxH = CONFIG.BOX_H + 14;
-  const boxX = (logicalWidth - boxW) / 2;
-  const boxY = logicalHeight - CONFIG.BOX_Y_OFFSET - boxH;
-  return { boxX, boxY, boxW, boxH, slotW, capacity };
-}
+  const startY = logicalHeight - CONFIG.BOX_Y_OFFSET - boxH;
 
-function drawBoxTray(dt) {
-  const ls = gameState.levelState;
-  if (!ls) return;
-  const layout = getBoxLayout();
-  if (!layout) return;
-  let { boxX, boxY, boxW, boxH, slotW, capacity } = layout;
-
-  // Box slide/enter animation
-  if (ls.boxIncoming !== null) {
-    const t = ls.boxIncoming;       // 0 -> 1
-    const fromX = logicalWidth + 60;
-    const toX = boxX;
-    boxX = fromX + (toX - fromX) * t;
-    ls.boxIncoming = Math.min(1, t + dt * 3.5);
-    if (ls.boxIncoming >= 1) ls.boxIncoming = null;
-  }
-
-  // Shake
-  if (gameState.boxShakeOffset !== 0) {
-    gameState.boxShakeVel *= 0.9;
-    gameState.boxShakeOffset += gameState.boxShakeVel;
-    gameState.boxShakeOffset *= 0.85;
-    if (Math.abs(gameState.boxShakeOffset) < 0.3) { gameState.boxShakeOffset = 0; gameState.boxShakeVel = 0; }
-    boxX += gameState.boxShakeOffset;
-  }
-
-  // Reset animation: nuts fly up
-  let resetAlpha = 1;
-  let resetOffsetY = 0;
-  if (ls.boxResetting) {
-    ls.boxResetProgress += dt * 1000 / CONFIG.BOX_RESET_ANIM_MS;
-    const t = Math.min(1, ls.boxResetProgress);
-    resetAlpha = 1 - t;
-    resetOffsetY = -t * 40;
-    if (t >= 1) {
-      ls.boxResetting = false;
-      ls.boxResetProgress = 0;
-      ls.currentBox = [];
-      ls.boxIncoming = 0;
+  for (let i = 0; i < numBoxes; i++) {
+    const box = ls.boxes[i];
+    let boxX = 10 + i * (boxW + 6);
+    let boxY = startY;
+    
+    // Slide animation for incoming box
+    if (box.incomingAnim !== null) {
+      const t = box.incomingAnim;
+      boxX = logicalWidth + (boxX - logicalWidth) * t;
+      box.incomingAnim = Math.min(1, t + dt * 3.5);
+      if (box.incomingAnim >= 1) box.incomingAnim = null;
     }
-  }
 
-  // ---- Draw wooden box body (3D) ----
-  ctx.save();
-  ctx.globalAlpha = resetAlpha;
-
-  // Outer shadow
-  ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
-
-  // Back rim (darker)
-  ctx.fillStyle = '#3d2a1a';
-  ctx.beginPath(); ctx.roundRect(boxX - 4, boxY - 4, boxW + 8, boxH + 8, 10); ctx.fill();
-
-  // Box interior (dark hollow)
-  ctx.shadowColor = 'transparent';
-  const innerGrad = ctx.createLinearGradient(boxX, boxY, boxX, boxY + boxH);
-  innerGrad.addColorStop(0, '#1a1005');
-  innerGrad.addColorStop(1, '#2d1e0d');
-  ctx.fillStyle = innerGrad;
-  ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 8); ctx.fill();
-
-  // Front face (wood)
-  const frontGrad = ctx.createLinearGradient(boxX, boxY + boxH * 0.7, boxX, boxY + boxH);
-  frontGrad.addColorStop(0, '#8B5A2B');
-  frontGrad.addColorStop(1, '#5C3A1A');
-  ctx.fillStyle = frontGrad;
-  ctx.beginPath(); ctx.roundRect(boxX, boxY + boxH * 0.65, boxW, boxH * 0.35, [0,0,8,8]); ctx.fill();
-
-  // Top rim highlight
-  ctx.strokeStyle = 'rgba(255,220,160,0.35)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 8); ctx.stroke();
-
-  // Wood grain on front
-  ctx.globalAlpha = resetAlpha * 0.15;
-  ctx.strokeStyle = '#2d1f00'; ctx.lineWidth = 1;
-  for (let i = 0; i < 4; i++) {
-    ctx.beginPath();
-    ctx.moveTo(boxX + 6, boxY + boxH * 0.7 + i * (boxH * 0.07));
-    ctx.lineTo(boxX + boxW - 6, boxY + boxH * 0.7 + i * (boxH * 0.07));
-    ctx.stroke();
-  }
-  ctx.globalAlpha = resetAlpha;
-
-  // Metal brackets on sides
-  ctx.fillStyle = '#c9a227';
-  ctx.fillRect(boxX - 5, boxY + boxH * 0.3, 6, boxH * 0.5);
-  ctx.fillRect(boxX + boxW - 1, boxY + boxH * 0.3, 6, boxH * 0.5);
-  ctx.fillStyle = '#f6d365';
-  ctx.fillRect(boxX - 5, boxY + boxH * 0.3, 6, 3);
-  ctx.fillRect(boxX + boxW - 1, boxY + boxH * 0.3, 6, 3);
-
-  // Box label
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  ctx.font = 'bold 9px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('BOX ' + (ls.boxesUsed + 1) + '/' + ls.maxBoxes, boxX + boxW / 2, boxY + boxH - 4);
-
-  // ---- Draw nuts inside ----
-  const nuts = ls.currentBox;
-  const startX = boxX + 14;
-  const nutY = boxY + boxH * 0.42 + resetOffsetY;
-
-  for (let i = 0; i < capacity; i++) {
-    const slotCx = startX + i * slotW + slotW / 2;
-    // Slot guide (dim circle)
-    if (i >= nuts.length) {
-      ctx.globalAlpha = resetAlpha * 0.25;
-      ctx.beginPath();
-      ctx.arc(slotCx, nutY, 9, 0, Math.PI * 2);
-      ctx.strokeStyle = '#8B5A2B';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([2, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = resetAlpha;
+    // Reset animation
+    let resetAlpha = 1;
+    let resetOffsetY = 0;
+    if (box.isResetting) {
+      box.resetProgress += dt * 1000 / CONFIG.BOX_RESET_ANIM_MS;
+      const t = Math.min(1, box.resetProgress);
+      resetAlpha = 1 - t;
+      resetOffsetY = -t * 40;
+      if (t >= 1) {
+        box.isResetting = false;
+        box.resetProgress = 0;
+        box.currentNuts = [];
+        box.incomingAnim = 0;
+      }
     }
-  }
 
-  // Draw each nut with slight pop animation
-  const now = performance.now();
-  for (let i = 0; i < nuts.length; i++) {
-    const nutId = nuts[i];
-    const slotCx = startX + i * slotW + slotW / 2;
-    // Find the screw color for this nut id
-    const screw = ls.screws.find(s => s.id === nutId);
-    const color = screw ? screw.color : '#e53e3e';
-    // Pop-in scale: newest nut grows from 0
-    let popScale = 1;
-    if (i === nuts.length - 1) {
-      const age = now - (ls._lastNutAddedAt || 0);
-      popScale = Math.min(1, age / CONFIG.BOX_FILL_ANIM_MS);
-      popScale = popScale < 1 ? Math.sin(popScale * Math.PI / 2) : 1;
-    }
-    const glow = i === nuts.length - 1 ? Math.max(0, 1 - (now - (ls._lastNutAddedAt || 0)) / 600) : 0;
-    drawNutInBox(slotCx, nutY, color, popScale, glow);
-  }
-
-  ctx.restore();
-
-  // ---- Reset progress bar ----
-  if (ls.boxResetting) {
-    const t = Math.min(1, ls.boxResetProgress);
     ctx.save();
-    ctx.globalAlpha = 0.9;
-    ctx.fillStyle = 'rgba(246,211,101,0.8)';
-    ctx.fillRect(boxX, boxY - 8, boxW * (1 - t), 4);
+    ctx.globalAlpha = resetAlpha;
+
+    // Box shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 4;
+    
+    // Box background (dark wood/metal look)
+    ctx.fillStyle = '#2d1e0d';
+    ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 6); ctx.fill();
+    
+    // Box border (Colored based on box type)
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = box.colorHex;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 6); ctx.stroke();
+    
+    // Box inner area
+    const innerGrad = ctx.createLinearGradient(boxX, boxY, boxX, boxY + boxH);
+    innerGrad.addColorStop(0, shadeColor(box.colorHex, -60));
+    innerGrad.addColorStop(1, shadeColor(box.colorHex, -80));
+    ctx.fillStyle = innerGrad;
+    ctx.beginPath(); ctx.roundRect(boxX + 2, boxY + 2, boxW - 4, boxH - 4, 4); ctx.fill();
+
+    // Draw Nuts
+    const nuts = box.currentNuts;
+    const capacity = box.capacity;
+    const slotW = (boxW - 12) / capacity;
+    
+    // Draw empty slots
+    for (let s = 0; s < capacity; s++) {
+      const slotCx = boxX + 6 + s * slotW + slotW / 2;
+      if (s >= nuts.length) {
+        ctx.globalAlpha = resetAlpha * 0.3;
+        ctx.beginPath();
+        ctx.arc(slotCx, boxY + boxH / 2 + resetOffsetY, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = box.colorHex;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = resetAlpha;
+      }
+    }
+
+    // Draw filled nuts
+    const now = performance.now();
+    for (let n = 0; n < nuts.length; n++) {
+      const nutId = nuts[n];
+      const slotCx = boxX + 6 + n * slotW + slotW / 2;
+      const nutCy = boxY + boxH / 2 + resetOffsetY;
+      
+      let popScale = 1;
+      if (n === nuts.length - 1) {
+        const age = now - (box._lastNutAddedAt || 0);
+        popScale = Math.min(1, age / CONFIG.BOX_FILL_ANIM_MS);
+        popScale = popScale < 1 ? Math.sin(popScale * Math.PI / 2) : 1;
+      }
+      const glow = n === nuts.length - 1 ? Math.max(0, 1 - (now - (box._lastNutAddedAt || 0)) / 600) : 0;
+      
+      drawNutInBox(slotCx, nutCy, box.colorHex, popScale, glow);
+    }
+
+    // Draw capacity text
+    ctx.globalAlpha = resetAlpha;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${nuts.length}/${capacity}`, boxX + boxW / 2, boxY + boxH - 2);
+
     ctx.restore();
   }
-
-  // ---- Hint: how many nuts left in current box ----
-  const remaining = capacity - nuts.length;
-  ctx.save();
-  ctx.fillStyle = remaining === 0 ? '#f6d365' : '#cbd5e1';
-  ctx.font = 'bold 11px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(remaining > 0 ? `${remaining} slot${remaining > 1 ? 's' : ''} left` : 'BOX FULL!', logicalWidth / 2, boxY - 10);
-  ctx.restore();
 }
 
 // ============================================================
@@ -759,7 +661,7 @@ function render(now) {
   if (gameState.levelState) {
     const ls = gameState.levelState;
 
-    // Update board falls
+    // Update boards
     for (const board of ls.boards) {
       if (board.removed) {
         board.fallVel = (board.fallVel || 0) + CONFIG.GRAVITY * dt;
@@ -768,7 +670,7 @@ function render(now) {
       }
     }
 
-    // Update screw removals
+    // Update screws
     for (const screw of ls.screws) {
       if (screw.removing) {
         screw.removeProgress += dt * 3;
@@ -779,7 +681,7 @@ function render(now) {
 
     updateParticles(dt);
 
-    // Draw boards (removed ones on top so they fall in front)
+    // Draw boards
     const sortedBoards = [...ls.boards].sort((a, b) => (a.removed ? 1 : 0) - (b.removed ? 1 : 0));
     for (const board of sortedBoards) drawBoard(board);
 
@@ -798,9 +700,7 @@ function render(now) {
     }
 
     drawParticles();
-
-    // Draw the box tray
-    drawBoxTray(dt);
+    drawColorBoxes(dt);
   }
 
   gameState.animFrame = requestAnimationFrame(render);
@@ -811,43 +711,20 @@ gameState.animFrame = requestAnimationFrame(render);
 // 10. GAME LOGIC
 // ============================================================
 function startLevel(levelNum) {
-  const template = LEVEL_DATA[levelNum - 1];
-  if (!template) return;
-  const ls = JSON.parse(JSON.stringify(template));
-
-  ls.currentBox = [];
-  ls.boxesUsed = 0;
-  ls.boxResetting = false;
-  ls.boxResetProgress = 0;
-  ls.boxIncoming = null;
+  const ls = generateLevel(levelNum); // Generate dynamically for unlimited play
   ls.moves = 0;
   ls.removedScrews = 0;
   ls.completed = false;
-  ls.failed = false;
   ls.startTime = Date.now();
-  ls.hintUsed = false;
   ls.undoStack = [];
-  ls.maxBoxes = template.maxBoxes + gameState.extraBoxesBonus;
-  ls.totalNutsInAllBoxes = 0;
-
-  for (const screw of ls.screws) {
-    screw.removed = false; screw.removing = false; screw.removeProgress = 0; screw.scale = 1;
-  }
-  for (const board of ls.boards) {
-    board.removed = false; board.fallY = 0; board.fallVel = 0; board.rotation = 0;
-  }
 
   gameState.levelState = ls;
   gameState.currentLevel = levelNum;
   gameState.paused = false;
   gameState.particles = [];
-  gameState.extraBoxesBonus = 0;
-  gameState.boxShakeOffset = 0;
-  gameState.boxShakeVel = 0;
-
+  
   gameState.hintsRemaining = gameState.boosters.hint || 0;
   gameState.undosRemaining = gameState.boosters.undo || 0;
-  gameState.extraTraysRemaining = gameState.boosters.extraTray || 0;
   gameState.hammersRemaining = gameState.boosters.hammer || 0;
   gameState.drillsRemaining = gameState.boosters.drill || 0;
 
@@ -859,46 +736,52 @@ function startLevel(levelNum) {
 
 function handleScrewTap(screw) {
   const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
+  if (!ls || ls.completed) return;
   if (screw.removed || screw.removing) return;
-  if (ls.boxResetting) { showToast('⏳ Box resetting...'); return; }
 
   if (screw.locked) {
     showToast('🔒 Locked! Use a hammer.');
     playSound('fail'); vibrate(50); return;
   }
 
-  // Check current box has room
-  if (ls.currentBox.length >= ls.boxCapacity) {
-    // Should be handled by auto-reset, but safety
-    triggerBoxReset(ls);
+  // Find matching box
+  const box = ls.boxes.find(b => b.colorId === screw.colorId);
+  if (!box) return;
+
+  // If box is resetting, don't allow
+  if (box.isResetting) {
+    showToast('⏳ Box resetting...');
     return;
   }
 
-  // Remove the screw
+  // Check if box is full (should auto reset, but safety)
+  if (box.currentNuts.length >= box.capacity) {
+    triggerBoxReset(box);
+    return;
+  }
+
+  // Remove screw
   screw.removing = true;
   screw.removeProgress = 0;
   ls.moves++;
 
-  ls.undoStack.push({ type: 'screw', screwId: screw.id, boardId: screw.boardId });
+  ls.undoStack.push({ type: 'screw', screwId: screw.id, boardId: screw.boardId, colorId: screw.colorId });
 
   setTimeout(() => {
     if (!gameState.levelState || gameState.levelState !== ls) return;
-    if (ls.failed || ls.completed) return;
+    if (ls.completed) return;
 
     // Add nut to box
-    ls.currentBox.push(screw.id);
+    box.currentNuts.push(screw.id);
     ls.removedScrews++;
-    ls.totalNutsInAllBoxes++;
-    ls._lastNutAddedAt = performance.now();
+    box._lastNutAddedAt = performance.now();
 
     playSound('unscrew'); vibrate(20);
     spawnParticles(screw.x, screw.y, screw.color, 8, 150);
-    gameState.boxShakeVel = 2.5;
 
-    // If box is now full → trigger reset
-    if (ls.currentBox.length >= ls.boxCapacity) {
-      triggerBoxReset(ls);
+    // Check if box is full
+    if (box.currentNuts.length >= box.capacity) {
+      triggerBoxReset(box);
     }
 
     checkBoardRemoval(ls);
@@ -909,27 +792,12 @@ function handleScrewTap(screw) {
   }, 400);
 }
 
-function triggerBoxReset(ls) {
-  if (ls.boxResetting) return;
-
-  ls.boxResetting = true;
-  ls.boxResetProgress = 0;
-
-  // Determine if we can afford a new box
-  if (ls.boxesUsed + 1 >= ls.maxBoxes) {
-    // Out of boxes → GAME OVER
-    ls.failed = true;
-    playSound('fail'); vibrate([100, 50, 100]);
-    setTimeout(() => { if (gameState.levelState === ls) showGameOver(); }, 600);
-    return;
-  }
-
-  // Consume a box, animate reset
-  ls.boxesUsed++;
+function triggerBoxReset(box) {
+  if (box.isResetting) return;
+  box.isResetting = true;
+  box.resetProgress = 0;
   playSound('boxreset');
   vibrate(60);
-  spawnParticles(logicalWidth / 2, logicalHeight - CONFIG.BOX_Y_OFFSET, '#f6d365', 20, 250);
-  gameState.boxShakeVel = 6;
 }
 
 function checkBoardRemoval(ls) {
@@ -949,32 +817,38 @@ function checkBoardRemoval(ls) {
 function winLevel(ls) {
   if (ls.completed) return;
   ls.completed = true;
+  
   const efficiency = ls.requiredScrews / Math.max(ls.moves, 1);
   let stars = 1;
   if (efficiency >= 0.7) stars = 2;
   if (efficiency >= 0.9) stars = 3;
   if (ls.moves <= ls.requiredScrews) stars = 3;
-  ls.stars = stars;
-  ls.coinsEarned = CONFIG.BASE_COINS_PER_LEVEL + (stars === 3 ? CONFIG.STAR_BONUS : 0);
-  gameState.coins += ls.coinsEarned;
-  gameState.totalStars += stars;
-  gameState.completedLevels[gameState.currentLevel] = Math.max(gameState.completedLevels[gameState.currentLevel] || 0, stars);
-  if (gameState.currentLevel >= gameState.unlockedLevels && gameState.currentLevel < CONFIG.TOTAL_LEVELS) {
-    gameState.unlockedLevels = gameState.currentLevel + 1;
+  
+  // Reward System: Every 10 rounds gives a big bonus
+  let coinsEarned = CONFIG.BASE_COINS_PER_LEVEL + (stars === 3 ? CONFIG.STAR_BONUS : 0);
+  let isMilestone = (ls.level % 10 === 0);
+  
+  if (isMilestone) {
+    coinsEarned += 500; // Big reward every 10 rounds
   }
+
+  gameState.coins += coinsEarned;
+  gameState.totalStars += stars;
   saveState(); updateHUD(); playSound('success'); vibrate([50, 50, 50, 50]);
-  setTimeout(() => showVictory(ls), 800);
-}
-
-function showVictory(ls) {
-  document.getElementById('victory-stars').textContent = '⭐'.repeat(ls.stars) + '☆'.repeat(3 - ls.stars);
-  document.getElementById('victory-coins').textContent = '+' + ls.coinsEarned;
-  document.getElementById('victory-screen').classList.remove('hidden');
-  document.getElementById('next-level-btn').disabled = gameState.currentLevel >= CONFIG.TOTAL_LEVELS;
-}
-
-function showGameOver() {
-  document.getElementById('gameover-screen').classList.remove('hidden');
+  
+  setTimeout(() => {
+    if (isMilestone) {
+      document.getElementById('victory-screen').querySelector('h2').textContent = '🏆 Milestone Reached!';
+      document.getElementById('victory-screen').querySelector('h2').style.color = '#f6d365';
+    } else {
+      document.getElementById('victory-screen').querySelector('h2').textContent = '🎉 Round Complete!';
+      document.getElementById('victory-screen').querySelector('h2').style.color = '#fff';
+    }
+    
+    document.getElementById('victory-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('victory-coins').textContent = '+' + coinsEarned;
+    document.getElementById('victory-screen').classList.remove('hidden');
+  }, 800);
 }
 
 // ============================================================
@@ -982,7 +856,7 @@ function showGameOver() {
 // ============================================================
 function useHint() {
   const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
+  if (!ls || ls.completed) return;
   if (gameState.hintsRemaining <= 0) { showToast('No hints left!'); return; }
   const available = ls.screws.filter(s => !s.removed && !s.removing && !s.locked);
   if (available.length === 0) { showToast('No screws to hint!'); return; }
@@ -996,7 +870,7 @@ function useHint() {
 
 function useUndo() {
   const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
+  if (!ls || ls.completed) return;
   if (gameState.undosRemaining <= 0) { showToast('No undos left!'); return; }
   if (ls.undoStack.length === 0) { showToast('Nothing to undo!'); return; }
   const lastAction = ls.undoStack.pop();
@@ -1004,12 +878,16 @@ function useUndo() {
     const screw = ls.screws.find(s => s.id === lastAction.screwId);
     if (screw && (screw.removed || screw.removing)) {
       screw.removed = false; screw.removing = false; screw.removeProgress = 0; screw.scale = 1;
-      // Remove from current box
-      const boxIdx = ls.currentBox.indexOf(screw.id);
-      if (boxIdx !== -1) {
-        ls.currentBox.splice(boxIdx, 1);
-        ls.removedScrews--;
+      
+      const box = ls.boxes.find(b => b.colorId === lastAction.colorId);
+      if (box) {
+        const nutIdx = box.currentNuts.indexOf(screw.id);
+        if (nutIdx !== -1) {
+          box.currentNuts.splice(nutIdx, 1);
+          ls.removedScrews--;
+        }
       }
+      
       const board = ls.boards.find(b => b.id === screw.boardId);
       if (board && board.removed) { board.removed = false; board.fallY = 0; board.fallVel = 0; board.rotation = 0; }
       playSound('tap'); vibrate(20);
@@ -1020,21 +898,9 @@ function useUndo() {
   }
 }
 
-function useExtraTray() {
-  // Adds an extra box (increases maxBoxes)
-  const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
-  if (gameState.extraTraysRemaining <= 0) { showToast('No extra boxes left!'); return; }
-  ls.maxBoxes += 1;
-  gameState.extraTraysRemaining--;
-  updateToolbar();
-  playSound('coin');
-  showToast('➕ Extra box added!');
-}
-
 function useHammer() {
   const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
+  if (!ls || ls.completed) return;
   if (gameState.hammersRemaining <= 0) { showToast('No hammers left!'); return; }
   const lockedScrew = ls.screws.find(s => s.locked && !s.removed);
   if (!lockedScrew) { showToast('No locked screws!'); return; }
@@ -1048,12 +914,13 @@ function useHammer() {
 
 function useDrill() {
   const ls = gameState.levelState;
-  if (!ls || ls.completed || ls.failed) return;
+  if (!ls || ls.completed) return;
   if (gameState.drillsRemaining <= 0) { showToast('No drills left!'); return; }
   const available = ls.screws.filter(s => !s.removed && !s.removing);
   if (available.length === 0) { showToast('No screws to drill!'); return; }
   const target = available[Math.floor(Math.random() * available.length)];
   target.removing = true; target.removeProgress = 0;
+  
   setTimeout(() => {
     if (!gameState.levelState || gameState.levelState !== ls) return;
     target.removed = true; target.removing = false; target.scale = 0;
@@ -1063,6 +930,7 @@ function useDrill() {
     checkBoardRemoval(ls);
     if (ls.removedScrews >= ls.requiredScrews) winLevel(ls);
   }, 300);
+  
   gameState.drillsRemaining--;
   updateToolbar();
   showToast('🔩 Screw drilled!');
@@ -1074,20 +942,16 @@ function useDrill() {
 function updateHUD() {
   document.getElementById('coin-display').textContent = gameState.coins;
   document.getElementById('star-display').textContent = gameState.totalStars;
-  document.getElementById('level-display').textContent = 'Lv ' + gameState.currentLevel;
+  document.getElementById('level-display').textContent = 'Round ' + gameState.currentLevel;
 }
 
 function updateToolbar() {
-  const ls = gameState.levelState;
-  if (!ls) return;
   document.getElementById('hint-btn').classList.toggle('disabled', gameState.hintsRemaining <= 0);
-  document.getElementById('undo-btn').classList.toggle('disabled', gameState.undosRemaining <= 0 || ls.undoStack.length === 0);
-  document.getElementById('extra-tray-btn').classList.toggle('disabled', gameState.extraTraysRemaining <= 0);
+  document.getElementById('undo-btn').classList.toggle('disabled', gameState.undosRemaining <= 0);
   document.getElementById('hammer-btn').classList.toggle('disabled', gameState.hammersRemaining <= 0);
   document.getElementById('drill-btn').classList.toggle('disabled', gameState.drillsRemaining <= 0);
   document.getElementById('hint-cost').textContent = gameState.hintsRemaining;
   document.getElementById('undo-cost').textContent = gameState.undosRemaining;
-  document.getElementById('extra-cost').textContent = gameState.extraTraysRemaining;
   document.getElementById('hammer-cost').textContent = gameState.hammersRemaining;
   document.getElementById('drill-cost').textContent = gameState.drillsRemaining;
 }
@@ -1105,31 +969,7 @@ function hideAllScreens() {
 }
 
 // ============================================================
-// 13. LEVEL SELECT
-// ============================================================
-function renderLevelGrid() {
-  const grid = document.getElementById('level-grid');
-  grid.innerHTML = '';
-  for (let i = 1; i <= CONFIG.TOTAL_LEVELS; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'level-btn';
-    btn.textContent = i;
-    if (i <= gameState.unlockedLevels) {
-      if (gameState.completedLevels[i]) {
-        btn.classList.add('completed');
-        btn.innerHTML = i + '<span style="position:absolute;bottom:2px;font-size:9px;">' + '⭐'.repeat(gameState.completedLevels[i]) + '</span>';
-      }
-      if (i === gameState.currentLevel) btn.classList.add('current');
-      btn.addEventListener('click', () => { hideAllScreens(); startLevel(i); });
-    } else {
-      btn.classList.add('locked'); btn.innerHTML = '🔒';
-    }
-    grid.appendChild(btn);
-  }
-}
-
-// ============================================================
-// 14. INPUT
+// 13. INPUT
 // ============================================================
 function getCanvasCoords(e) {
   const rect = canvas.getBoundingClientRect();
@@ -1182,10 +1022,9 @@ canvas.addEventListener('click', (e) => {
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 
 // ============================================================
-// 15. UI BUTTON BINDINGS
+// 14. UI BUTTON BINDINGS
 // ============================================================
-document.getElementById('play-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.unlockedLevels); });
-document.getElementById('levels-btn').addEventListener('click', () => { hideAllScreens(); renderLevelGrid(); document.getElementById('level-screen').classList.remove('hidden'); });
+document.getElementById('play-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel); });
 document.getElementById('shop-btn').addEventListener('click', () => { hideAllScreens(); document.getElementById('shop-coins').textContent = gameState.coins; document.getElementById('shop-screen').classList.remove('hidden'); });
 document.getElementById('daily-btn').addEventListener('click', () => {
   const today = new Date().toDateString();
@@ -1199,7 +1038,6 @@ document.getElementById('daily-btn').addEventListener('click', () => {
   document.getElementById('daily-badge').style.display = 'none';
 });
 document.getElementById('settings-btn').addEventListener('click', () => { hideAllScreens(); document.getElementById('settings-screen').classList.remove('hidden'); });
-document.getElementById('back-from-levels').addEventListener('click', () => { hideAllScreens(); document.getElementById('home-screen').classList.remove('hidden'); });
 document.getElementById('back-from-shop').addEventListener('click', () => { hideAllScreens(); document.getElementById('home-screen').classList.remove('hidden'); });
 
 document.getElementById('buy-hint').addEventListener('click', () => {
@@ -1211,11 +1049,6 @@ document.getElementById('buy-undo').addEventListener('click', () => {
   if (gameState.coins < 30) { showToast('Not enough coins!'); return; }
   gameState.coins -= 30; gameState.boosters.undo = (gameState.boosters.undo || 0) + 1; gameState.undosRemaining++;
   saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('↩️ Undo purchased!');
-});
-document.getElementById('buy-extra-tray').addEventListener('click', () => {
-  if (gameState.coins < 100) { showToast('Not enough coins!'); return; }
-  gameState.coins -= 100; gameState.boosters.extraTray = (gameState.boosters.extraTray || 0) + 1; gameState.extraTraysRemaining++;
-  saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('➕ Extra Box purchased!');
 });
 document.getElementById('buy-hammer').addEventListener('click', () => {
   if (gameState.coins < 75) { showToast('Not enough coins!'); return; }
@@ -1234,12 +1067,13 @@ document.getElementById('buy-coins-ad').addEventListener('click', () => {
 });
 
 document.getElementById('pause-btn').addEventListener('click', () => {
-  if (!gameState.levelState || gameState.levelState.completed || gameState.levelState.failed) return;
+  if (!gameState.levelState || gameState.levelState.completed) return;
   gameState.paused = true; hideAllScreens(); document.getElementById('pause-screen').classList.remove('hidden');
 });
 document.getElementById('resume-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); });
 document.getElementById('restart-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); startLevel(gameState.currentLevel); });
 document.getElementById('quit-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); gameState.levelState = null; document.getElementById('home-screen').classList.remove('hidden'); });
+document.getElementById('reset-btn').addEventListener('click', () => { if(gameState.levelState) { startLevel(gameState.currentLevel); showToast('🔄 Round Restarted'); } });
 
 document.getElementById('back-from-settings').addEventListener('click', () => {
   hideAllScreens(); document.getElementById('home-screen').classList.remove('hidden'); gameState.paused = false;
@@ -1249,49 +1083,29 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   document.getElementById('toggle-sound').textContent = gameState.soundOn ? 'ON' : 'OFF';
   saveState(); initAudio(); if (gameState.soundOn) playSound('tap');
 });
-document.getElementById('toggle-music').addEventListener('click', () => {
-  gameState.musicOn = !gameState.musicOn;
-  document.getElementById('toggle-music').textContent = gameState.musicOn ? 'ON' : 'OFF';
-  saveState();
-});
 document.getElementById('toggle-vibration').addEventListener('click', () => {
   gameState.vibrationOn = !gameState.vibrationOn;
   document.getElementById('toggle-vibration').textContent = gameState.vibrationOn ? 'ON' : 'OFF';
   saveState();
 });
 
-document.getElementById('next-level-btn').addEventListener('click', () => { hideAllScreens(); startLevel(Math.min(gameState.currentLevel + 1, CONFIG.TOTAL_LEVELS)); });
-document.getElementById('replay-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel); });
+document.getElementById('next-level-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel + 1); });
 document.getElementById('victory-ad-btn').addEventListener('click', () => { showToast('📺 Ad placeholder — +100 coins (demo)'); gameState.coins += 100; saveState(); updateHUD(); playSound('coin'); });
 document.getElementById('victory-menu-btn').addEventListener('click', () => { hideAllScreens(); gameState.levelState = null; document.getElementById('home-screen').classList.remove('hidden'); });
 
-document.getElementById('retry-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel); });
-document.getElementById('extra-life-ad-btn').addEventListener('click', () => {
-  showToast('📺 Ad placeholder — Extra Box (demo)');
-  const ls = gameState.levelState;
-  if (ls) {
-    ls.maxBoxes += 1;
-    ls.failed = false;
-    hideAllScreens();
-  }
-});
-document.getElementById('gameover-menu-btn').addEventListener('click', () => { hideAllScreens(); gameState.levelState = null; document.getElementById('home-screen').classList.remove('hidden'); });
-
 document.getElementById('hint-btn').addEventListener('click', useHint);
 document.getElementById('undo-btn').addEventListener('click', useUndo);
-document.getElementById('extra-tray-btn').addEventListener('click', useExtraTray);
 document.getElementById('hammer-btn').addEventListener('click', useHammer);
 document.getElementById('drill-btn').addEventListener('click', useDrill);
 
 // ============================================================
-// 16. INIT
+// 15. INIT
 // ============================================================
 function init() {
   loadState();
   initAudio();
   updateHUD();
   document.getElementById('toggle-sound').textContent = gameState.soundOn ? 'ON' : 'OFF';
-  document.getElementById('toggle-music').textContent = gameState.musicOn ? 'ON' : 'OFF';
   document.getElementById('toggle-vibration').textContent = gameState.vibrationOn ? 'ON' : 'OFF';
   const today = new Date().toDateString();
   if (gameState.lastDailyDate === today) document.getElementById('daily-badge').style.display = 'none';
@@ -1305,14 +1119,14 @@ function init() {
 init();
 
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden && gameState.levelState && !gameState.levelState.completed && !gameState.levelState.failed) {
+  if (document.hidden && gameState.levelState && !gameState.levelState.completed) {
     gameState.paused = true;
     hideAllScreens();
     document.getElementById('pause-screen').classList.remove('hidden');
   }
 });
 
-console.log('🔩 UNSCREW NUTS 3D — Box Tray edition ready!');
+console.log('🔩 UNSCREW NUTS 3D - Color Boxes Unlimited Ready!');
 })();
 </script>
 </body>
