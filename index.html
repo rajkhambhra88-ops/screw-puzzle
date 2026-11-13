@@ -3,43 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>UNSCREW NUTS 3D - Hidden Screws & Overlaps</title>
+  <title>UNSCREW NUTS 3D - Premium Edition</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1e2c; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; touch-action: pan-y pinch-zoom; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #E8DAB2; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; touch-action: pan-y pinch-zoom; }
     body { display: flex; align-items: center; justify-content: center; }
-    #game-container { width: 100%; max-width: 480px; height: 100%; max-height: 900px; background: linear-gradient(145deg, #2a2f44, #1b1f2e); position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
+    
+    /* Cream Background matching the photo */
+    #game-container { width: 100%; max-width: 480px; height: 100%; max-height: 900px; background: #F2E8C6; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.2); }
     canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    
     .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
     .ui-layer > * { pointer-events: auto; }
-    #hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 20; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.7); font-weight: 600; }
-    .hud-left, .hud-right { display: flex; align-items: center; gap: 8px; background: rgba(20,24,35,0.75); backdrop-filter: blur(6px); padding: 6px 14px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.12); }
-    .hud-item { display: flex; align-items: center; gap: 5px; font-size: 15px; }
-    .hud-icon { font-size: 18px; }
-    #level-display { font-size: 14px; background: rgba(0,0,0,0.4); padding: 2px 10px; border-radius: 20px; margin-left: 4px; }
-    .btn { background: linear-gradient(180deg, #3d8bfd, #1e5fcf); border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 16px; padding: 12px 28px; box-shadow: 0 8px 0 #0e2f66, 0 8px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.08s, box-shadow 0.08s; touch-action: manipulation; letter-spacing: 0.5px; }
-    .btn:active { transform: translateY(5px); box-shadow: 0 3px 0 #0e2f66, 0 8px 20px rgba(0,0,0,0.4); }
-    .btn.secondary { background: linear-gradient(180deg, #6c7a8f, #4a5568); box-shadow: 0 6px 0 #2d3748, 0 8px 20px rgba(0,0,0,0.4); }
-    .btn.danger { background: linear-gradient(180deg, #f56565, #c53030); box-shadow: 0 6px 0 #742a2a, 0 8px 20px rgba(0,0,0,0.4); }
-    .btn.gold { background: linear-gradient(180deg, #f6d365, #d4a017); box-shadow: 0 6px 0 #8a6d1b, 0 8px 20px rgba(0,0,0,0.4); color: #2d1f00; }
-    .btn.small { font-size: 13px; padding: 8px 18px; box-shadow: 0 5px 0 #0e2f66; }
-    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(15,18,28,0.92); backdrop-filter: blur(12px); z-index: 100; padding: 24px; text-align: center; color: white; transition: opacity 0.3s; }
+    
+    /* TOP BAR STYLING */
+    #top-bar { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 20; }
+    #level-badge { background: #fff; border: 3px solid #D3C59C; border-radius: 20px; padding: 4px 16px; font-weight: 900; font-size: 18px; color: #5A4A3A; text-shadow: 0 1px 0 #fff; box-shadow: 0 4px 0 #C2B280; }
+    
+    /* BOXES TRAY AT TOP */
+    #tray-container { position: absolute; top: 60px; left: 10px; right: 10px; display: flex; gap: 10px; z-index: 20; transition: all 0.3s; }
+    
+    .tray-box { flex: 1; height: 70px; background: #fff; border-radius: 16px; border: 4px solid #A8D5BA; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 0 #8DBFA1; position: relative; overflow: hidden; }
+    .tray-box.red { border-color: #F28B82; box-shadow: 0 6px 0 #D9786D; }
+    .tray-box.blue { border-color: #8AB4F8; box-shadow: 0 6px 0 #779DDA; }
+    .tray-box.yellow { border-color: #FDE293; box-shadow: 0 6px 0 #E5C77A; }
+    .tray-box.green { border-color: #81C995; box-shadow: 0 6px 0 #6CAF81; }
+    .tray-box.purple { border-color: #C58AF9; box-shadow: 0 6px 0 #A86EDC; }
+    
+    .tray-slot { width: 18px; height: 18px; border-radius: 50%; background: #E0E0E0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+    .tray-slot.filled { background: #555; box-shadow: inset 0 -2px 4px rgba(255,255,255,0.4); }
+    
+    .ad-box-btn { flex: 1; height: 70px; background: #F6D365; border-radius: 16px; border: 4px solid #E5B93F; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 6px 0 #C99D30; cursor: pointer; position: relative; }
+    .ad-box-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #C99D30; }
+    .ad-box-btn .plus { font-size: 32px; font-weight: 900; color: #7A5E15; line-height: 1; }
+    .ad-box-btn .ad-tag { position: absolute; bottom: 4px; right: 4px; background: #4CAF50; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; }
+
+    /* BOTTOM BOOSTERS */
+    #bottom-bar { position: absolute; bottom: 20px; left: 10px; right: 10px; display: flex; justify-content: space-between; gap: 10px; z-index: 20; }
+    .booster-btn { flex: 1; height: 60px; background: #F6D365; border-radius: 12px; border: 3px solid #E5B93F; box-shadow: 0 5px 0 #C99D30; display: flex; align-items: center; justify-content: center; font-size: 30px; position: relative; cursor: pointer; }
+    .booster-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #C99D30; }
+    .booster-btn .count { position: absolute; top: -8px; right: -8px; background: #fff; border: 2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #333; }
+    
+    /* PROGRESS STAR */
+    #progress-star { position: absolute; top: 10px; right: 10px; width: 50px; height: 50px; background: #888; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white; z-index: 20; }
+    
+    /* MODALS */
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(242,232,198,0.95); backdrop-filter: blur(5px); z-index: 100; padding: 24px; text-align: center; color: #4A3B32; }
     .screen.hidden { display: none; }
-    .screen h1 { font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #f6d365, #fda085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; letter-spacing: 2px; filter: drop-shadow(0 4px 12px rgba(246,211,101,0.3)); }
-    .screen h2 { font-size: 24px; margin-bottom: 20px; color: #cbd5e1; }
-    .screen p { color: #94a3b8; margin-bottom: 20px; font-size: 15px; line-height: 1.6; }
-    .btn-group { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 280px; }
-    #toolbar { position: absolute; bottom: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 20; pointer-events: none; }
-    #toolbar > * { pointer-events: auto; }
-    .tool-btn { width: 52px; height: 52px; border-radius: 16px; background: rgba(20,24,35,0.85); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.12); color: white; font-size: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    .tool-btn:active { transform: scale(0.9); background: rgba(61,139,253,0.3); }
-    .tool-btn .badge { font-size: 9px; color: #f6d365; font-weight: 700; margin-top: -2px; }
-    .tool-btn.disabled { opacity: 0.35; pointer-events: none; }
-    #toast { position: absolute; top: 70px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #f6d365; padding: 10px 24px; border-radius: 40px; font-weight: 600; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; white-space: nowrap; border: 1px solid rgba(246,211,101,0.3); backdrop-filter: blur(4px); }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #ad-banner { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: #0d1117; display: flex; align-items: center; justify-content: center; color: #4a5568; font-size: 12px; border-top: 1px solid #1f2937; z-index: 5; }
-    @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    .screen:not(.hidden) { animation: popIn 0.25s ease-out; }
+    .screen h1 { font-size: 32px; font-weight: 900; color: #D35400; margin-bottom: 10px; text-shadow: 0 2px 0 #fff; }
+    .screen p { font-size: 16px; margin-bottom: 20px; font-weight: 600; }
+    .btn { background: #4CAF50; border: 3px solid #388E3C; border-radius: 40px; color: white; font-weight: 900; font-size: 18px; padding: 12px 30px; box-shadow: 0 6px 0 #2E7D32; cursor: pointer; text-transform: uppercase; }
+    .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2E7D32; }
+    .btn.blue { background: #42A5F5; border-color: #1E88E5; box-shadow: 0 6px 0 #1565C0; }
+    .btn.gold { background: #F6D365; border-color: #E5B93F; box-shadow: 0 6px 0 #C99D30; color: #5A4A3A; }
+    
+    #toast { position: absolute; top: 150px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: bold; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    #toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -47,87 +66,48 @@
   <canvas id="gameCanvas"></canvas>
 
   <div class="ui-layer">
-    <div id="hud">
-      <div class="hud-left">
-        <span class="hud-item"><span class="hud-icon">🪙</span><span id="coin-display">0</span></span>
-        <span class="hud-item"><span class="hud-icon">⭐</span><span id="star-display">0</span></span>
-      </div>
-      <div class="hud-right">
-        <span class="hud-item" id="level-display">Round 1</span>
-        <button class="btn small secondary" id="pause-btn" style="padding:8px 14px;font-size:16px;">⏸</button>
-      </div>
+    <!-- TOP BAR -->
+    <div id="top-bar">
+      <div id="level-badge">LEVEL 1</div>
+      <div id="progress-star">0%</div>
     </div>
 
-    <div id="toolbar">
-      <button class="tool-btn" id="hint-btn" title="Hint"><span>💡</span><span class="badge" id="hint-cost">0</span></button>
-      <button class="tool-btn" id="undo-btn" title="Undo"><span>↩️</span><span class="badge" id="undo-cost">0</span></button>
-      <button class="tool-btn" id="hammer-btn" title="Hammer"><span>🔨</span><span class="badge" id="hammer-cost">0</span></button>
-      <button class="tool-btn" id="drill-btn" title="Drill"><span>🔩</span><span class="badge" id="drill-cost">0</span></button>
-      <button class="tool-btn" id="reset-btn" title="Restart Round"><span>🔄</span></button>
+    <!-- TRAY AT TOP -->
+    <div id="tray-container">
+      <!-- Boxes will be injected here by JS -->
     </div>
 
-    <div id="ad-banner">📢 Ad Placeholder — Banner Ad Slot (320x50)</div>
+    <!-- BOTTOM BAR -->
+    <div id="bottom-bar">
+      <div class="booster-btn" id="btn-drill">🔫<span class="count" id="count-drill">2</span></div>
+      <div class="booster-btn" id="btn-hammer">🔨<span class="count" id="count-hammer">1</span></div>
+      <div class="booster-btn" id="btn-brush">🖌️<span class="count" id="count-brush">1</span></div>
+    </div>
   </div>
 
+  <!-- START SCREEN -->
   <div class="screen" id="home-screen">
-    <h1>UNSCREW NUTS 3D</h1>
-    <p style="color:#94a3b8; margin-bottom:28px;">Remove top plates first!<br>Hidden screws are locked.</p>
-    <div class="btn-group">
-      <button class="btn" id="play-btn">▶ PLAY</button>
-      <button class="btn secondary" id="shop-btn">🛒 SHOP</button>
-      <button class="btn secondary" id="daily-btn" style="position:relative;">🎁 DAILY REWARD <span id="daily-badge" style="position:absolute;top:-4px;right:-4px;background:#e53e3e;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;">!</span></button>
-    </div>
-    <div style="display:flex;gap:16px;margin-top:24px;">
-      <button class="btn small secondary" id="settings-btn">⚙️ Settings</button>
-    </div>
+    <h1>UNSCREW NUTS</h1>
+    <p>Remove the screws to clear the leaves.<br>Match colors to the top boxes!</p>
+    <button class="btn" id="play-btn" style="margin-top: 20px;">PLAY</button>
+    <button class="btn blue" id="ad-coins-btn" style="margin-top: 15px; font-size: 14px; padding: 10px 20px;">WATCH AD +100 🪙</button>
   </div>
 
-  <div class="screen hidden" id="shop-screen">
-    <h2>Shop</h2>
-    <p>Coins: <span id="shop-coins">0</span> 🪙</p>
-    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;">
-      <button class="btn gold" id="buy-hint">💡 Hint — 50 🪙</button>
-      <button class="btn gold" id="buy-undo">↩️ Undo — 30 🪙</button>
-      <button class="btn gold" id="buy-hammer">🔨 Hammer — 75 🪙</button>
-      <button class="btn gold" id="buy-drill">🔩 Drill — 120 🪙</button>
-      <button class="btn secondary" id="buy-coins-ad">📺 Watch Ad → +100 🪙</button>
-    </div>
-    <button class="btn secondary" id="back-from-shop" style="margin-top:20px;">← Back</button>
-  </div>
-
-  <div class="screen hidden" id="pause-screen">
-    <h2>Paused</h2>
-    <div class="btn-group">
-      <button class="btn" id="resume-btn">▶ Resume</button>
-      <button class="btn secondary" id="restart-btn">🔄 Restart Round</button>
-      <button class="btn danger" id="quit-btn">🚪 Quit to Menu</button>
-    </div>
-  </div>
-
-  <div class="screen hidden" id="settings-screen">
-    <h2>Settings</h2>
-    <div style="display:flex;flex-direction:column;gap:18px;margin-bottom:24px;width:100%;max-width:280px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;color:#cbd5e1;font-size:16px;">
-        <span>🔊 Sound</span>
-        <button class="btn small secondary" id="toggle-sound">ON</button>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;color:#cbd5e1;font-size:16px;">
-        <span>📳 Vibration</span>
-        <button class="btn small secondary" id="toggle-vibration">ON</button>
-      </div>
-    </div>
-    <button class="btn secondary" id="back-from-settings">← Back</button>
-  </div>
-
+  <!-- VICTORY SCREEN -->
   <div class="screen hidden" id="victory-screen">
-    <h2 style="font-size:32px;color:#f6d365;">🎉 Round Complete!</h2>
-    <div style="font-size:48px;margin:16px 0;" id="victory-stars">⭐⭐⭐</div>
-    <p>Coins earned: <span id="victory-coins" style="color:#f6d365;font-weight:700;">+50</span></p>
-    <div class="btn-group" style="margin-top:20px;">
-      <button class="btn gold" id="next-level-btn">▶ Next Round</button>
-      <button class="btn secondary" id="victory-ad-btn">📺 Watch Ad → +100 🪙</button>
-      <button class="btn danger" id="victory-menu-btn">🏠 Menu</button>
-    </div>
+    <h1>LEVEL COMPLETE!</h1>
+    <div style="font-size: 50px; margin: 10px 0;">⭐⭐⭐</div>
+    <p>Coins earned: <span id="victory-coins">+50</span></p>
+    <button class="btn" id="next-level-btn" style="margin-top: 20px;">NEXT LEVEL</button>
+  </div>
+
+  <!-- DEMO AD SCREEN -->
+  <div class="screen hidden" id="ad-screen" style="background: #222; color: white;">
+    <h1 style="color: #F6D365;">DEMO AD</h1>
+    <p>This is a placeholder for a real advertisement.</p>
+    <p style="font-size: 40px; margin: 30px 0;">📺</p>
+    <p>Please wait <span id="ad-timer">3</span> seconds...</p>
+    <button class="btn gold hidden" id="ad-close-btn" style="margin-top: 20px;">CLAIM REWARD</button>
   </div>
 
   <div id="toast"></div>
@@ -135,243 +115,44 @@
 
 <script>
 /* ============================================================
-   UNSCREW NUTS 3D - Plates Overlap & Hidden Screws
+   UNSCREW NUTS - PREMIUM 2D CARTOON EDITION
    ============================================================ */
 
 (function() {
 'use strict';
 
-// ============================================================
-// 1. CONFIGURATION
-// ============================================================
 const CONFIG = {
-  BASE_COINS_PER_LEVEL: 50,
-  STAR_BONUS: 25,
+  BASE_COINS: 50,
   SCREW_RADIUS: 14,
   HOLE_RADIUS: 8,
-  BOARD_COLORS: ['#8B5A2B', '#A0522D', '#6B4226', '#B8860B', '#5C4033'],
-  METAL_COLORS: ['#6B7280', '#4B5563', '#9CA3AF', '#78716C'],
   GRAVITY: 1200,
-  BOX_SLOT_W: 26,
-  BOX_H: 34,
-  BOX_Y_OFFSET: 78,
-  BOX_FILL_ANIM_MS: 350,
-  BOX_RESET_ANIM_MS: 500,
-  COLOR_PALETTE: [
-    { id: 'red', hex: '#e53e3e' },
-    { id: 'blue', hex: '#3182ce' },
-    { id: 'green', hex: '#38a169' },
-    { id: 'yellow', hex: '#d69e2e' },
-    { id: 'purple', hex: '#805ad5' },
-    { id: 'orange', hex: '#dd6b20' }
+  COLORS: [
+    { id: 'red', hex: '#E57373', border: '#F28B82' },
+    { id: 'blue', hex: '#64B5F6', border: '#8AB4F8' },
+    { id: 'green', hex: '#81C784', border: '#81C995' },
+    { id: 'yellow', hex: '#FFD54F', border: '#FDE293' },
+    { id: 'purple', hex: '#BA68C8', border: '#C58AF9' }
   ],
-  SHAPES: ['square', 'circle', 'triangle', 'hexagon']
+  SHAPES: ['leaf', 'petal', 'hexagon']
 };
-
-// ============================================================
-// 2. LEVEL GENERATOR (MULTIPLE OVERLAPPING PLATES)
-// ============================================================
-function generateLevel(levelNum) {
-  const boards = [];
-  const screws = [];
-
-  // Increased layer count for more plates
-  const plateLayers = Math.min(3 + Math.floor(levelNum / 2), 6); 
-  const colorCount = Math.min(2 + Math.floor(levelNum / 4), 6);
-  const boxCapacity = Math.min(3 + Math.floor(levelNum / 4), 6);
-  
-  const activeColors = CONFIG.COLOR_PALETTE.slice(0, colorCount);
-  
-  const cx = 200;
-  const cy = 280;
-  
-  for (let layer = 0; layer < plateLayers; layer++) {
-    const isMetal = levelNum > 10 && (layer % 2 === 0);
-    const shape = CONFIG.SHAPES[(layer + levelNum) % CONFIG.SHAPES.length];
-    
-    const maxSize = 110 - (layer * 8);
-    const minSize = 60 - (layer * 5);
-    const size = Math.max(45, minSize + Math.random() * (maxSize - minSize));
-    const w = size;
-    const h = size;
-    
-    // Random offsets so plates are half-overlapping and scattered
-    const offsetX = (Math.random() - 0.5) * 80;
-    const offsetY = (Math.random() - 0.5) * 80;
-    
-    const bx = cx - w / 2 + offsetX;
-    const by = cy - h / 2 + offsetY;
-    
-    boards.push({
-      id: layer, x: bx, y: by, w: w, h: h,
-      type: isMetal ? 'metal' : 'wood',
-      shape: shape,
-      layer: layer,
-      isInvisible: false,
-      color: isMetal ? CONFIG.METAL_COLORS[layer % CONFIG.METAL_COLORS.length] : CONFIG.BOARD_COLORS[layer % CONFIG.BOARD_COLORS.length],
-      removed: false, fallY: 0, fallVel: 0, rotation: 0, swingAngle: 0,
-      screwsCount: 0
-    });
-
-    const screwCount = 2 + Math.floor(levelNum / 4);
-    let corners = [];
-    
-    if (shape === 'square') {
-      const m = 15;
-      corners = [
-        { x: bx + m, y: by + m }, { x: bx + w - m, y: by + m },
-        { x: bx + m, y: by + h - m }, { x: bx + w - m, y: by + h - m }
-      ];
-    } else if (shape === 'circle') {
-      const r = w / 2 - 15;
-      for (let i = 0; i < 4; i++) {
-        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-        corners.push({ x: bx + w/2 + Math.cos(a) * r, y: by + h/2 + Math.sin(a) * r });
-      }
-    } else if (shape === 'triangle') {
-      const m = 20;
-      corners = [
-        { x: bx + w/2, y: by + m },
-        { x: bx + m, y: by + h - m },
-        { x: bx + w - m, y: by + h - m }
-      ];
-    } else if (shape === 'hexagon') {
-      const r = w / 2 - 12;
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-        corners.push({ x: bx + w/2 + Math.cos(a) * r, y: by + h/2 + Math.sin(a) * r });
-      }
-    }
-
-    corners.sort(() => Math.random() - 0.5);
-    const usedCorners = corners.slice(0, Math.min(screwCount, corners.length));
-    
-    boards[boards.length - 1].screwsCount = usedCorners.length;
-
-    for (let s = 0; s < usedCorners.length; s++) {
-      const c = usedCorners[s];
-      const chosenColor = activeColors[(layer + s + levelNum) % activeColors.length];
-      screws.push({
-        id: boards.length * 10 + s,
-        x: c.x, y: c.y, boardId: layer, color: chosenColor.hex, colorId: chosenColor.id,
-        removed: false, removing: false, removeProgress: 0, locked: false, scale: 1
-      });
-    }
-  }
-
-  const boxes = activeColors.map(c => ({
-    colorId: c.id,
-    colorHex: c.hex,
-    capacity: boxCapacity,
-    currentNuts: [],
-    isResetting: false,
-    resetProgress: 0,
-    incomingAnim: null,
-  }));
-
-  return {
-    level: levelNum,
-    boards,
-    screws,
-    boxes,
-    moves: 0,
-    requiredScrews: screws.length,
-    removedScrews: 0,
-    completed: false,
-    startTime: Date.now(),
-    hintUsed: false,
-    undoStack: [],
-  };
-}
-
-// ============================================================
-// 3. STATE & PERSISTENCE
-// ============================================================
-const STORAGE_KEY = 'unscrew_nuts_3d_hidden_v1';
 
 let gameState = {
-  currentLevel: 1,
+  level: 1,
   coins: 100,
-  totalStars: 0,
-  soundOn: true,
-  vibrationOn: true,
-  lastDailyDate: '',
-  boosters: { hint: 1, undo: 1, hammer: 1, drill: 1 },
-  levelState: null,
-  animFrame: null,
+  activeBoxes: [], // Array of box objects { colorId, capacity, filled: [] }
+  extraBoxesUnlocked: 0,
+  maxBoxesLimit: 4,
+  currentLevelData: null,
   paused: false,
-  hintsRemaining: 1,
-  undosRemaining: 1,
-  hammersRemaining: 1,
-  drillsRemaining: 1,
-  particles: [],
-  canvas: null,
-  ctx: null,
-  touchStart: null,
-  touchMoved: false,
+  // Boosters
+  drill: 2, hammer: 1, brush: 1,
+  animFrame: null,
 };
 
-function loadState() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const data = JSON.parse(saved);
-      Object.assign(gameState, data);
-      if (!gameState.boosters) gameState.boosters = { hint: 1, undo: 1, hammer: 1, drill: 1 };
-    }
-  } catch (e) { console.warn('Save load failed', e); }
-}
-
-function saveState() {
-  try {
-    const data = {
-      currentLevel: gameState.currentLevel,
-      coins: gameState.coins,
-      totalStars: gameState.totalStars,
-      soundOn: gameState.soundOn,
-      vibrationOn: gameState.vibrationOn,
-      lastDailyDate: gameState.lastDailyDate,
-      boosters: gameState.boosters,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) { console.warn('Save failed', e); }
-}
-
-// ============================================================
-// 4. AUDIO
-// ============================================================
-let audioCtx = null;
-function initAudio() {
-  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
-}
-function playSound(type) {
-  if (!gameState.soundOn || !audioCtx) return;
-  try {
-    const now = audioCtx.currentTime;
-    switch (type) {
-      case 'tap': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(800,now);o.frequency.exponentialRampToValueAtTime(400,now+0.05);g.gain.setValueAtTime(0.15,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.08);o.start(now);o.stop(now+0.08); break; }
-      case 'unscrew': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='sawtooth';o.frequency.setValueAtTime(300,now);o.frequency.exponentialRampToValueAtTime(150,now+0.15);g.gain.setValueAtTime(0.12,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.2);o.start(now);o.stop(now+0.2); break; }
-      case 'success': { [523,659,784].forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(f,now+i*0.1);g.gain.setValueAtTime(0.1,now+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,now+i*0.1+0.2);o.start(now+i*0.1);o.stop(now+i*0.1+0.2);}); break; }
-      case 'fail': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='square';o.frequency.setValueAtTime(200,now);o.frequency.exponentialRampToValueAtTime(80,now+0.4);g.gain.setValueAtTime(0.15,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.5);o.start(now);o.stop(now+0.5); break; }
-      case 'coin': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(1200,now);o.frequency.exponentialRampToValueAtTime(1800,now+0.08);g.gain.setValueAtTime(0.1,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.15);o.start(now);o.stop(now+0.15); break; }
-      case 'fall': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='triangle';o.frequency.setValueAtTime(150,now);o.frequency.exponentialRampToValueAtTime(40,now+0.6);g.gain.setValueAtTime(0.2,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.7);o.start(now);o.stop(now+0.7); break; }
-      case 'boxreset': { const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='sine';o.frequency.setValueAtTime(600,now);o.frequency.exponentialRampToValueAtTime(900,now+0.15);o.frequency.exponentialRampToValueAtTime(400,now+0.3);g.gain.setValueAtTime(0.12,now);g.gain.exponentialRampToValueAtTime(0.001,now+0.4);o.start(now);o.stop(now+0.4); break; }
-    }
-  } catch(e) {}
-}
-function vibrate(ms) {
-  if (gameState.vibrationOn && navigator.vibrate) { try { navigator.vibrate(ms); } catch(e) {} }
-}
-
-// ============================================================
-// 5. CANVAS SETUP
-// ============================================================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-gameState.canvas = canvas;
-gameState.ctx = ctx;
+let logicalWidth = 400, logicalHeight = 800;
 
-let logicalWidth = 400, logicalHeight = 700;
 function resizeCanvas() {
   const container = document.getElementById('game-container');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -388,511 +169,262 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // ============================================================
-// 6. DRAWING HELPERS
+// LEVEL GENERATOR (LEAF & PETAL SHAPES)
 // ============================================================
-function shadeColor(hex, percent) {
-  const num = parseInt(hex.replace('#', ''), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = Math.min(255, Math.max(0, (num >> 16) + amt));
-  const G = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amt));
-  const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
-  return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
-}
+function generateLevel(levelNum) {
+  const boards = [];
+  const screws = [];
+  const layers = Math.min(2 + Math.floor(levelNum / 3), 5);
+  const numColors = Math.min(2 + Math.floor(levelNum / 4), 5);
+  const activeColors = CONFIG.COLORS.slice(0, numColors);
+  const boxCapacity = 3; // 3 slots per box
 
-function drawScrew(x, y, color, scale, rotation, isLocked) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  ctx.scale(scale, scale);
-  const r = CONFIG.SCREW_RADIUS;
-  
-  ctx.beginPath(); ctx.arc(2, 3, r + 2, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill();
-  
-  const grad = ctx.createRadialGradient(-3, -3, r*0.2, 0, 0, r);
-  grad.addColorStop(0, '#fff'); grad.addColorStop(0.3, color); grad.addColorStop(1, shadeColor(color, -40));
-  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-  ctx.strokeStyle = shadeColor(color, -60); ctx.lineWidth = 1.5; ctx.stroke();
-  
-  ctx.beginPath(); ctx.moveTo(-r*0.5, 0); ctx.lineTo(r*0.5, 0);
-  ctx.moveTo(0, -r*0.5); ctx.lineTo(0, r*0.5);
-  ctx.strokeStyle = shadeColor(color, -70); ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
-  
-  ctx.beginPath(); ctx.arc(-r*0.25, -r*0.25, r*0.25, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
-  
-  if (isLocked) {
-    ctx.beginPath(); ctx.arc(0, 0, r*0.7, 0, Math.PI*2); ctx.strokeStyle = '#f6d365'; ctx.lineWidth = 2; ctx.setLineDash([3,2]); ctx.stroke(); ctx.setLineDash([]);
-  }
-  ctx.restore();
-}
+  const cx = logicalWidth / 2;
+  const cy = 400; // Center of play area
 
-function drawHole(x, y) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(x, y, CONFIG.HOLE_RADIUS, 0, Math.PI * 2);
-  const grad = ctx.createRadialGradient(x - 2, y - 2, 2, x, y, CONFIG.HOLE_RADIUS);
-  grad.addColorStop(0, '#000');
-  grad.addColorStop(0.7, '#111');
-  grad.addColorStop(1, 'rgba(0,0,0,0.5)');
-  ctx.fillStyle = grad;
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawNutInBox(cx, cy, color, scale, glow) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(scale, scale);
-  const r = 10;
-  
-  if (glow > 0) {
-    ctx.beginPath(); ctx.arc(0, 0, r + 6 * glow, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(246,211,101,${0.4 * glow})`; ctx.fill();
-  }
-  ctx.beginPath(); ctx.arc(1, 2, r + 1, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
-  
-  const grad = ctx.createRadialGradient(-2, -2, r*0.2, 0, 0, r);
-  grad.addColorStop(0, '#fff'); grad.addColorStop(0.3, color); grad.addColorStop(1, shadeColor(color, -50));
-  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-  ctx.strokeStyle = shadeColor(color, -70); ctx.lineWidth = 1; ctx.stroke();
-  
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-    const px = Math.cos(a) * r * 0.55;
-    const py = Math.sin(a) * r * 0.55;
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-  }
-  ctx.closePath(); ctx.strokeStyle = shadeColor(color, -50); ctx.lineWidth = 1.2; ctx.stroke();
-  ctx.beginPath(); ctx.arc(-r*0.3, -r*0.3, r*0.2, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
-  ctx.restore();
-}
-
-function drawPlate(board) {
-  const { x, y, w, h, color, type, shape, removed, fallY, rotation } = board;
-  if (removed && fallY > 600) return;
-  
-  ctx.save();
-  const cx = x + w/2, cy = y + h/2;
-  
-  if (board.swingAngle) {
-     ctx.translate(cx, cy + (fallY || 0));
-     ctx.rotate(board.swingAngle);
-     ctx.translate(-w/2, -h/2);
-  } else {
-     ctx.translate(cx, cy + (fallY || 0));
-     ctx.rotate(rotation || 0);
-     ctx.translate(-w/2, -h/2);
-  }
-
-  ctx.beginPath();
-  if (shape === 'square') {
-    ctx.roundRect(0, 0, w, h, 10);
-  } else if (shape === 'circle') {
-    ctx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
-  } else if (shape === 'triangle') {
-    ctx.moveTo(w/2, 0);
-    ctx.lineTo(w, h);
-    ctx.lineTo(0, h);
-    ctx.closePath();
-  } else if (shape === 'hexagon') {
-    const r = w / 2;
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-      const px = w/2 + Math.cos(a) * r;
-      const py = h/2 + Math.sin(a) * r;
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-  }
-
-  ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 20; ctx.shadowOffsetX = 4; ctx.shadowOffsetY = 8;
-  const grad = ctx.createLinearGradient(0, 0, w, h);
-  if (type === 'wood') { grad.addColorStop(0, shadeColor(color, 20)); grad.addColorStop(0.4, color); grad.addColorStop(1, shadeColor(color, -30)); }
-  else { grad.addColorStop(0, shadeColor(color, 40)); grad.addColorStop(0.3, color); grad.addColorStop(1, shadeColor(color, -40)); }
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  ctx.shadowColor = 'transparent';
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  ctx.globalAlpha = 0.15;
-  if (type === 'wood') {
-    for (let i = 0; i < 4; i++) {
-      ctx.beginPath();
-      if (shape === 'square') {
-        ctx.moveTo(10, 10 + i * (h - 20) / 3);
-        ctx.lineTo(w - 10, 10 + i * (h - 20) / 3);
-      } else if (shape === 'circle') {
-        ctx.arc(w/2, h/2, 15 + i * 8, 0, Math.PI * 2);
-      }
-      ctx.strokeStyle = '#2d1f00';
-      ctx.stroke();
-    }
-  } else {
-    ctx.strokeStyle = '#000';
-    ctx.strokeRect(8, 8, w - 16, h - 16);
-  }
-  ctx.globalAlpha = 1;
-
-  ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.font = 'bold 12px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(`L${board.layer + 1}`, w/2, h/2 + 4);
-
-  ctx.restore();
-}
-
-// ============================================================
-// 7. BOXES
-// ============================================================
-function drawColorBoxes(dt) {
-  const ls = gameState.levelState;
-  if (!ls || !ls.boxes) return;
-  const numBoxes = ls.boxes.length;
-  if (numBoxes === 0) return;
-
-  const totalWidth = logicalWidth - 20;
-  const boxW = (totalWidth / numBoxes) - 6;
-  const boxH = CONFIG.BOX_H + 14;
-  const startY = logicalHeight - CONFIG.BOX_Y_OFFSET - boxH;
-
-  for (let i = 0; i < numBoxes; i++) {
-    const box = ls.boxes[i];
-    let boxX = 10 + i * (boxW + 6);
-    let boxY = startY;
+  // Create Layers
+  for (let l = 0; l < layers; l++) {
+    const shape = CONFIG.SHAPES[(l + levelNum) % CONFIG.SHAPES.length];
+    const size = 140 - (l * 15);
     
-    if (box.incomingAnim !== null) {
-      const t = box.incomingAnim;
-      boxX = logicalWidth + (boxX - logicalWidth) * t;
-      box.incomingAnim = Math.min(1, t + dt * 3.5);
-      if (box.incomingAnim >= 1) box.incomingAnim = null;
-    }
+    // Random offset to make them overlap
+    const ox = (Math.random() - 0.5) * 60;
+    const oy = (Math.random() - 0.5) * 60;
+    const bx = cx - size/2 + ox;
+    const by = cy - size/2 + oy;
 
-    let resetAlpha = 1;
-    let resetOffsetY = 0;
-    if (box.isResetting) {
-      box.resetProgress += dt * 1000 / CONFIG.BOX_RESET_ANIM_MS;
-      const t = Math.min(1, box.resetProgress);
-      resetAlpha = 1 - t;
-      resetOffsetY = -t * 40;
-      if (t >= 1) {
-        box.isResetting = false;
-        box.resetProgress = 0;
-        box.currentNuts = [];
-        box.incomingAnim = 0;
-      }
-    }
-
-    ctx.save();
-    ctx.globalAlpha = resetAlpha;
-    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 4;
-    
-    ctx.fillStyle = '#2d1e0d';
-    ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 6); ctx.fill();
-    
-    ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = box.colorHex;
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.roundRect(boxX, boxY, boxW, boxH, 6); ctx.stroke();
-    
-    const innerGrad = ctx.createLinearGradient(boxX, boxY, boxX, boxY + boxH);
-    innerGrad.addColorStop(0, shadeColor(box.colorHex, -60));
-    innerGrad.addColorStop(1, shadeColor(box.colorHex, -80));
-    ctx.fillStyle = innerGrad;
-    ctx.beginPath(); ctx.roundRect(boxX + 2, boxY + 2, boxW - 4, boxH - 4, 4); ctx.fill();
-
-    const nuts = box.currentNuts;
-    const capacity = box.capacity;
-    const slotW = (boxW - 12) / capacity;
-    
-    for (let s = 0; s < capacity; s++) {
-      const slotCx = boxX + 6 + s * slotW + slotW / 2;
-      if (s >= nuts.length) {
-        ctx.globalAlpha = resetAlpha * 0.3;
-        ctx.beginPath();
-        ctx.arc(slotCx, boxY + boxH / 2 + resetOffsetY, 8, 0, Math.PI * 2);
-        ctx.strokeStyle = box.colorHex;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.globalAlpha = resetAlpha;
-      }
-    }
-
-    const now = performance.now();
-    for (let n = 0; n < nuts.length; n++) {
-      const nutId = nuts[n];
-      const slotCx = boxX + 6 + n * slotW + slotW / 2;
-      const nutCy = boxY + boxH / 2 + resetOffsetY;
-      
-      let popScale = 1;
-      if (n === nuts.length - 1) {
-        const age = now - (box._lastNutAddedAt || 0);
-        popScale = Math.min(1, age / CONFIG.BOX_FILL_ANIM_MS);
-        popScale = popScale < 1 ? Math.sin(popScale * Math.PI / 2) : 1;
-      }
-      const glow = n === nuts.length - 1 ? Math.max(0, 1 - (now - (box._lastNutAddedAt || 0)) / 600) : 0;
-      
-      drawNutInBox(slotCx, nutCy, box.colorHex, popScale, glow);
-    }
-
-    ctx.globalAlpha = resetAlpha;
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${nuts.length}/${capacity}`, boxX + boxW / 2, boxY + boxH - 2);
-
-    ctx.restore();
-  }
-}
-
-// ============================================================
-// 8. PARTICLES
-// ============================================================
-function spawnParticles(x, y, color, count, speed) {
-  for (let i = 0; i < count; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const spd = (Math.random() * 0.5 + 0.5) * speed;
-    gameState.particles.push({
-      x, y, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 30,
-      life: 1, decay: 0.02 + Math.random() * 0.03, color, size: 2 + Math.random() * 4,
+    boards.push({
+      id: l, x: bx, y: by, w: size, h: size, shape: shape, layer: l,
+      removed: false, fallY: 0, fallVel: 0, rotation: 0, swingAngle: 0,
+      color: activeColors[l % activeColors.length].hex,
+      colorId: activeColors[l % activeColors.length].id
     });
-  }
-}
 
-function updateParticles(dt) {
-  for (let i = gameState.particles.length - 1; i >= 0; i--) {
-    const p = gameState.particles[i];
-    p.x += p.vx * dt * 60;
-    p.y += p.vy * dt * 60;
-    p.vy += CONFIG.GRAVITY * dt * 0.3;
-    p.life -= p.decay * dt * 60;
-    if (p.life <= 0) gameState.particles.splice(i, 1);
-  }
-}
-
-function drawParticles() {
-  for (const p of gameState.particles) {
-    ctx.globalAlpha = Math.max(0, p.life);
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
-// ============================================================
-// 9. MAIN RENDER LOOP
-// ============================================================
-let lastTime = 0;
-function render(now) {
-  const dt = Math.min((now - lastTime) / 1000, 0.05);
-  lastTime = now;
-
-  if (gameState.paused) { gameState.animFrame = requestAnimationFrame(render); return; }
-
-  ctx.clearRect(0, 0, logicalWidth, logicalHeight);
-
-  const bgGrad = ctx.createLinearGradient(0, 0, 0, logicalHeight);
-  bgGrad.addColorStop(0, '#1a1e2c'); bgGrad.addColorStop(0.5, '#252b3d'); bgGrad.addColorStop(1, '#1a1e2c');
-  ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-  const vigGrad = ctx.createRadialGradient(logicalWidth/2, logicalHeight/2, logicalWidth*0.2, logicalWidth/2, logicalHeight/2, logicalWidth*0.8);
-  vigGrad.addColorStop(0, 'rgba(0,0,0,0)'); vigGrad.addColorStop(1, 'rgba(0,0,0,0.6)');
-  ctx.fillStyle = vigGrad; ctx.fillRect(0, 0, logicalWidth, logicalHeight);
-
-  if (gameState.levelState) {
-    const ls = gameState.levelState;
-
-    for (const board of ls.boards) {
-      if (board.removed) {
-        board.fallVel = (board.fallVel || 0) + CONFIG.GRAVITY * dt;
-        board.fallY = (board.fallY || 0) + board.fallVel * dt;
-        board.rotation = (board.rotation || 0) + 0.02 * dt * 60;
-      } else {
-        const boardScrews = ls.screws.filter(s => s.boardId === board.id && !s.removed && !s.removing);
-        if (boardScrews.length === 1) {
-           board.swingTime = (board.swingTime || 0) + dt;
-           const screw = boardScrews[0];
-           const dx = screw.x - (board.x + board.w/2);
-           const swingMultiplier = Math.min(Math.abs(dx) / (board.w/2), 1.5);
-           board.swingAngle = Math.sin(board.swingTime * 6) * 0.15 * swingMultiplier;
-        } else {
-           board.swingAngle = 0;
-           board.swingTime = 0;
-        }
+    // Add Screws
+    const screwCount = 2 + Math.floor(levelNum / 4);
+    let pos = [];
+    if (shape === 'leaf') {
+      // 4 points on a leaf
+      pos = [
+        { x: bx + size*0.5, y: by + size*0.15 },
+        { x: bx + size*0.2, y: by + size*0.5 },
+        { x: bx + size*0.8, y: by + size*0.5 },
+        { x: bx + size*0.5, y: by + size*0.85 }
+      ];
+    } else if (shape === 'petal') {
+      // 3 points
+      pos = [
+        { x: bx + size*0.5, y: by + size*0.2 },
+        { x: bx + size*0.2, y: by + size*0.8 },
+        { x: bx + size*0.8, y: by + size*0.8 }
+      ];
+    } else {
+      // Hexagon
+      for(let i=0; i<6; i++) {
+        const a = (i/6) * Math.PI * 2;
+        pos.push({ x: bx + size/2 + Math.cos(a)*size*0.35, y: by + size/2 + Math.sin(a)*size*0.35 });
       }
     }
 
-    for (const screw of ls.screws) {
-      if (screw.removing) {
-        screw.removeProgress += dt * 3;
-        screw.scale = Math.max(0, 1 - screw.removeProgress);
-        if (screw.removeProgress >= 1) { screw.removed = true; screw.removing = false; screw.scale = 0; }
-      }
-    }
+    pos.sort(() => Math.random() - 0.5);
+    const usedPos = pos.slice(0, Math.min(screwCount, pos.length));
 
-    updateParticles(dt);
-
-    // Draw Plates (Bottom to Top)
-    const sortedBoards = [...ls.boards].sort((a, b) => a.layer - b.layer);
-    for (const board of sortedBoards) drawPlate(board);
-
-    // Draw Holes (Only for removed screws)
-    for (const screw of ls.screws) {
-      const board = ls.boards.find(b => b.id === screw.boardId);
-      if (board && board.removed && board.fallY > 400) continue;
-      if (screw.removed) {
-        let sx = screw.x, sy = screw.y;
-        if (board && board.removed) {
-          sx += Math.sin(board.rotation || 0) * (board.fallY || 0) * 0.3;
-          sy += (board.fallY || 0);
-        }
-        drawHole(sx, sy);
-      }
-    }
-
-    // Draw Screws
-    for (const screw of ls.screws) {
-      if (screw.removed || screw.removing) continue;
-      
-      const board = ls.boards.find(b => b.id === screw.boardId);
-      if (board && board.removed && board.fallY > 400) continue;
-      
-      let sx = screw.x, sy = screw.y;
-      if (board && board.removed) {
-        sx += Math.sin(board.rotation || 0) * (board.fallY || 0) * 0.3;
-        sy += (board.fallY || 0);
-      }
-      
-      if (board && board.swingAngle) {
-        const cx = board.x + board.w/2;
-        const cy = board.y + board.h/2;
-        const dx = sx - cx;
-        const dy = sy - cy;
-        const cos = Math.cos(board.swingAngle);
-        const sin = Math.sin(board.swingAngle);
-        sx = cx + dx * cos - dy * sin;
-        sy = cy + dx * sin + dy * cos;
-      }
-
-      // HIDE SCREW IF COVERED
-      if (isScrewCovered(ls, screw)) continue;
-
-      const rot = screw.removing ? screw.removeProgress * Math.PI * 4 : 0;
-      drawScrew(sx, sy, screw.color, screw.scale || 1, rot, screw.locked);
-    }
-
-    drawParticles();
-    drawColorBoxes(dt);
-  }
-
-  gameState.animFrame = requestAnimationFrame(render);
-}
-gameState.animFrame = requestAnimationFrame(render);
-
-// Helper: Check if any higher plate covers the screw
-function isScrewCovered(ls, screw) {
-  const board = ls.boards.find(b => b.id === screw.boardId);
-  for (const otherBoard of ls.boards) {
-    if (otherBoard.id !== board.id && !otherBoard.removed && otherBoard.layer > board.layer) {
-       // Check bounding box overlap for simplicity
-       if (screw.x > otherBoard.x && screw.x < otherBoard.x + otherBoard.w &&
-           screw.y > otherBoard.y && screw.y < otherBoard.y + otherBoard.h) {
-         return true;
-       }
+    for (let s = 0; s < usedPos.length; s++) {
+      const p = usedPos[s];
+      const col = activeColors[(l + s + levelNum) % activeColors.length];
+      screws.push({
+        id: l * 100 + s,
+        x: p.x, y: p.y, boardId: l,
+        color: col.hex, colorId: col.id,
+        removed: false, removing: false, removeProgress: 0, scale: 1,
+        locked: (Math.random() < 0.1) // 10% chance locked
+      });
     }
   }
-  return false;
-}
 
-// ============================================================
-// 10. GAME LOGIC
-// ============================================================
-function startLevel(levelNum) {
-  const ls = generateLevel(levelNum);
-  ls.moves = 0;
-  ls.removedScrews = 0;
-  ls.completed = false;
-  ls.startTime = Date.now();
-  ls.undoStack = [];
-
-  gameState.levelState = ls;
-  gameState.currentLevel = levelNum;
-  gameState.paused = false;
-  gameState.particles = [];
+  // Setup Top Boxes (Start with 2)
+  const startColors = [activeColors[0], activeColors[1 % activeColors.length]];
   
-  gameState.hintsRemaining = gameState.boosters.hint || 0;
-  gameState.undosRemaining = gameState.boosters.undo || 0;
-  gameState.hammersRemaining = gameState.boosters.hammer || 0;
-  gameState.drillsRemaining = gameState.boosters.drill || 0;
-
-  updateHUD();
-  updateToolbar();
-  hideAllScreens();
-  saveState();
+  return {
+    level: levelNum,
+    boards,
+    screws,
+    capacity: boxCapacity,
+    totalScrews: screws.length,
+    removedCount: 0,
+    startColors: startColors,
+    allColors: activeColors,
+    completed: false
+  };
 }
 
+// ============================================================
+// GAME LOGIC & UI SYNC
+// ============================================================
+function initLevel(levelNum) {
+  gameState.level = levelNum;
+  gameState.currentLevelData = generateLevel(levelNum);
+  gameState.extraBoxesUnlocked = 0; // Reset ad boxes
+  
+  // Setup the 2 starting boxes
+  const data = gameState.currentLevelData;
+  gameState.activeBoxes = data.startColors.map((c, i) => ({
+    id: i,
+    colorId: c.id,
+    colorHex: c.hex,
+    border: c.border,
+    capacity: data.capacity,
+    filled: []
+  }));
+
+  updateTopUI();
+  document.getElementById('level-badge').textContent = 'LEVEL ' + levelNum;
+  document.getElementById('progress-star').textContent = '0%';
+  
+  hideScreens();
+}
+
+function updateTopUI() {
+  const container = document.getElementById('tray-container');
+  container.innerHTML = '';
+
+  // 1. Render Active Boxes
+  gameState.activeBoxes.forEach((box, index) => {
+    const boxDiv = document.createElement('div');
+    boxDiv.className = `tray-box ${box.colorId}`;
+    
+    // Add slots
+    for (let i = 0; i < box.capacity; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'tray-slot';
+      if (i < box.filled.length) {
+        slot.classList.add('filled');
+        slot.style.backgroundColor = box.colorHex;
+      }
+      boxDiv.appendChild(slot);
+    }
+    container.appendChild(boxDiv);
+  });
+
+  // 2. Render AD Boxes if less than max limit
+  const totalBoxes = gameState.activeBoxes.length;
+  if (totalBoxes < gameState.maxBoxesLimit) {
+    // Show ADD AD Box button
+    const adBtn = document.createElement('div');
+    adBtn.className = 'ad-box-btn';
+    adBtn.innerHTML = '<span class="plus">+</span><span class="ad-tag">AD</span>';
+    adBtn.onclick = showAdForNewBox;
+    container.appendChild(adBtn);
+  }
+}
+
+function showAdForNewBox() {
+  if (gameState.activeBoxes.length >= gameState.maxBoxesLimit) return;
+  
+  // Show demo ad
+  showDemoAd(() => {
+    // Reward: Add a random new color box
+    const availableColors = gameState.currentLevelData.allColors;
+    const randomColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+    
+    gameState.activeBoxes.push({
+      id: Date.now(),
+      colorId: randomColor.id,
+      colorHex: randomColor.hex,
+      border: randomColor.border,
+      capacity: gameState.currentLevelData.capacity,
+      filled: []
+    });
+    
+    updateTopUI();
+    showToast('New Box Unlocked!');
+  });
+}
+
+// ============================================================
+// CORE MECHANICS
+// ============================================================
 function handleScrewTap(screw) {
-  const ls = gameState.levelState;
-  if (!ls || ls.completed) return;
-  if (screw.removed || screw.removing) return;
+  const ls = gameState.currentLevelData;
+  if (ls.completed || screw.removed || screw.removing) return;
 
   if (screw.locked) {
-    showToast('🔒 Locked! Use a hammer.');
-    playSound('fail'); vibrate(50); return;
-  }
-
-  if (isScrewCovered(ls, screw)) {
-    showToast('🚫 Screw is covered by a plate!');
-    playSound('fail'); vibrate(50); return;
-  }
-
-  const box = ls.boxes.find(b => b.colorId === screw.colorId);
-  if (!box || box.isResetting) return;
-
-  if (box.currentNuts.length >= box.capacity) {
-    triggerBoxReset(box);
+    showToast('🔒 Locked! Use Hammer.');
     return;
   }
 
+  if (isCovered(ls, screw)) {
+    showToast('🚫 Covered by another plate!');
+    return;
+  }
+
+  // Find the matching box
+  const box = gameState.activeBoxes.find(b => b.colorId === screw.colorId && b.filled.length < b.capacity);
+  
+  if (!box) {
+    // If no box has space for this color, find ANY full box of this color to reset
+    const fullBox = gameState.activeBoxes.find(b => b.colorId === screw.colorId && b.filled.length >= b.capacity);
+    if (fullBox) {
+      fullBox.filled = []; // Reset box
+      updateTopUI();
+      showToast('Box reset!');
+    } else {
+      showToast('No box for this color!');
+      return;
+    }
+  }
+
+  const targetBox = gameState.activeBoxes.find(b => b.colorId === screw.colorId && b.filled.length < b.capacity);
+  if (!targetBox) return;
+
+  // Animate screw removal
   screw.removing = true;
   screw.removeProgress = 0;
-  ls.moves++;
-
-  ls.undoStack.push({ type: 'screw', screwId: screw.id, boardId: screw.boardId, colorId: screw.colorId });
 
   setTimeout(() => {
-    if (!gameState.levelState || gameState.levelState !== ls) return;
     if (ls.completed) return;
-
-    box.currentNuts.push(screw.id);
-    ls.removedScrews++;
-    box._lastNutAddedAt = performance.now();
-
-    playSound('unscrew'); vibrate(20);
-    spawnParticles(screw.x, screw.y, screw.color, 8, 150);
-
-    if (box.currentNuts.length >= box.capacity) {
-      triggerBoxReset(box);
+    screw.removed = true;
+    targetBox.filled.push(screw.id);
+    ls.removedCount++;
+    
+    // Check if box is full now
+    if (targetBox.filled.length >= targetBox.capacity) {
+      // Auto-reset box after a short delay
+      setTimeout(() => {
+        targetBox.filled = [];
+        updateTopUI();
+        playSound('reset');
+      }, 500);
     }
 
+    updateTopUI();
+    updateProgress();
     checkBoardRemoval(ls);
 
-    if (ls.removedScrews >= ls.requiredScrews) {
+    if (ls.removedCount >= ls.totalScrews) {
       winLevel(ls);
     }
-  }, 400);
+  }, 300);
 }
 
-function triggerBoxReset(box) {
-  if (box.isResetting) return;
-  box.isResetting = true;
-  box.resetProgress = 0;
-  playSound('boxreset');
-  vibrate(60);
+function updateProgress() {
+  const ls = gameState.currentLevelData;
+  const percent = Math.floor((ls.removedCount / ls.totalScrews) * 100);
+  document.getElementById('progress-star').textContent = percent + '%';
+}
+
+function isCovered(ls, screw) {
+  const board = ls.boards.find(b => b.id === screw.boardId);
+  for (const other of ls.boards) {
+    if (other.id !== board.id && !other.removed && other.layer > board.layer) {
+      // Simple bounding box check
+      if (screw.x > other.x && screw.x < other.x + other.w &&
+          screw.y > other.y && screw.y < other.y + other.h) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function checkBoardRemoval(ls) {
@@ -903,8 +435,7 @@ function checkBoardRemoval(ls) {
     if (allRemoved && boardScrews.length > 0) {
       board.removed = true;
       board.fallVel = 50;
-      playSound('fall'); vibrate(60);
-      spawnParticles(board.x + board.w/2, board.y + board.h/2, board.color, 12, 200);
+      playSound('fall');
     }
   }
 }
@@ -912,343 +443,369 @@ function checkBoardRemoval(ls) {
 function winLevel(ls) {
   if (ls.completed) return;
   ls.completed = true;
+  gameState.coins += 50;
+  document.getElementById('victory-coins').textContent = '+50';
+  document.getElementById('victory-screen').classList.remove('hidden');
+}
+
+// ============================================================
+// DRAWING (2D CARTOON STYLE)
+// ============================================================
+function drawLeaf(x, y, w, h, color, angle) {
+  ctx.save();
+  ctx.translate(x + w/2, y + h/2);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(0, -h/2);
+  ctx.quadraticCurveTo(w/2, 0, 0, h/2);
+  ctx.quadraticCurveTo(-w/2, 0, 0, -h/2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)'; // White outline style
+  ctx.stroke();
   
-  const efficiency = ls.requiredScrews / Math.max(ls.moves, 1);
-  let stars = 1;
-  if (efficiency >= 0.7) stars = 2;
-  if (efficiency >= 0.9) stars = 3;
-  if (ls.moves <= ls.requiredScrews) stars = 3;
-  
-  let coinsEarned = CONFIG.BASE_COINS_PER_LEVEL + (stars === 3 ? CONFIG.STAR_BONUS : 0);
-  let isMilestone = (ls.level % 10 === 0);
-  
-  if (isMilestone) {
-    coinsEarned += 500;
+  // Inner detail line
+  ctx.beginPath();
+  ctx.moveTo(0, -h/2 + 10);
+  ctx.lineTo(0, h/2 - 10);
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPetal(x, y, w, h, color) {
+  ctx.save();
+  ctx.translate(x + w/2, y + h/2);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, w/2, h/2, 0, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawScrew(x, y, color, scale, isLocked) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+
+  // Shadow
+  ctx.beginPath(); ctx.arc(2, 3, 12, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fill();
+
+  // Base
+  ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.stroke();
+
+  // Cross
+  ctx.beginPath();
+  ctx.moveTo(-6, 0); ctx.lineTo(6, 0);
+  ctx.moveTo(0, -6); ctx.lineTo(0, 6);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Lock icon
+  if (isLocked) {
+    ctx.fillStyle = '#FFF';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🔒', 0, 0);
   }
 
-  gameState.coins += coinsEarned;
-  gameState.totalStars += stars;
-  saveState(); updateHUD(); playSound('success'); vibrate([50, 50, 50, 50]);
-  
-  setTimeout(() => {
-    if (isMilestone) {
-      document.getElementById('victory-screen').querySelector('h2').textContent = '🏆 Milestone Reached!';
-      document.getElementById('victory-screen').querySelector('h2').style.color = '#f6d365';
-    } else {
-      document.getElementById('victory-screen').querySelector('h2').textContent = '🎉 Round Complete!';
-      document.getElementById('victory-screen').querySelector('h2').style.color = '#fff';
-    }
-    
-    document.getElementById('victory-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-    document.getElementById('victory-coins').textContent = '+' + coinsEarned;
-    document.getElementById('victory-screen').classList.remove('hidden');
-  }, 800);
+  ctx.restore();
 }
 
-// ============================================================
-// 11. BOOSTERS
-// ============================================================
-function useHint() {
-  const ls = gameState.levelState;
-  if (!ls || ls.completed) return;
-  if (gameState.hintsRemaining <= 0) { showToast('No hints left!'); return; }
-  
-  const available = ls.screws.filter(s => !s.removed && !s.removing && !s.locked && !isScrewCovered(ls, s));
-  if (available.length === 0) { showToast('No screws to hint!'); return; }
-  
-  const target = available[Math.floor(Math.random() * available.length)];
-  spawnParticles(target.x, target.y, '#f6d365', 20, 250);
-  playSound('coin');
-  gameState.hintsRemaining--;
-  updateToolbar();
-  showToast('💡 Screw highlighted!');
+function drawHole(x, y) {
+  ctx.beginPath();
+  ctx.arc(x, y, 8, 0, Math.PI*2);
+  ctx.fillStyle = '#D3C5A3'; // Darker cream for hole
+  ctx.fill();
+  ctx.strokeStyle = '#B8A880';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
-function useUndo() {
-  const ls = gameState.levelState;
-  if (!ls || ls.completed) return;
-  if (gameState.undosRemaining <= 0) { showToast('No undos left!'); return; }
-  if (ls.undoStack.length === 0) { showToast('Nothing to undo!'); return; }
-  
-  const lastAction = ls.undoStack.pop();
-  if (lastAction.type === 'screw') {
-    const screw = ls.screws.find(s => s.id === lastAction.screwId);
-    if (screw && (screw.removed || screw.removing)) {
-      screw.removed = false; screw.removing = false; screw.removeProgress = 0; screw.scale = 1;
-      
-      const box = ls.boxes.find(b => b.colorId === lastAction.colorId);
-      if (box) {
-        const nutIdx = box.currentNuts.indexOf(screw.id);
-        if (nutIdx !== -1) {
-          box.currentNuts.splice(nutIdx, 1);
-          ls.removedScrews--;
+let lastTime = 0;
+function render(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (gameState.paused) {
+    requestAnimationFrame(render);
+    return;
+  }
+
+  ctx.clearRect(0, 0, logicalWidth, logicalHeight);
+
+  const ls = gameState.currentLevelData;
+  if (ls) {
+    // Update physics
+    for (const board of ls.boards) {
+      if (board.removed) {
+        board.fallVel += CONFIG.GRAVITY * dt;
+        board.fallY += board.fallVel * dt;
+        board.rotation += 0.05 * dt * 60;
+      } else {
+        // Swing if 1 screw left
+        const activeScrews = ls.screws.filter(s => s.boardId === board.id && !s.removed && !s.removing);
+        if (activeScrews.length === 1) {
+          board.swingTime = (board.swingTime || 0) + dt;
+          board.swingAngle = Math.sin(board.swingTime * 5) * 0.1;
+        } else {
+          board.swingAngle = 0;
         }
       }
+    }
+
+    for (const s of ls.screws) {
+      if (s.removing) {
+        s.removeProgress += dt * 4;
+        s.scale = Math.max(0, 1 - s.removeProgress);
+        if (s.removeProgress >= 1) s.removing = false;
+      }
+    }
+
+    // Draw Boards
+    const sortedBoards = [...ls.boards].sort((a,b) => a.layer - b.layer);
+    for (const b of sortedBoards) {
+      if (b.removed && b.fallY > 800) continue;
       
-      const board = ls.boards.find(b => b.id === screw.boardId);
-      if (board && board.removed) { board.removed = false; board.fallY = 0; board.fallVel = 0; board.rotation = 0; }
-      playSound('tap'); vibrate(20);
-      gameState.undosRemaining--;
-      updateToolbar();
-      showToast('↩️ Move undone!');
-    }
-  }
-}
+      const cx = b.x + b.w/2;
+      const cy = b.y + b.h/2 + (b.fallY || 0);
+      
+      ctx.save();
+      ctx.translate(cx, cy);
+      if (b.swingAngle) ctx.rotate(b.swingAngle);
+      if (b.removed) ctx.rotate(b.rotation);
+      ctx.translate(-cx, -cy);
 
-function useHammer() {
-  const ls = gameState.levelState;
-  if (!ls || ls.completed) return;
-  if (gameState.hammersRemaining <= 0) { showToast('No hammers left!'); return; }
-  const lockedScrew = ls.screws.find(s => s.locked && !s.removed);
-  if (!lockedScrew) { showToast('No locked screws!'); return; }
-  lockedScrew.locked = false;
-  spawnParticles(lockedScrew.x, lockedScrew.y, '#f6d365', 15, 200);
-  playSound('unscrew'); vibrate(40);
-  gameState.hammersRemaining--;
-  updateToolbar();
-  showToast('🔨 Screw unlocked!');
-}
-
-function useDrill() {
-  const ls = gameState.levelState;
-  if (!ls || ls.completed) return;
-  if (gameState.drillsRemaining <= 0) { showToast('No drills left!'); return; }
-  
-  const available = ls.screws.filter(s => !s.removed && !s.removing && !s.locked && !isScrewCovered(ls, s));
-  if (available.length === 0) { showToast('No open screws to drill!'); return; }
-  
-  const target = available[Math.floor(Math.random() * available.length)];
-  target.removing = true; target.removeProgress = 0;
-  
-  setTimeout(() => {
-    if (!gameState.levelState || gameState.levelState !== ls) return;
-    target.removed = true; target.removing = false; target.scale = 0;
-    ls.removedScrews++;
-    spawnParticles(target.x, target.y, '#f6d365', 20, 300);
-    playSound('unscrew'); vibrate(60);
-    checkBoardRemoval(ls);
-    if (ls.removedScrews >= ls.requiredScrews) winLevel(ls);
-  }, 300);
-  
-  gameState.drillsRemaining--;
-  updateToolbar();
-  showToast('🔩 Screw drilled!');
-}
-
-// ============================================================
-// 12. UI UPDATES
-// ============================================================
-function updateHUD() {
-  document.getElementById('coin-display').textContent = gameState.coins;
-  document.getElementById('star-display').textContent = gameState.totalStars;
-  document.getElementById('level-display').textContent = 'Round ' + gameState.currentLevel;
-}
-
-function updateToolbar() {
-  document.getElementById('hint-btn').classList.toggle('disabled', gameState.hintsRemaining <= 0);
-  document.getElementById('undo-btn').classList.toggle('disabled', gameState.undosRemaining <= 0);
-  document.getElementById('hammer-btn').classList.toggle('disabled', gameState.hammersRemaining <= 0);
-  document.getElementById('drill-btn').classList.toggle('disabled', gameState.drillsRemaining <= 0);
-  document.getElementById('hint-cost').textContent = gameState.hintsRemaining;
-  document.getElementById('undo-cost').textContent = gameState.undosRemaining;
-  document.getElementById('hammer-cost').textContent = gameState.hammersRemaining;
-  document.getElementById('drill-cost').textContent = gameState.drillsRemaining;
-}
-
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(() => toast.classList.remove('show'), 2000);
-}
-
-function hideAllScreens() {
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-}
-
-// ============================================================
-// 13. INPUT
-// ============================================================
-function getCanvasCoords(e) {
-  const rect = canvas.getBoundingClientRect();
-  let clientX, clientY;
-  if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-  else { clientX = e.clientX; clientY = e.clientY; }
-  return { x: (clientX - rect.left) * (logicalWidth / rect.width), y: (clientY - rect.top) * (logicalHeight / rect.height) };
-}
-
-function findScrewAt(x, y) {
-  const ls = gameState.levelState;
-  if (!ls) return null;
-  
-  const sortedScrews = [...ls.screws].sort((a, b) => {
-    const boardA = ls.boards.find(b => b.id === a.boardId);
-    const boardB = ls.boards.find(b => b.id === b.boardId);
-    return (boardB?.layer || 0) - (boardA?.layer || 0);
-  });
-
-  for (const screw of sortedScrews) {
-    if (screw.removed || screw.removing) continue; 
-    // Don't allow tapping covered screws
-    if (isScrewCovered(ls, screw)) continue;
-
-    const board = ls.boards.find(b => b.id === screw.boardId);
-    if (board && board.removed && board.fallY > 100) continue;
-    
-    let sx = screw.x, sy = screw.y;
-    if (board && board.removed) { sx += Math.sin(board.rotation || 0) * (board.fallY || 0) * 0.3; sy += (board.fallY || 0); }
-    
-    if (board && board.swingAngle) {
-        const cx = board.x + board.w/2;
-        const cy = board.y + board.h/2;
-        const dx = sx - cx;
-        const dy = sy - cy;
-        const cos = Math.cos(board.swingAngle);
-        const sin = Math.sin(board.swingAngle);
-        sx = cx + dx * cos - dy * sin;
-        sy = cy + dx * sin + dy * cos;
+      if (b.shape === 'leaf') drawLeaf(b.x, b.y, b.w, b.h, b.color, 0);
+      else if (b.shape === 'petal') drawPetal(b.x, b.y, b.w, b.h, b.color);
+      else {
+        // Hexagon fallback
+        ctx.beginPath();
+        for(let i=0; i<6; i++){
+          const a = i/6*Math.PI*2;
+          const px = cx + Math.cos(a)*b.w/2;
+          const py = cy + Math.sin(a)*b.h/2;
+          if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.closePath();
+        ctx.fillStyle = b.color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
-    if (Math.hypot(x - sx, y - sy) < CONFIG.SCREW_RADIUS * 2.5) return screw;
+    // Draw Holes
+    for (const s of ls.screws) {
+      if (s.removed) {
+        const b = ls.boards.find(b => b.id === s.boardId);
+        if (b && b.removed && b.fallY > 600) continue;
+        let hx = s.x, hy = s.y;
+        if (b && b.removed) hy += b.fallY;
+        drawHole(hx, hy);
+      }
+    }
+
+    // Draw Screws
+    for (const s of ls.screws) {
+      if (s.removed || s.removing) continue;
+      const b = ls.boards.find(b => b.id === s.boardId);
+      if (b && b.removed && b.fallY > 600) continue;
+      
+      if (isCovered(ls, s)) continue; // Hidden under another plate
+
+      let sx = s.x, sy = s.y;
+      if (b && b.removed) sy += b.fallY;
+      
+      drawScrew(sx, sy, s.color, s.scale || 1, s.locked);
+    }
   }
-  return null;
+
+  requestAnimationFrame(render);
 }
 
+// ============================================================
+// INTERACTION
+// ============================================================
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
   if (gameState.paused) return;
-  gameState.touchStart = getCanvasCoords(e);
-  gameState.touchMoved = false;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.touches[0].clientX - rect.left) * (logicalWidth / rect.width);
+  const y = (e.touches[0].clientY - rect.top) * (logicalHeight / rect.height);
+  
+  const ls = gameState.currentLevelData;
+  if (!ls) return;
+
+  // Find topmost screw
+  const sortedScrews = [...ls.screws].sort((a, b) => {
+    const bA = ls.boards.find(b => b.id === a.boardId);
+    const bB = ls.boards.find(b => b.id === b.boardId);
+    return (bB?.layer || 0) - (bA?.layer || 0);
+  });
+
+  for (const s of sortedScrews) {
+    if (s.removed || s.removing || isCovered(ls, s)) continue;
+    const dist = Math.hypot(x - s.x, y - s.y);
+    if (dist < CONFIG.SCREW_RADIUS * 2.5) {
+      handleScrewTap(s);
+      break;
+    }
+  }
 }, { passive: false });
 
-canvas.addEventListener('touchmove', (e) => { e.preventDefault(); gameState.touchMoved = true; }, { passive: false });
-
-canvas.addEventListener('touchend', (e) => {
-  e.preventDefault();
-  if (gameState.paused) return;
-  if (!gameState.touchStart || gameState.touchMoved) { gameState.touchStart = null; return; }
-  const coords = gameState.touchStart;
-  gameState.touchStart = null;
-  const screw = findScrewAt(coords.x, coords.y);
-  if (screw) handleScrewTap(screw);
-}, { passive: false });
-
-canvas.addEventListener('click', (e) => {
-  if (gameState.paused) return;
-  const coords = getCanvasCoords(e);
-  const screw = findScrewAt(coords.x, coords.y);
-  if (screw) handleScrewTap(screw);
-});
-
-canvas.addEventListener('contextmenu', e => e.preventDefault());
+// Prevent scrolling
+canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
 // ============================================================
-// 14. UI BUTTON BINDINGS
+// BOOSTERS
 // ============================================================
-document.getElementById('play-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel); });
-document.getElementById('shop-btn').addEventListener('click', () => { hideAllScreens(); document.getElementById('shop-coins').textContent = gameState.coins; document.getElementById('shop-screen').classList.remove('hidden'); });
-document.getElementById('daily-btn').addEventListener('click', () => {
-  const today = new Date().toDateString();
-  if (gameState.lastDailyDate === today) { showToast('🎁 Already claimed today!'); return; }
-  gameState.lastDailyDate = today;
-  gameState.coins += 100;
-  gameState.boosters.hint = (gameState.boosters.hint || 0) + 1;
-  gameState.boosters.undo = (gameState.boosters.undo || 0) + 1;
-  saveState(); updateHUD(); playSound('coin'); vibrate([30, 30, 30]);
-  showToast('🎁 +100 coins, +1 hint, +1 undo!');
-  document.getElementById('daily-badge').style.display = 'none';
-});
-document.getElementById('settings-btn').addEventListener('click', () => { hideAllScreens(); document.getElementById('settings-screen').classList.remove('hidden'); });
-document.getElementById('back-from-shop').addEventListener('click', () => { hideAllScreens(); document.getElementById('home-screen').classList.remove('hidden'); });
-
-document.getElementById('buy-hint').addEventListener('click', () => {
-  if (gameState.coins < 50) { showToast('Not enough coins!'); return; }
-  gameState.coins -= 50; gameState.boosters.hint = (gameState.boosters.hint || 0) + 1; gameState.hintsRemaining++;
-  saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('💡 Hint purchased!');
-});
-document.getElementById('buy-undo').addEventListener('click', () => {
-  if (gameState.coins < 30) { showToast('Not enough coins!'); return; }
-  gameState.coins -= 30; gameState.boosters.undo = (gameState.boosters.undo || 0) + 1; gameState.undosRemaining++;
-  saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('↩️ Undo purchased!');
-});
-document.getElementById('buy-hammer').addEventListener('click', () => {
-  if (gameState.coins < 75) { showToast('Not enough coins!'); return; }
-  gameState.coins -= 75; gameState.boosters.hammer = (gameState.boosters.hammer || 0) + 1; gameState.hammersRemaining++;
-  saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('🔨 Hammer purchased!');
-});
-document.getElementById('buy-drill').addEventListener('click', () => {
-  if (gameState.coins < 120) { showToast('Not enough coins!'); return; }
-  gameState.coins -= 120; gameState.boosters.drill = (gameState.boosters.drill || 0) + 1; gameState.drillsRemaining++;
-  saveState(); updateHUD(); updateToolbar(); playSound('coin'); showToast('🔩 Drill purchased!');
-});
-document.getElementById('buy-coins-ad').addEventListener('click', () => {
-  showToast('📺 Ad placeholder — +100 coins (demo)');
-  gameState.coins += 100; saveState(); updateHUD(); playSound('coin');
-  document.getElementById('shop-coins').textContent = gameState.coins;
+document.getElementById('btn-drill').addEventListener('click', () => {
+  if (gameState.drill <= 0) return showToast('No drills left!');
+  const ls = gameState.currentLevelData;
+  const available = ls.screws.filter(s => !s.removed && !s.removing && !isCovered(ls, s));
+  if (available.length === 0) return showToast('No available screws!');
+  
+  // Destroy one random available screw
+  const target = available[Math.floor(Math.random() * available.length)];
+  target.removed = true;
+  ls.removedCount++;
+  gameState.drill--;
+  document.getElementById('count-drill').textContent = gameState.drill;
+  updateProgress();
+  checkBoardRemoval(ls);
+  if (ls.removedCount >= ls.totalScrews) winLevel(ls);
+  showToast('Drilled!');
 });
 
-document.getElementById('pause-btn').addEventListener('click', () => {
-  if (!gameState.levelState || gameState.levelState.completed) return;
-  gameState.paused = true; hideAllScreens(); document.getElementById('pause-screen').classList.remove('hidden');
-});
-document.getElementById('resume-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); });
-document.getElementById('restart-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); startLevel(gameState.currentLevel); });
-document.getElementById('quit-btn').addEventListener('click', () => { gameState.paused = false; hideAllScreens(); gameState.levelState = null; document.getElementById('home-screen').classList.remove('hidden'); });
-document.getElementById('reset-btn').addEventListener('click', () => { if(gameState.levelState) { startLevel(gameState.currentLevel); showToast('🔄 Round Restarted'); } });
-
-document.getElementById('back-from-settings').addEventListener('click', () => {
-  hideAllScreens(); document.getElementById('home-screen').classList.remove('hidden'); gameState.paused = false;
-});
-document.getElementById('toggle-sound').addEventListener('click', () => {
-  gameState.soundOn = !gameState.soundOn;
-  document.getElementById('toggle-sound').textContent = gameState.soundOn ? 'ON' : 'OFF';
-  saveState(); initAudio(); if (gameState.soundOn) playSound('tap');
-});
-document.getElementById('toggle-vibration').addEventListener('click', () => {
-  gameState.vibrationOn = !gameState.vibrationOn;
-  document.getElementById('toggle-vibration').textContent = gameState.vibrationOn ? 'ON' : 'OFF';
-  saveState();
+document.getElementById('btn-hammer').addEventListener('click', () => {
+  if (gameState.hammer <= 0) return showToast('No hammers left!');
+  const ls = gameState.currentLevelData;
+  const locked = ls.screws.find(s => s.locked && !s.removed);
+  if (!locked) return showToast('No locked screws!');
+  
+  locked.locked = false;
+  gameState.hammer--;
+  document.getElementById('count-hammer').textContent = gameState.hammer;
+  showToast('Unlocked!');
 });
 
-document.getElementById('next-level-btn').addEventListener('click', () => { hideAllScreens(); startLevel(gameState.currentLevel + 1); });
-document.getElementById('victory-ad-btn').addEventListener('click', () => { showToast('📺 Ad placeholder — +100 coins (demo)'); gameState.coins += 100; saveState(); updateHUD(); playSound('coin'); });
-document.getElementById('victory-menu-btn').addEventListener('click', () => { hideAllScreens(); gameState.levelState = null; document.getElementById('home-screen').classList.remove('hidden'); });
-
-document.getElementById('hint-btn').addEventListener('click', useHint);
-document.getElementById('undo-btn').addEventListener('click', useUndo);
-document.getElementById('hammer-btn').addEventListener('click', useHammer);
-document.getElementById('drill-btn').addEventListener('click', useDrill);
-
-// ============================================================
-// 15. INIT
-// ============================================================
-function init() {
-  loadState();
-  initAudio();
-  updateHUD();
-  document.getElementById('toggle-sound').textContent = gameState.soundOn ? 'ON' : 'OFF';
-  document.getElementById('toggle-vibration').textContent = gameState.vibrationOn ? 'ON' : 'OFF';
-  const today = new Date().toDateString();
-  if (gameState.lastDailyDate === today) document.getElementById('daily-badge').style.display = 'none';
-  else document.getElementById('daily-badge').style.display = 'flex';
-  hideAllScreens();
-  document.getElementById('home-screen').classList.remove('hidden');
-  document.addEventListener('touchstart', function once() { initAudio(); document.removeEventListener('touchstart', once); }, { once: true });
-  document.addEventListener('click', function once2() { initAudio(); document.removeEventListener('click', once2); }, { once: true });
-}
-
-init();
-
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && gameState.levelState && !gameState.levelState.completed) {
-    gameState.paused = true;
-    hideAllScreens();
-    document.getElementById('pause-screen').classList.remove('hidden');
+document.getElementById('btn-brush').addEventListener('click', () => {
+  if (gameState.brush <= 0) return showToast('No brushes left!');
+  // Demo: Brush removes one random top-layer screw color box
+  gameState.brush--;
+  document.getElementById('count-brush').textContent = gameState.brush;
+  
+  // Randomly clear one box
+  if (gameState.activeBoxes.length > 0) {
+    const box = gameState.activeBoxes[0];
+    box.filled = [];
+    updateTopUI();
+    showToast('Box Cleaned!');
   }
 });
 
-console.log('🔩 UNSCREW NUTS 3D - Hidden Screws & Overlaps Active!');
+// ============================================================
+// AD SIMULATION
+// ============================================================
+function showDemoAd(callback) {
+  const adScreen = document.getElementById('ad-screen');
+  const timerEl = document.getElementById('ad-timer');
+  const closeBtn = document.getElementById('ad-close-btn');
+  
+  adScreen.classList.remove('hidden');
+  closeBtn.classList.add('hidden');
+  
+  let timeLeft = 3;
+  timerEl.textContent = timeLeft;
+  
+  const interval = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      closeBtn.classList.remove('hidden');
+    }
+  }, 1000);
+
+  closeBtn.onclick = () => {
+    adScreen.classList.add('hidden');
+    if (callback) callback();
+  };
+}
+
+document.getElementById('ad-coins-btn').addEventListener('click', () => {
+  showDemoAd(() => {
+    gameState.coins += 100;
+    showToast('+100 Coins!');
+  });
+});
+
+// ============================================================
+// UTILS
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function hideScreens() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+}
+
+function playSound(type) {
+  // Simple beep using Web Audio API
+  try {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    if (type === 'reset') osc.frequency.value = 600;
+    else if (type === 'fall') osc.frequency.value = 300;
+    else osc.frequency.value = 800;
+    gain.gain.setValueAtTime(0.1, actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.2);
+    osc.start();
+    osc.stop(actx.currentTime + 0.2);
+  } catch(e){}
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('play-btn').addEventListener('click', () => {
+  hideScreens();
+  initLevel(gameState.level);
+});
+
+document.getElementById('next-level-btn').addEventListener('click', () => {
+  hideScreens();
+  gameState.level++;
+  initLevel(gameState.level);
+});
+
+// Start render loop
+requestAnimationFrame(render);
+initLevel(1); // Load level 1 but keep home screen visible
+
 })();
 </script>
 </body>
