@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>UNSCREW NUTS 3D - Invisible & Swinging Plates</title>
+  <title>UNSCREW NUTS 3D - Fixed Layers</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1e2c; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; touch-action: pan-y pinch-zoom; }
@@ -135,7 +135,7 @@
 
 <script>
 /* ============================================================
-   UNSCREW NUTS 3D - Invisible Plates, Holes & Pendulum Swing
+   UNSCREW NUTS 3D - Fixed Layering & Tapping
    ============================================================ */
 
 (function() {
@@ -148,7 +148,7 @@ const CONFIG = {
   BASE_COINS_PER_LEVEL: 50,
   STAR_BONUS: 25,
   SCREW_RADIUS: 14,
-  HOLE_RADIUS: 8, // Size of hole after nut is removed
+  HOLE_RADIUS: 8,
   BOARD_COLORS: ['#8B5A2B', '#A0522D', '#6B4226', '#B8860B', '#5C4033'],
   METAL_COLORS: ['#6B7280', '#4B5563', '#9CA3AF', '#78716C'],
   GRAVITY: 1200,
@@ -169,13 +169,12 @@ const CONFIG = {
 };
 
 // ============================================================
-// 2. DYNAMIC LEVEL GENERATOR (INVISIBLE PLATES ADDED)
+// 2. DYNAMIC LEVEL GENERATOR (IMPROVED SPACING)
 // ============================================================
 function generateLevel(levelNum) {
   const boards = [];
   const screws = [];
 
-  // Difficulty scaling
   const plateLayers = Math.min(1 + Math.floor(levelNum / 3), 4);
   const colorCount = Math.min(2 + Math.floor(levelNum / 4), 6);
   const boxCapacity = Math.min(3 + Math.floor(levelNum / 4), 6);
@@ -185,22 +184,24 @@ function generateLevel(levelNum) {
   const cx = 200;
   const cy = 280;
   
-  // Create layers from bottom to top
   for (let layer = 0; layer < plateLayers; layer++) {
     const isMetal = levelNum > 10 && (layer % 2 === 0);
     const shape = CONFIG.SHAPES[(layer + levelNum) % CONFIG.SHAPES.length];
     
-    // 30% chance for a plate to be invisible (mostly on lower layers)
     const isInvisible = (Math.random() < 0.3 && layer > 0);
     
-    const maxSize = 130 - (layer * 15);
+    const maxSize = 120 - (layer * 15);
     const minSize = 70 - (layer * 10);
     const size = Math.max(50, minSize + Math.random() * (maxSize - minSize));
     const w = size;
     const h = size;
     
-    const bx = cx - w / 2;
-    const by = cy - h / 2 + (layer * 5);
+    // IMPROVEMENT: Random offset so plates don't perfectly overlap
+    const offsetX = (Math.random() - 0.5) * 40;
+    const offsetY = (Math.random() - 0.5) * 40;
+    
+    const bx = cx - w / 2 + offsetX;
+    const by = cy - h / 2 + offsetY;
     
     boards.push({
       id: layer, x: bx, y: by, w: w, h: h,
@@ -213,7 +214,6 @@ function generateLevel(levelNum) {
       screwsCount: 0
     });
 
-    // Add screws to this plate
     const screwCount = 2 + Math.floor(levelNum / 4);
     let corners = [];
     
@@ -227,12 +227,12 @@ function generateLevel(levelNum) {
       const r = w / 2 - 20;
       for (let i = 0; i < 4; i++) {
         const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-        corners.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+        corners.push({ x: bx + w/2 + Math.cos(a) * r, y: by + h/2 + Math.sin(a) * r });
       }
     } else if (shape === 'triangle') {
       const m = 25;
       corners = [
-        { x: cx, y: by + m },
+        { x: bx + w/2, y: by + m },
         { x: bx + m, y: by + h - m },
         { x: bx + w - m, y: by + h - m }
       ];
@@ -240,7 +240,7 @@ function generateLevel(levelNum) {
       const r = w / 2 - 15;
       for (let i = 0; i < 6; i++) {
         const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-        corners.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+        corners.push({ x: bx + w/2 + Math.cos(a) * r, y: by + h/2 + Math.sin(a) * r });
       }
     }
 
@@ -256,7 +256,7 @@ function generateLevel(levelNum) {
         id: boards.length * 10 + s,
         x: c.x, y: c.y, boardId: layer, color: chosenColor.hex, colorId: chosenColor.id,
         removed: false, removing: false, removeProgress: 0, locked: false, scale: 1,
-        isInvisible: isInvisible // Nuts inherit invisibility from plate
+        isInvisible: isInvisible 
       });
     }
   }
@@ -289,7 +289,7 @@ function generateLevel(levelNum) {
 // ============================================================
 // 3. STATE & PERSISTENCE
 // ============================================================
-const STORAGE_KEY = 'unscrew_nuts_3d_advanced_save';
+const STORAGE_KEY = 'unscrew_nuts_3d_advanced_save_v3';
 
 let gameState = {
   currentLevel: 1,
@@ -402,8 +402,8 @@ function shadeColor(hex, percent) {
 }
 
 function drawScrew(x, y, color, scale, rotation, isLocked, isInvisible) {
-  if (isInvisible && scale > 0) return; // Don't draw invisible nuts
-
+  if (isInvisible && scale > 0) return; 
+  
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
@@ -429,12 +429,10 @@ function drawScrew(x, y, color, scale, rotation, isLocked, isInvisible) {
   ctx.restore();
 }
 
-// Draw empty hole (small dark circle) where nut used to be
 function drawHole(x, y) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(x, y, CONFIG.HOLE_RADIUS, 0, Math.PI * 2);
-  // Deep dark hole effect
   const grad = ctx.createRadialGradient(x - 2, y - 2, 2, x, y, CONFIG.HOLE_RADIUS);
   grad.addColorStop(0, '#000');
   grad.addColorStop(0.7, '#111');
@@ -476,7 +474,6 @@ function drawNutInBox(cx, cy, color, scale, glow) {
   ctx.restore();
 }
 
-// DRAW PLATE (Handles Invisible, Holes, and Swinging)
 function drawPlate(board) {
   const { x, y, w, h, color, type, shape, removed, fallY, rotation, isInvisible } = board;
   if (removed && fallY > 600) return;
@@ -484,7 +481,6 @@ function drawPlate(board) {
   ctx.save();
   const cx = x + w/2, cy = y + h/2;
   
-  // Pendulum swing logic (hanging by last nut)
   if (board.swingAngle) {
      ctx.translate(cx, cy + (fallY || 0));
      ctx.rotate(board.swingAngle);
@@ -495,7 +491,6 @@ function drawPlate(board) {
      ctx.translate(-w/2, -h/2);
   }
 
-  // Path based on shape
   ctx.beginPath();
   if (shape === 'square') {
     ctx.roundRect(0, 0, w, h, 10);
@@ -518,16 +513,14 @@ function drawPlate(board) {
   }
 
   if (isInvisible) {
-    // Draw only a faint glass-like outline
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
+    ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.setLineDash([]);
   } else {
-    // Draw normal plate
     ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 18; ctx.shadowOffsetX = 3; ctx.shadowOffsetY = 6;
     const grad = ctx.createLinearGradient(0, 0, w, h);
     if (type === 'wood') { grad.addColorStop(0, shadeColor(color, 20)); grad.addColorStop(0.4, color); grad.addColorStop(1, shadeColor(color, -30)); }
@@ -569,7 +562,7 @@ function drawPlate(board) {
 }
 
 // ============================================================
-// 7. BOXES (Color Matching)
+// 7. BOXES
 // ============================================================
 function drawColorBoxes(dt) {
   const ls = gameState.levelState;
@@ -727,19 +720,15 @@ function render(now) {
   if (gameState.levelState) {
     const ls = gameState.levelState;
 
-    // Update boards (falling & swinging)
     for (const board of ls.boards) {
       if (board.removed) {
         board.fallVel = (board.fallVel || 0) + CONFIG.GRAVITY * dt;
         board.fallY = (board.fallY || 0) + board.fallVel * dt;
         board.rotation = (board.rotation || 0) + 0.02 * dt * 60;
       } else {
-        // Check if 1 screw remains to apply swing
         const boardScrews = ls.screws.filter(s => s.boardId === board.id && !s.removed && !s.removing);
         if (boardScrews.length === 1) {
-           // Swing based on last screw position
            board.swingTime = (board.swingTime || 0) + dt;
-           // The further from center the screw is, the more it swings
            const screw = boardScrews[0];
            const dx = screw.x - (board.x + board.w/2);
            const swingMultiplier = Math.min(Math.abs(dx) / (board.w/2), 1.5);
@@ -751,7 +740,6 @@ function render(now) {
       }
     }
 
-    // Update screws
     for (const screw of ls.screws) {
       if (screw.removing) {
         screw.removeProgress += dt * 3;
@@ -762,15 +750,14 @@ function render(now) {
 
     updateParticles(dt);
 
+    // Draw bottom to top
     const sortedBoards = [...ls.boards].sort((a, b) => a.layer - b.layer);
     for (const board of sortedBoards) drawPlate(board);
 
-    // Draw holes first (under screws)
     for (const screw of ls.screws) {
       const board = ls.boards.find(b => b.id === screw.boardId);
       if (board && board.removed && board.fallY > 400) continue;
       if (screw.removed) {
-        // Draw hole where nut used to be
         let sx = screw.x, sy = screw.y;
         if (board && board.removed) {
           sx += Math.sin(board.rotation || 0) * (board.fallY || 0) * 0.3;
@@ -780,7 +767,6 @@ function render(now) {
       }
     }
 
-    // Draw screws
     for (const screw of ls.screws) {
       if (screw.removed || screw.removing) continue;
       
@@ -793,7 +779,6 @@ function render(now) {
         sy += (board.fallY || 0);
       }
       
-      // Apply swing offset to nuts
       if (board && board.swingAngle) {
         const cx = board.x + board.w/2;
         const cy = board.y + board.h/2;
@@ -818,7 +803,7 @@ function render(now) {
 }
 gameState.animFrame = requestAnimationFrame(render);
 
-// Helper to check if a screw is covered by a higher plate
+// Helper
 function isScrewCovered(ls, screw) {
   const board = ls.boards.find(b => b.id === screw.boardId);
   for (const otherBoard of ls.boards) {
@@ -868,7 +853,7 @@ function handleScrewTap(screw) {
   if (screw.removed || screw.removing) return;
 
   if (screw.locked) {
-    showToast('🔒 Locked by special bolt! Use a hammer.');
+    showToast('🔒 Locked! Use a hammer.');
     playSound('fail'); vibrate(50); return;
   }
 
@@ -985,7 +970,7 @@ function useHint() {
   
   const trulyAvailable = available.filter(s => !isScrewCovered(ls, s));
 
-  if (trulyAvailable.length === 0) { showToast('All remaining screws are covered!'); return; }
+  if (trulyAvailable.length === 0) { showToast('All visible screws are covered!'); return; }
   
   const target = trulyAvailable[Math.floor(Math.random() * trulyAvailable.length)];
   spawnParticles(target.x, target.y, '#f6d365', 20, 250);
@@ -1120,7 +1105,7 @@ function findScrewAt(x, y) {
   });
 
   for (const screw of sortedScrews) {
-    if (screw.removed || screw.removing || screw.isInvisible) continue; // Cannot tap invisible nuts
+    if (screw.removed || screw.removing || screw.isInvisible) continue; 
     const board = ls.boards.find(b => b.id === screw.boardId);
     if (board && board.removed && board.fallY > 100) continue;
     
@@ -1276,7 +1261,7 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-console.log('🔩 UNSCREW NUTS 3D - Advanced Plates Active!');
+console.log('🔩 UNSCREW NUTS 3D - Fixed Tapping!');
 })();
 </script>
 </body>
