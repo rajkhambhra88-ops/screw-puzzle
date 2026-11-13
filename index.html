@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>UNSCREW NUTS 3D - Swing & Reward Update</title>
+  <title>UNSCREW NUTS 3D - Big & Dynamic</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #E8DAB2; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; touch-action: pan-y pinch-zoom; }
@@ -16,7 +16,7 @@
     .ui-layer > * { pointer-events: auto; }
     
     #top-bar { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 20; }
-    #level-badge { background: #fff; border: 3px solid #D3C59C; border-radius: 20px; padding: 4px 16px; font-weight: 900; font-size: 18px; color: #5A4A3A; text-shadow: 0 1px 0 #fff; box-shadow: 0 4px 0 #C2B280; }
+    #level-badge { background: #fff; border: 3px solid #D3C59C; border-radius: 20px; padding: 4px 16px; font-weight: 900; font-size: 18px; color: #5A4A3A; box-shadow: 0 4px 0 #C2B280; }
     
     #tray-container { position: absolute; top: 60px; left: 10px; right: 10px; display: flex; gap: 8px; z-index: 20; transition: all 0.3s; flex-wrap: wrap; justify-content: center; }
     .tray-box { flex: 1; min-width: 70px; height: 60px; background: #fff; border-radius: 16px; border: 4px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 0 #aaa; position: relative; overflow: hidden; }
@@ -37,7 +37,7 @@
     
     .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(242,232,198,0.95); backdrop-filter: blur(5px); z-index: 100; padding: 24px; text-align: center; color: #4A3B32; }
     .screen.hidden { display: none; }
-    .screen h1 { font-size: 32px; font-weight: 900; color: #D35400; margin-bottom: 10px; text-shadow: 0 2px 0 #fff; }
+    .screen h1 { font-size: 32px; font-weight: 900; color: #D35400; margin-bottom: 10px; }
     .screen p { font-size: 16px; margin-bottom: 20px; font-weight: 600; }
     .btn { background: #4CAF50; border: 3px solid #388E3C; border-radius: 40px; color: white; font-weight: 900; font-size: 18px; padding: 12px 30px; box-shadow: 0 6px 0 #2E7D32; cursor: pointer; text-transform: uppercase; }
     .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2E7D32; }
@@ -69,7 +69,7 @@
 
   <div class="screen" id="home-screen">
     <h1>UNSCREW NUTS</h1>
-    <p>Remove the screws to clear the leaves.<br>Match colors to the top boxes!</p>
+    <p>Clear the plates. Match the colors.</p>
     <button class="btn" id="play-btn" style="margin-top: 20px;">PLAY</button>
     <button class="btn blue" id="ad-coins-btn" style="margin-top: 15px; font-size: 14px; padding: 10px 20px;">WATCH AD +100 🪙</button>
   </div>
@@ -81,11 +81,10 @@
     <button class="btn" id="next-level-btn" style="margin-top: 20px;">NEXT LEVEL</button>
   </div>
 
-  <!-- REWARD SCREEN FOR EVERY 10 LEVELS -->
   <div class="screen hidden" id="reward-screen">
     <h1 style="color: #F39C12;">🎉 10 LEVELS COMPLETE! 🎉</h1>
     <div style="font-size: 60px; margin: 20px 0;">🎁</div>
-    <p style="font-size: 20px; color: #D35400;">You have earned a Milestone Reward!</p>
+    <p style="font-size: 20px; color: #D35400;">Milestone Reward!</p>
     <div style="background: #fff; border-radius: 20px; padding: 20px; width: 80%; margin-bottom: 20px; border: 3px solid #E5B93F; box-shadow: 0 4px 0 #C99D30;">
       <p style="font-size: 24px; margin: 5px 0;">🪙 +200 Coins</p>
       <p style="font-size: 24px; margin: 5px 0;">🔨 +1 Hammer</p>
@@ -97,7 +96,7 @@
 
   <div class="screen hidden" id="ad-screen" style="background: #222; color: white;">
     <h1 style="color: #F6D365;">DEMO AD</h1>
-    <p>This is a placeholder for a real advertisement.</p>
+    <p>Placeholder for real ad.</p>
     <p style="font-size: 40px; margin: 30px 0;">📺</p>
     <p>Please wait <span id="ad-timer">3</span> seconds...</p>
     <button class="btn gold hidden" id="ad-close-btn" style="margin-top: 20px;">CLAIM REWARD</button>
@@ -108,7 +107,7 @@
 
 <script>
 /* ============================================================
-   UNSCREW NUTS - HOLES FIXED & MILESTONE REWARDS
+   UNSCREW NUTS 3D - Bigger Plates, Dynamic Boxes
    ============================================================ */
 
 (function() {
@@ -116,8 +115,8 @@
 
 const CONFIG = {
   BASE_COINS: 50,
-  SCREW_RADIUS: 14,
-  HOLE_RADIUS: 8,
+  SCREW_RADIUS: 18, // Increased size
+  HOLE_RADIUS: 12,  // Increased size
   GRAVITY: 1200,
   COLORS: [
     { id: 'red', hex: '#E57373', border: '#F28B82' },
@@ -133,7 +132,7 @@ let gameState = {
   level: 1,
   coins: 100,
   activeBoxes: [], 
-  maxBoxesLimit: 4,
+  maxBoxesLimit: 4, // Max allowed via AD
   currentLevelData: null,
   paused: false,
   drill: 2, hammer: 1, brush: 1,
@@ -159,11 +158,15 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
+// ============================================================
+// LEVEL GENERATOR
+// ============================================================
 function generateLevel(levelNum) {
   const boards = [];
   const screws = [];
-  const layers = Math.min(2 + Math.floor(levelNum / 3), 5);
-  const numColors = Math.min(2 + Math.floor(levelNum / 4), 5);
+  // Layers increase with level (max 4 layers)
+  const layers = Math.min(2 + Math.floor(levelNum / 4), 4);
+  const numColors = Math.min(2 + Math.floor(levelNum / 3), 5);
   
   const activeColors = CONFIG.COLORS.slice(0, numColors);
   const boxCapacity = 3; 
@@ -173,10 +176,11 @@ function generateLevel(levelNum) {
 
   for (let l = 0; l < layers; l++) {
     const shape = CONFIG.SHAPES[(l + levelNum) % CONFIG.SHAPES.length];
-    const size = 140 - (l * 15);
+    // Bigger plates (max 180)
+    const size = 180 - (l * 20);
     
-    const ox = (Math.random() - 0.5) * 60;
-    const oy = (Math.random() - 0.5) * 60;
+    const ox = (Math.random() - 0.5) * 50;
+    const oy = (Math.random() - 0.5) * 50;
     const bx = cx - size/2 + ox;
     const by = cy - size/2 + oy;
 
@@ -188,22 +192,23 @@ function generateLevel(levelNum) {
       color: boardColor.hex, colorId: boardColor.id
     });
 
-    const screwCount = 2 + Math.floor(levelNum / 4);
+    const screwCount = 3 + Math.floor(levelNum / 3);
     let pos = [];
     if (shape === 'leaf') {
       pos = [
-        { x: bx + size*0.5, y: by + size*0.15 },
-        { x: bx + size*0.2, y: by + size*0.5 },
-        { x: bx + size*0.8, y: by + size*0.5 },
-        { x: bx + size*0.5, y: by + size*0.85 }
+        { x: bx + size*0.5, y: by + size*0.2 },
+        { x: bx + size*0.25, y: by + size*0.5 },
+        { x: bx + size*0.75, y: by + size*0.5 },
+        { x: bx + size*0.5, y: by + size*0.8 }
       ];
     } else if (shape === 'petal') {
       pos = [
-        { x: bx + size*0.5, y: by + size*0.2 },
-        { x: bx + size*0.2, y: by + size*0.8 },
-        { x: bx + size*0.8, y: by + size*0.8 }
+        { x: bx + size*0.5, y: by + size*0.25 },
+        { x: bx + size*0.25, y: by + size*0.75 },
+        { x: bx + size*0.75, y: by + size*0.75 }
       ];
     } else {
+      // Hexagon
       for(let i=0; i<6; i++) {
         const a = (i/6) * Math.PI * 2;
         pos.push({ x: bx + size/2 + Math.cos(a)*size*0.35, y: by + size/2 + Math.sin(a)*size*0.35 });
@@ -220,8 +225,7 @@ function generateLevel(levelNum) {
         id: l * 100 + s,
         x: p.x, y: p.y, boardId: l,
         color: col.hex, colorId: col.id,
-        removed: false, removing: false, removeProgress: 0, scale: 1,
-        locked: false // FIX: Locked screws removed as requested
+        removed: false, removing: false, removeProgress: 0, scale: 1
       });
     }
   }
@@ -233,12 +237,19 @@ function generateLevel(levelNum) {
   };
 }
 
+// ============================================================
+// DYNAMIC BOX SYSTEM
+// ============================================================
 function initLevel(levelNum) {
   gameState.level = levelNum;
   gameState.currentLevelData = generateLevel(levelNum);
   
   const data = gameState.currentLevelData;
-  gameState.activeBoxes = data.allColors.map((c, i) => ({
+  
+  // Start with exactly 2 boxes (based on first two colors needed)
+  const startColors = [data.allColors[0], data.allColors[1 % data.allColors.length]];
+  
+  gameState.activeBoxes = startColors.map((c, i) => ({
     id: i, colorId: c.id, colorHex: c.hex, border: c.border,
     capacity: data.capacity, filled: []
   }));
@@ -303,17 +314,23 @@ function handleScrewTap(screw) {
   if (ls.completed || screw.removed || screw.removing) return;
   if (isCovered(ls, screw)) return showToast('🚫 Covered by another plate!');
 
+  // Find matching box with space
   let box = gameState.activeBoxes.find(b => b.colorId === screw.colorId && b.filled.length < b.capacity);
   
   if (!box) {
-    const fullBox = gameState.activeBoxes.find(b => b.colorId === screw.colorId && b.filled.length >= b.capacity);
-    if (fullBox) {
-      fullBox.filled = []; 
-      updateTopUI();
-      box = fullBox; 
-    } else {
-      return showToast('No box available for this color!');
-    }
+    // DYNAMIC BOX CHANGE: If no box exists for this color, convert a box to this color!
+    // We pick the box that is either empty or the first one.
+    const boxToConvert = gameState.activeBoxes.find(b => b.filled.length === 0) || gameState.activeBoxes[0];
+    
+    const targetColor = CONFIG.COLORS.find(c => c.id === screw.colorId);
+    boxToConvert.colorId = targetColor.id;
+    boxToConvert.colorHex = targetColor.hex;
+    boxToConvert.border = targetColor.border;
+    boxToConvert.filled = []; // Reset it
+    
+    updateTopUI();
+    box = boxToConvert;
+    showToast('Box changed color!');
   }
 
   screw.removing = true;
@@ -380,7 +397,6 @@ function winLevel(ls) {
   ls.completed = true;
   gameState.coins += 50;
   
-  // MILESTONE REWARD LOGIC
   if (ls.level % 10 === 0) {
     document.getElementById('reward-screen').classList.remove('hidden');
   } else {
@@ -390,7 +406,7 @@ function winLevel(ls) {
 }
 
 // ============================================================
-// DRAWING (HOLE FIX INCLUDED)
+// DRAWING (3D GRADIENTS & LARGER SIZES)
 // ============================================================
 function drawLeaf(x, y, w, h, color) {
   ctx.save();
@@ -399,10 +415,17 @@ function drawLeaf(x, y, w, h, color) {
   ctx.moveTo(0, -h/2);
   ctx.quadraticCurveTo(w/2, 0, 0, h/2);
   ctx.quadraticCurveTo(-w/2, 0, 0, -h/2);
-  ctx.fillStyle = color;
+  
+  // 3D Gradient fill
+  const grad = ctx.createLinearGradient(0, -h/2, 0, h/2);
+  grad.addColorStop(0, 'rgba(255,255,255,0.4)');
+  grad.addColorStop(0.5, color);
+  grad.addColorStop(1, 'rgba(0,0,0,0.15)');
+  ctx.fillStyle = grad;
   ctx.fill();
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)'; 
+  
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#fff'; // Thick white border
   ctx.stroke();
   ctx.restore();
 }
@@ -412,10 +435,15 @@ function drawPetal(x, y, w, h, color) {
   ctx.translate(x + w/2, y + h/2);
   ctx.beginPath();
   ctx.ellipse(0, 0, w/2, h/2, 0, 0, Math.PI * 2);
-  ctx.fillStyle = color;
+  
+  const grad = ctx.createRadialGradient(0, 0, 10, 0, 0, w/2);
+  grad.addColorStop(0, 'rgba(255,255,255,0.4)');
+  grad.addColorStop(1, color);
+  ctx.fillStyle = grad;
   ctx.fill();
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#fff';
   ctx.stroke();
   ctx.restore();
 }
@@ -425,19 +453,28 @@ function drawScrew(x, y, color, scale) {
   ctx.translate(x, y);
   ctx.scale(scale, scale);
 
-  ctx.beginPath(); ctx.arc(2, 3, 12, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI*2);
-  ctx.fillStyle = color;
+  // 3D Shadow
+  ctx.beginPath(); ctx.arc(3, 4, CONFIG.SCREW_RADIUS, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fill();
+  
+  // Base circle with gradient
+  ctx.beginPath(); ctx.arc(0, 0, CONFIG.SCREW_RADIUS, 0, Math.PI*2);
+  const grad = ctx.createRadialGradient(-5, -5, 2, 0, 0, CONFIG.SCREW_RADIUS);
+  grad.addColorStop(0, '#fff');
+  grad.addColorStop(0.3, color);
+  grad.addColorStop(1, 'rgba(0,0,0,0.3)');
+  ctx.fillStyle = grad;
   ctx.fill();
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
   ctx.stroke();
 
+  // Cross
   ctx.beginPath();
-  ctx.moveTo(-6, 0); ctx.lineTo(6, 0);
-  ctx.moveTo(0, -6); ctx.lineTo(0, 6);
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 3;
+  ctx.moveTo(-8, 0); ctx.lineTo(8, 0);
+  ctx.moveTo(0, -8); ctx.lineTo(0, 8);
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = 4;
   ctx.lineCap = 'round';
   ctx.stroke();
 
@@ -446,10 +483,15 @@ function drawScrew(x, y, color, scale) {
 
 function drawHole(x, y) {
   ctx.beginPath();
-  ctx.arc(x, y, 8, 0, Math.PI*2);
-  ctx.fillStyle = '#D3C5A3'; 
+  ctx.arc(x, y, CONFIG.HOLE_RADIUS, 0, Math.PI*2);
+  
+  const grad = ctx.createRadialGradient(x-2, y-2, 2, x, y, CONFIG.HOLE_RADIUS);
+  grad.addColorStop(0, '#8C7A5B');
+  grad.addColorStop(1, '#D3C5A3');
+  ctx.fillStyle = grad;
   ctx.fill();
-  ctx.strokeStyle = '#B8A880';
+  
+  ctx.strokeStyle = '#A89A78';
   ctx.lineWidth = 2;
   ctx.stroke();
 }
@@ -459,16 +501,13 @@ function render(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.05);
   lastTime = now;
 
-  if (gameState.paused) {
-    requestAnimationFrame(render);
-    return;
-  }
+  if (gameState.paused) { requestAnimationFrame(render); return; }
 
   ctx.clearRect(0, 0, logicalWidth, logicalHeight);
   const ls = gameState.currentLevelData;
 
   if (ls) {
-    // 1. Update Physics (Swing & Fall)
+    // 1. Update Physics
     for (const board of ls.boards) {
       if (board.removed) {
         board.fallVel += CONFIG.GRAVITY * dt;
@@ -485,7 +524,7 @@ function render(now) {
       }
     }
 
-    // 2. Update Screw Removal Animation
+    // 2. Update Screw Animation
     for (const s of ls.screws) {
       if (s.removing) {
         s.removeProgress += dt * 4;
@@ -518,19 +557,21 @@ function render(now) {
           if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
         }
         ctx.closePath();
-        ctx.fillStyle = b.color;
+        const grad = ctx.createLinearGradient(b.x, b.y, b.x+b.w, b.y+b.h);
+        grad.addColorStop(0, 'rgba(255,255,255,0.3)');
+        grad.addColorStop(1, b.color);
+        ctx.fillStyle = grad;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 5;
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    // 4. Draw Holes (FIXED: Holes now rotate with the swinging board)
+    // 4. Draw Holes
     for (const b of ls.boards) {
       if (b.removed && b.fallY > 800) continue;
-      
       const boardScrews = ls.screws.filter(s => s.boardId === b.id && s.removed);
       if (boardScrews.length === 0) continue;
 
@@ -539,8 +580,8 @@ function render(now) {
 
       ctx.save();
       ctx.translate(cx, cy);
-      if (b.swingAngle) ctx.rotate(b.swingAngle); // Apply swing to holes too!
-      if (b.removed) ctx.rotate(b.rotation);      // Apply fall rotation to holes too!
+      if (b.swingAngle) ctx.rotate(b.swingAngle);
+      if (b.removed) ctx.rotate(b.rotation);
       ctx.translate(-cx, -cy);
 
       for (const s of boardScrews) {
@@ -597,8 +638,9 @@ canvas.addEventListener('touchstart', (e) => {
 
   for (const s of sortedScrews) {
     if (s.removed || s.removing || isCovered(ls, s)) continue;
+    // Increased tap radius for bigger screws
     const dist = Math.hypot(x - s.x, y - s.y);
-    if (dist < CONFIG.SCREW_RADIUS * 2.5) {
+    if (dist < CONFIG.SCREW_RADIUS * 2.8) {
       handleScrewTap(s);
       break;
     }
@@ -625,14 +667,12 @@ document.getElementById('btn-drill').addEventListener('click', () => {
   showToast('Drilled!');
 });
 
-// Hammer now just removes any random screw (since locked screws are gone)
 document.getElementById('btn-hammer').addEventListener('click', () => {
   if (gameState.hammer <= 0) return showToast('No hammers left!');
   const ls = gameState.currentLevelData;
   const available = ls.screws.filter(s => !s.removed && !s.removing);
   if (available.length === 0) return showToast('No screws left!');
   
-  // Hammer breaks a covered screw (even if covered)
   const target = available[Math.floor(Math.random() * available.length)];
   target.removed = true;
   ls.removedCount++;
